@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: amr_backend
+  config:
+    import: optional:file:env/spring.dev.env[.properties]
