@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+# IntelliJ inspection profiles
+.idea/inspectionProfiles/
+# Kotlin/IDE error logs
+.kotlin/
+*.log
