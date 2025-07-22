@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class UIManager
 {
+    #region Attribute
     int _order = 10;
-
     Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
     UI_Scene _sceneUI = null;
-
+    #endregion
+    #region Methods
     public GameObject Root
     {
         get
@@ -94,4 +95,5 @@ public class UIManager
         while (_popupStack.Count > 0)
             ClosePopupUI();
     }
+    #endregion
 }

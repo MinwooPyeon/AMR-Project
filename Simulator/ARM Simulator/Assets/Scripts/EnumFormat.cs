@@ -14,4 +14,11 @@ public enum UIEvent
     DRAG
 }
 
-
+public enum  AIORDER
+{
+    MOVE_FORWARD,
+    ROTATE_LEFT,
+    ROTATE_RIGHT,
+    LIFT,
+    STOP
+}

@@ -3,14 +3,11 @@ using UnityEngine;
 
 public class MoveController : MonoBehaviour
 {
-    [Header("ARM 상태 저장용 데이터")]
-    [SerializeField] private StateData _stateData;
-
-    [Header("회전 속도 (°/s)")]
+    #region Attribute
+    private StateData _stateData;
     [SerializeField] private float _rotateSpeed = 180f;
-
     private Coroutine activeCoroutine = null;
-
+    #endregion
     #region Public API
 
     public void MoveForward(float acceleration)
@@ -29,7 +26,7 @@ public class MoveController : MonoBehaviour
         activeCoroutine = StartCoroutine(MoveForwardCoroutine());
     }
 
-    public void Stop()
+    public void Stop(float value = 0)
     {
         StopActiveCoroutine();
         _stateData.State = ARM_STATE.IDLE;
@@ -48,7 +45,6 @@ public class MoveController : MonoBehaviour
     }
 
     #endregion
-
     #region Coroutine Implementations
 
     private IEnumerator MoveForwardCoroutine()
@@ -78,7 +74,6 @@ public class MoveController : MonoBehaviour
     }
 
     #endregion
-
     #region Helpers
 
     private void StopActiveCoroutine()
@@ -90,5 +85,11 @@ public class MoveController : MonoBehaviour
         }
     }
 
+    #endregion
+    #region Unity Methods
+    private void Awake()
+    {
+        _stateData = GetComponent<StateData>();
+    }
     #endregion
 }
