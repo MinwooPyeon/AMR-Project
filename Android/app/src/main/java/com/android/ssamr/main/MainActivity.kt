@@ -1,4 +1,4 @@
-package com.android.ssamr
+package com.android.ssamr.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
