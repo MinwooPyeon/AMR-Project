@@ -1,7 +1,6 @@
 package com.android.ssamr.feature.amr
 
 import androidx.lifecycle.ViewModel
-import com.android.ssamr.core.usecase.amr.GetAmrListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,13 +12,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AmrManageViewModel @Inject constructor(
-    private val getAmrListUseCase: GetAmrListUseCase
+//    private val getAmrListUseCase: GetAmrListUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AmrState())
     val state: StateFlow<AmrState> = _state.asStateFlow()
 
-     private val _effect = MutableSharedFlow<AmrEffect>()
+    private val _effect = MutableSharedFlow<AmrEffect>()
     val effect: SharedFlow<AmrEffect>
         get() = _effect.asSharedFlow()
 

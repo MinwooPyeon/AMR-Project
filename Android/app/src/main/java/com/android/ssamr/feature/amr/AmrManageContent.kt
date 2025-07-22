@@ -46,7 +46,10 @@ fun AmrCardList(
     amrs: List<AmrUiModel>,
     onAmrCardClick: (Long) -> Unit
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier
+            .padding(horizontal = 8.dp)
+    ) {
         items(amrs) { amr ->
             AmrCard(amr = amr, onAmrCardClick)
         }
