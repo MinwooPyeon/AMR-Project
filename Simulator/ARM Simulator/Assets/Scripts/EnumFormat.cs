@@ -7,14 +7,7 @@ public enum ARM_STATE
     RECHARGE,
     BROKEN,
 }
-
-public enum UIEvent
-{
-    CLICK,
-    DRAG
-}
-
-public enum  AIORDER
+public enum  ACTION_STATE
 {
     MOVE_FORWARD,
     ROTATE_LEFT,
@@ -22,3 +15,10 @@ public enum  AIORDER
     LIFT,
     STOP
 }
+
+public enum UIEvent
+{
+    CLICK,
+    DRAG
+}
+

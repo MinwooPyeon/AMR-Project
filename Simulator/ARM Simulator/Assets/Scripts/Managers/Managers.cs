@@ -7,12 +7,14 @@ public class Managers : MonoBehaviour
     static UIManager _ui = new UIManager();
     static ResourceManager _resource = new ResourceManager();
     static DeviceManager _device = new DeviceManager();
+    static DataManager _data = new DataManager();
     #endregion
     #region Methods
     public static Managers Manager { get { return _instance; } }
     public static UIManager UI { get { return _ui; } }
     public static ResourceManager Resource { get { return _resource; } }
     public static DeviceManager Device { get { return _device; } }
+    public static DataManager Data { get { return _data; } }
     #endregion
     #region Unity Methods
     static void Init()
