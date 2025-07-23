@@ -89,7 +89,7 @@ fun AmrCategoryTabRow(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier
                             .background(
-                                if (selected) Color(0xFF4C65E2) else Color.Transparent,
+                                if (selected) Color(0xFF4C65E2) else Color(0xFFF3F4F6),
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -118,7 +118,7 @@ fun AmrCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = {onAmrCardClick(amr.id)}
+        onClick = { onAmrCardClick(amr.id) }
     ) {
         Column(Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -230,7 +230,7 @@ fun AmrCategoryTabRowPreview() {
 @Composable
 fun AmrCardListPreview() {
     val sampleAmrs = listOf(
-        AmrUiModel (
+        AmrUiModel(
             id = 1L,
             name = "AMR-001",
             status = AmrStatus.RUNNING,
