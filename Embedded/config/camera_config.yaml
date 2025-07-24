@@ -1,0 +1,7 @@
+camera:
+  ros__parameters:
+    publish_rate: 10               # 10 FPS
+    device_id: 0                   # /dev/video0
+    image_topic: "/camera/image_raw"
+    resolution_width: 640
+    resolution_height: 480
