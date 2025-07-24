@@ -1,0 +1,7 @@
+slam:
+  ros__parameters:
+    max_features: 1000
+    detection_threshold: 10
+    image_topic: "/camera/image_raw"
+    lidar_topic: "/scan"
+    visualize: true
