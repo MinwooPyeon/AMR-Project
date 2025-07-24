@@ -1,0 +1,6 @@
+battery:
+  ros__parameters:
+    publish_rate_hz: 1.0
+    low_battery_threshold: 0.2     # 20%
+    critical_battery_threshold: 0.1 # 10%
+    topic_name: "/battery_state"
