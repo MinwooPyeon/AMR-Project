@@ -2,7 +2,7 @@ services:
   influxdb:
     image: influxdb:2
     env_file:
-      - "env/influx.dev.env"
+      - "env/influx.env"
     volumes:
       - influxdb-data:/var/lib/influxdb2
     ports:
@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - "env/postgres.dev.env"
+      - "env/postgres.env"
     volumes:
       - postgres-data:/var/lib/postgresql
 
