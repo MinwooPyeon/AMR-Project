@@ -31,15 +31,6 @@ services:
     networks:
       - amr-backend-network
 
-  jenkins:
-    image: jenkins/jenkins:lts-jdk17
-    ports:
-      - "8082:8080"
-      - "50000:5000"
-    user: root
-    volumes:
-      - /home/jenkins:/var/jenkins_home
-
   amr-server:
     image: amr-server
     build: .
