@@ -2,7 +2,7 @@ services:
   influxdb:
     image: influxdb:2
     env_file:
-      - "/env/influx.env"
+      - "env/influx.env"
     volumes:
       - influxdb-data:/var/lib/influxdb2
     ports:
@@ -17,7 +17,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - "/env/postgres.env"
+      - "env/postgres.env"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
@@ -44,7 +44,7 @@ services:
       - "8080:8080"
     user: spring
     env_file:
-      - "/env/spring.prod.env"
+      - "env/spring.prod.env"
     networks:
       - amr-backend-network
 
