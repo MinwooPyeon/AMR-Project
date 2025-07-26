@@ -9,7 +9,7 @@ using UnityEngine;
 public class DataManager
 {
     [Header("RosBridge 참조 (Inspector에 할당)")]
-    [SerializeField] private RosBridge _rosBridge;
+    //[SerializeField] private RosBridge _rosBridge;
 
     [Header("퍼블리시 주기 (Hz)")]
     [SerializeField] private float _publishRate = 5f;
@@ -19,22 +19,22 @@ public class DataManager
 
     private float _timer = 0f;
 
-    void Awake()
-    {
-        if (_rosBridge == null)
-        {
-            GameObject obj = GameObject.Find("@RosBridge");
-            _rosBridge = obj?.GetComponent<RosBridge>();
-        }
+    //void Awake()
+    //{
+    //    if (_rosBridge == null)
+    //    {
+    //        GameObject obj = GameObject.Find("@RosBridge");
+    //        _rosBridge = obj?.GetComponent<RosBridge>();
+    //    }
             
-        // RosBridge 이벤트에 콜백 등록
-        _rosBridge.OnJsonReceived += HandleIncomingJson;
-    }
+    //    // RosBridge 이벤트에 콜백 등록
+    //    _rosBridge.OnJsonReceived += HandleIncomingJson;
+    //}
 
-    void OnDestroy()
-    {
-        _rosBridge.OnJsonReceived -= HandleIncomingJson;
-    }
+    //void OnDestroy()
+    //{
+    //    _rosBridge.OnJsonReceived -= HandleIncomingJson;
+    //}
 
     void Update()
     {
@@ -61,7 +61,7 @@ public class DataManager
 
         // 2) JSON 직렬화 & 퍼블리시
         string json = DeviceStateDataParser.Serialize(list);
-        _rosBridge.PublishJson(json);
+        //_rosBridge.PublishJson(json);
     }
 
     /// <summary>ARM 초기화 시 StateData 등록</summary>
