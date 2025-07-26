@@ -9,20 +9,9 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.barracuda": {
-      "version": "3.0.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.burst": "1.6.0",
-        "com.unity.modules.jsonserialize": "1.0.0",
-        "com.unity.modules.imageconversion": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.burst": {
       "version": "1.8.23",
-      "depth": 1,
+      "depth": 2,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.2.1",
@@ -146,6 +135,13 @@
         "com.unity.mathematics": "1.2.4",
         "com.unity.modules.terrain": "1.0.0"
       }
+    },
+    "com.unity.robotics.ros-tcp-connector": {
+      "version": "https://github.com/Unity-Technologies/ROS-TCP-Connector.git?path=/com.unity.robotics.ros-tcp-connector",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c27f00c6cf750d2d0564349b3039d19aa3925e7c"
     },
     "com.unity.searcher": {
       "version": "4.9.3",
