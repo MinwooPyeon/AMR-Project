@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 731043917564695190}
   - component: {fileID: 8019438028344142344}
   - component: {fileID: 4806518480916510261}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LCD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: b41d5fc8b839736418ac556e99544351, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 7761992926188184155}
   - component: {fileID: 460068610922022090}
   - component: {fileID: 7267004240413748064}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +136,7 @@ Transform:
   m_GameObject: {fileID: 1307088637349584658}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0.173, z: 0.534}
+  m_LocalPosition: {x: 0, y: 0.173, z: 0.499}
   m_LocalScale: {x: 0.1, y: 0.23, z: 0.23}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -173,7 +173,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 312539dfe353c7542b89eccb85893d00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -283,7 +283,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 69425fcf38ebbdb4da891d9f316da691, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -335,7 +335,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 894747539878949965}
-  m_Layer: 0
+  - component: {fileID: 8533542049198798146}
+  - component: {fileID: 6740421961228510575}
+  - component: {fileID: 2660719473102243833}
+  m_Layer: 3
   m_Name: AMR_Virtual_Device
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -364,6 +367,43 @@ Transform:
   - {fileID: 2067727028263951347}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8533542049198798146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4431677523034616268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c34a45d9d94a1954ca2356839cec72d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6740421961228510575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4431677523034616268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f548959e4cbbb440abb84a296e994a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _rotateSpeed: 180
+--- !u!114 &2660719473102243833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4431677523034616268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1927645d2609fe64ba7d0688d1dfa920, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6118161336788038109
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,7 +416,7 @@ GameObject:
   - component: {fileID: 2344392091313500346}
   - component: {fileID: 4815631423902149110}
   - component: {fileID: 7001914937513643062}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Lift
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -429,7 +469,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 312539dfe353c7542b89eccb85893d00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -484,7 +524,8 @@ GameObject:
   - component: {fileID: 7051426235368321435}
   - component: {fileID: 2003458757787078697}
   - component: {fileID: 2340399284546624066}
-  m_Layer: 0
+  - component: {fileID: 749919034851413084}
+  m_Layer: 3
   m_Name: Lidar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -537,7 +578,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 312539dfe353c7542b89eccb85893d00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -582,6 +623,28 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &749919034851413084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6944346269236993209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b74665594baed4a9f8f0fe83679c7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horizontalResolution: 100
+  verticalResolution: 100
+  verticalFOV: 360
+  maxDistance: 20
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  scanEveryFrame: 0
+  scanInterval: 1
+  pointCloud: []
 --- !u!1 &8019317006433731033
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,7 +657,7 @@ GameObject:
   - component: {fileID: 2467834122783271448}
   - component: {fileID: 6623503246229040572}
   - component: {fileID: 5643355914192035061}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -647,7 +710,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 312539dfe353c7542b89eccb85893d00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -704,7 +767,7 @@ GameObject:
   - component: {fileID: 5642434164201379867}
   - component: {fileID: 2970498134935051229}
   - component: {fileID: 1959203674681765537}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -757,7 +820,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 312539dfe353c7542b89eccb85893d00, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
