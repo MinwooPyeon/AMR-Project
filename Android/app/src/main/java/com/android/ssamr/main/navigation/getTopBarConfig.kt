@@ -11,8 +11,8 @@ fun getTopBarConfig(
     route: String,
     navController: NavHostController
 ): TopBarConfig? {
-    return when (route) {
-        DashboardScreen.route -> TopBarConfig(
+    return when {
+        route == DashboardScreen.route -> TopBarConfig(
             title = "SafetyBot",
             subTitle = "물류 공장 관제 시스템",
             actions = {
@@ -26,7 +26,7 @@ fun getTopBarConfig(
             isCustom = true
         )
 
-        AmrScreen.route -> TopBarConfig(
+        route == AmrScreen.route -> TopBarConfig(
             title = "AMR 관리",
             actions = {
                 IconButton(onClick = {}) {
@@ -41,7 +41,7 @@ fun getTopBarConfig(
                 }
             })
 
-        AlarmScreen.route -> TopBarConfig(
+        route == AlarmScreen.route -> TopBarConfig(
             title = "알림",
             actions = {
                 IconButton(onClick = {}) {
@@ -56,7 +56,7 @@ fun getTopBarConfig(
                 }
             })
 
-        MoreScreen.route -> TopBarConfig(
+        route == MoreScreen.route -> TopBarConfig(
             title = "더보기",
             showBack = true,
             onBackClick = {
@@ -65,6 +65,12 @@ fun getTopBarConfig(
                     launchSingleTop = true
                 }
             })
+
+        route.startsWith("amr_detail") -> TopBarConfig(
+            title = "AMR 상세",
+            showBack = true,
+            onBackClick = { navController.popBackStack() }
+        )
 
         // ... 기타 화면
         else -> null
