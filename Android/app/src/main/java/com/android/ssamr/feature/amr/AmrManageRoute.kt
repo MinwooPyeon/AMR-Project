@@ -10,7 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AmrManageRoute(
-//    navigateToAmrDetail: (Long) -> Unit,
+    navigateToAmrDetail: (Long) -> Unit,
     viewModel: AmrManageViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
@@ -25,7 +25,7 @@ fun AmrManageRoute(
             when (effect) {
 
                 is AmrEffect.NavigateToAmrDetail -> {
-//                    navigateToAmrDetail(effect.amrId)
+                    navigateToAmrDetail(effect.amrId)
                 }
 
                 is AmrEffect.ShowError -> {

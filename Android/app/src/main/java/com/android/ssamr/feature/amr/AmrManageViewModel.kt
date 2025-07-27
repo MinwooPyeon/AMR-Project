@@ -1,6 +1,7 @@
 package com.android.ssamr.feature.amr
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +37,7 @@ class AmrManageViewModel @Inject constructor(
 
             is AmrIntent.ClickAmrManageCard -> {
                 // TODO: AMR카드 선택시 AMRDetail 화면으로 전환
-                // viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.amrId)) }
+                viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.amrId)) }
             }
         }
     }

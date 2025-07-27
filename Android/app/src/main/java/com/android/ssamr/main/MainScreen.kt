@@ -7,15 +7,19 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.android.ssamr.core.ui.SSAMRBottomBar
 import com.android.ssamr.core.ui.SSAMRCustomTopAppBar
 import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
+import com.android.ssamr.feature.amrDetail.AmrDetailRoute
 import com.android.ssamr.main.navigation.AlarmScreen
+import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.MoreScreen
@@ -83,9 +87,24 @@ fun MainScreen() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(DashboardScreen.route) { /* DashboardScreen() */ }
-            composable(AmrScreen.route) { AmrManageRoute() }
+            composable(AmrScreen.route) {
+                AmrManageRoute(
+                    navigateToAmrDetail = { amrId ->
+                        navController.navigate("amr_detail/$amrId")
+                    }
+                )
+            }
             composable(AlarmScreen.route) { /* AlarmScreen() */ }
             composable(MoreScreen.route) { /* MoreScreen() */ }
+            composable(
+                route = "${AmrDetailScreen.route}/{amrId}",
+                arguments = listOf(navArgument("amrId") { type = NavType.LongType })
+            ) { backStackEntry ->
+                val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
+                AmrDetailRoute(
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
