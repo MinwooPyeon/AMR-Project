@@ -23,14 +23,6 @@ data class DashboardState(
     val error: String? = null
 )
 
-// 카드 그리드
-data class DashboardCardGrid(
-    val total: Int,
-    val running: Int,
-    val charging: Int,
-    val checking: Int
-)
-
 // 사용자의 액션 정의
 sealed class DashboardIntent {
     data object LoadDashboard : DashboardIntent()
