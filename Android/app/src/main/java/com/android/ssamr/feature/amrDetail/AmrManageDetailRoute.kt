@@ -1,10 +1,9 @@
 package com.android.ssamr.feature.amrDetail
 
 import android.widget.Toast
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 
@@ -17,34 +16,23 @@ fun AmrDetailRoute(
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
-    // 상세 정보 불러오기 (최초 진입시 1회)
-//    LaunchedEffect(Unit) {
-//        viewModel.sendIntent(AmrDetailIntent.LoadAmrDetail)
-//    }
-
     // Effect 처리
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is AmrDetailEffect.NavigateToWebcam -> navigateToWebcam()
-                is AmrDetailEffect.ShowError -> Toast.makeText(
-                    context,
-                    effect.message,
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                is AmrDetailEffect.ShowReturnDialog -> {
-
+                is AmrDetailEffect.ShowError -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
-
-                is AmrDetailEffect.ShowStartDialog -> {/* TODO: 다이얼로그 띄우기 */
-                }
+                is AmrDetailEffect.ShowStartDialog -> {} // 필요시 사용
+                is AmrDetailEffect.ShowReturnDialog -> {}
             }
         }
     }
 
     AmrManageDetailScreen(
         state = state,
-        sendIntent = viewModel::sendIntent
+        sendIntent = viewModel::sendIntent,
+        modifier = Modifier.padding() // 필요시 Scaffold로 감싸고 padding 처리
     )
 }

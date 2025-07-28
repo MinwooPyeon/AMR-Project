@@ -3,6 +3,8 @@ package com.android.ssamr.feature.amrDetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.ssamr.core.usecase.amr.ManualReturnUseCase
+import com.android.ssamr.core.usecase.amr.ManualStartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,8 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AmrDetailViewModel @Inject constructor(
-    // private val getAmrDetailUseCase: GetAmrDetailUseCase
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val manualStartUseCase: ManualStartUseCase,
+    private val manualReturnUseCase: ManualReturnUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AmrDetailState())
@@ -26,12 +29,12 @@ class AmrDetailViewModel @Inject constructor(
         sendIntent(AmrDetailIntent.LoadAmrDetail)
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = AmrDetailState()
     )
 
     val amrId = requireNotNull(savedStateHandle.get<Long>("amrId")) {
-        "amd id is null in AmrDetailViewModel"
+        "amrId is null in AmrDetailViewModel"
     }
 
     private val _effect = MutableSharedFlow<AmrDetailEffect>()
@@ -40,11 +43,9 @@ class AmrDetailViewModel @Inject constructor(
     fun sendIntent(intent: AmrDetailIntent) {
         when (intent) {
             is AmrDetailIntent.LoadAmrDetail -> {
-                // 실제로는 서버 API 호출 (예시로 딜레이 후 샘플 데이터)
                 viewModelScope.launch {
                     _state.value = _state.value.copy(isLoading = true)
-//                    val amr = getAmrDetailUseCase(amrId)
-                    delay(500)
+                    delay(500) // 실제 API 호출로 교체
                     _state.value = _state.value.copy(
                         isLoading = false,
                         amr = sampleAmrDetail
@@ -53,22 +54,38 @@ class AmrDetailViewModel @Inject constructor(
             }
 
             is AmrDetailIntent.ClickWebcam -> {
-                viewModelScope.launch { _effect.emit(AmrDetailEffect.NavigateToWebcam) }
-            }
-
-            is AmrDetailIntent.ClickManualReturn -> {
-                _state.value = _state.value.copy(showReturnDialog = true)
                 viewModelScope.launch {
-                    delay(2000)
-                    _state.value = _state.value.copy(showReturnDialog = false)
+                    _effect.emit(AmrDetailEffect.NavigateToWebcam)
                 }
             }
 
             is AmrDetailIntent.ClickManualStart -> {
-                _state.value = _state.value.copy(showStartDialog = true)
                 viewModelScope.launch {
-                    delay(2000)
+                    _state.value = _state.value.copy(showStartDialog = true)
+                    val result = manualStartUseCase(amrId)
+                    delay(1000)
                     _state.value = _state.value.copy(showStartDialog = false)
+                    _effect.emit(
+                        AmrDetailEffect.ShowError(
+                            if (result.isSuccess) "출발 요청이 전송되었습니다."
+                            else "출발 요청 실패: ${result.exceptionOrNull()?.message.orEmpty()}"
+                        )
+                    )
+                }
+            }
+
+            is AmrDetailIntent.ClickManualReturn -> {
+                viewModelScope.launch {
+                    _state.value = _state.value.copy(showReturnDialog = true)
+                    val result = manualReturnUseCase(amrId)
+                    delay(1000)
+                    _state.value = _state.value.copy(showReturnDialog = false)
+                    _effect.emit(
+                        AmrDetailEffect.ShowError(
+                            if (result.isSuccess) "복귀 요청이 전송되었습니다."
+                            else "복귀 요청 실패: ${result.exceptionOrNull()?.message.orEmpty()}"
+                        )
+                    )
                 }
             }
         }

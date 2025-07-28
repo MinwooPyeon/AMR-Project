@@ -21,9 +21,10 @@ import com.android.ssamr.ui.theme.SSAMRTheme
 @Composable
 fun AmrManageDetailScreen(
     state: AmrDetailState,
-    sendIntent: (AmrDetailIntent) -> Unit
+    sendIntent: (AmrDetailIntent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(modifier.fillMaxSize()) { // ✅ modifier 적용
         when {
             state.isLoading -> {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -84,8 +85,10 @@ fun AmrManageDetailScreenPreview() {
             state = AmrDetailState(
                 amrId = 1,
                 amr = sampleAmrDetail,
-            )
-        ) { }
+            ),
+            sendIntent = {},
+            modifier = Modifier.padding(16.dp) // 실제 innerPadding 대체
+        )
     }
 }
 
