@@ -47,64 +47,35 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            try {
-                // 더미 데이터
+            runCatching {
                 val amrs = listOf(
-                    DashboardAmrUiModel(
-                        id = 1L,
-                        name = "AMR-001",
-                        battery = 85,
-                        status = DashboardAmrStatus.RUNNING,
-                        location = "A구역",
-                        job = "화물 운반"
-                    ),
-                    DashboardAmrUiModel(
-                        id = 2L,
-                        name = "AMR-002",
-                        battery = 45,
-                        status = DashboardAmrStatus.CHARGING,
-                        location = "충전소",
-                        job = "충전 중"
-                    ),
-                    DashboardAmrUiModel(
-                        id = 3L,
-                        name = "AMR-003",
-                        battery = 92,
-                        status = DashboardAmrStatus.CHECK,
-                        location = "B구역",
-                        job = "점검 중"
-                    ),
-                    DashboardAmrUiModel(
-                        id = 4L,
-                        name = "AMR-004",
-                        battery = 67,
-                        status = DashboardAmrStatus.RUNNING,
-                        location = "C구역",
-                        job = "운반"
-                    )
+                    DashboardAmrUiModel(1L, "AMR-001", 85, DashboardAmrStatus.RUNNING, "A구역", "화물 운반"),
+                    DashboardAmrUiModel(2L, "AMR-002", 45, DashboardAmrStatus.CHARGING, "충전소", "충전 중"),
+                    DashboardAmrUiModel(3L, "AMR-003", 92, DashboardAmrStatus.CHECK, "B구역", "점검 중"),
+                    DashboardAmrUiModel(4L, "AMR-004", 67, DashboardAmrStatus.RUNNING, "C구역", "운반")
                 )
 
                 val runningCount = amrs.count { it.status == DashboardAmrStatus.RUNNING }
                 val chargingCount = amrs.count { it.status == DashboardAmrStatus.CHARGING }
                 val checkingCount = amrs.count { it.status == DashboardAmrStatus.CHECK }
 
-                _state.update {
-                    it.copy(
-                        amrList = amrs,
-                        totalCount = amrs.size,
-                        runningCount = runningCount,
-                        chargingCount = chargingCount,
-                        checkingCount = checkingCount,
-                        isLoading = false
-                    )
-                }
-
-            } catch (e: Exception) {
+                DashboardState(
+                    amrList = amrs,
+                    totalCount = amrs.size,
+                    runningCount = runningCount,
+                    chargingCount = chargingCount,
+                    checkingCount = checkingCount,
+                    isLoading = false
+                )
+            }.onSuccess { newState ->
+                _state.update { newState }
+            }.onFailure { throwable ->
                 _state.update { it.copy(isLoading = false, error = "데이터를 불러오는 데 실패했습니다.") }
                 emitEffect(DashboardEffect.ShowError("네트워크 오류가 발생했습니다."))
             }
         }
     }
+
 
     private fun emitEffect(effect: DashboardEffect) {
         viewModelScope.launch {

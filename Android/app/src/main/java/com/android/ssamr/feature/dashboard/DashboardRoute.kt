@@ -26,9 +26,8 @@ fun DashboardRoute(
             }
         }
     }
-
-    DashboardContent(
+    DashboardScreen(
         state = state,
-        onIntent = { viewModel.onIntent(it) }
+        sendIntent = viewModel::onIntent
     )
 }

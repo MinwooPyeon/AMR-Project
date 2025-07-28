@@ -3,7 +3,6 @@ package com.android.ssamr.feature.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -12,49 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.ssamr.ui.theme.SSAMRTheme
 import com.android.ssamr.R
-
-
-@Composable
-fun DashboardContent(
-    state: DashboardState,
-    onIntent: (DashboardIntent) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF4F6FA))
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            TopSummarySection(
-                total = state.totalCount,
-                running = state.runningCount,
-                charging = state.chargingCount,
-                checking = state.checkingCount
-            )
-        }
-
-        item {
-            FactoryMapSection(
-                onExpandClick = { onIntent(DashboardIntent.ClickMapExpand) }
-            )
-        }
-
-        item {
-            AmrStatusSection(
-                amrs = state.amrList,
-                onClick = { id -> onIntent(DashboardIntent.ClickAmrItem(id)) },
-                onViewAllClick = { onIntent(DashboardIntent.ClickViewAllAmr) }
-            )
-        }
-    }
-}
 
 @Composable
 fun TopSummarySection(
@@ -205,45 +164,3 @@ fun AmrStatusSection(
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun DashboardContentPreview() {
-    SSAMRTheme {
-        DashboardContent(
-            state = DashboardState(
-                amrList = listOf(
-                    DashboardAmrUiModel(
-                        id = 1L,
-                        name = "AMR-001",
-                        battery = 85,
-                        status = DashboardAmrStatus.RUNNING,
-                        location = "A구역-라인1",
-                        job = "화물 운반 중"
-                    ),
-                    DashboardAmrUiModel(
-                        id = 2L,
-                        name = "AMR-002",
-                        battery = 45,
-                        status = DashboardAmrStatus.CHARGING,
-                        location = "충전소-1번",
-                        job = "충전 중"
-                    ),
-                    DashboardAmrUiModel(
-                        id = 3L,
-                        name = "AMR-003",
-                        battery = 92,
-                        status = DashboardAmrStatus.CHECK,
-                        location = "B구역-라인3",
-                        job = "점검 중"
-                    )
-                ),
-                totalCount = 3,
-                runningCount = 1,
-                chargingCount = 1,
-                checkingCount = 1
-            ),
-            onIntent = {}
-        )
-    }
-}
