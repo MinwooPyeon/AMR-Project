@@ -218,6 +218,7 @@ public class LidarManager : MonoBehaviour
             int count = _sensorCounts[si];
             for (int i = 0; i < count; i++)
                 sensor.pointCloud[i] = _outPoints[idx + i];
+            Debug.Log("[LidarManager] Sensor " + si + " updated with " + count + " points.");
             idx += count;
         }
     }
