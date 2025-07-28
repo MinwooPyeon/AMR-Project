@@ -33,6 +33,8 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("com.influxdb:influxdb-client-kotlin:6.6.0")
     implementation("io.micrometer:micrometer-registry-influx:1.13.1")
+    implementation("org.springframework.integration:spring-integration-mqtt:6.5.0")
+    implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
 }
 
 kotlin {
