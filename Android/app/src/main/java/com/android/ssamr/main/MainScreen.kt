@@ -18,6 +18,7 @@ import com.android.ssamr.core.ui.SSAMRCustomTopAppBar
 import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
+import com.android.ssamr.feature.dashboard.DashboardRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -86,7 +87,23 @@ fun MainScreen() {
             startDestination = DashboardScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(DashboardScreen.route) { /* DashboardScreen() */ }
+            composable(DashboardScreen.route) {
+                DashboardRoute(
+                    navigateToAmrDetail = { amrId ->
+                        navController.navigate("amr_detail/$amrId")
+                    },
+                    navigateToMapFullScreen = {
+                        navController.navigate("full_map")
+                    },
+                    navigateToAmrList = {
+                        navController.navigate("amr")
+                    },
+                    showSnackbar = { message ->
+                        // Snackbar 처리 예시:
+                        // coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+                    }
+                )
+            }
             composable(AmrScreen.route) {
                 AmrManageRoute(
                     navigateToAmrDetail = { amrId ->
