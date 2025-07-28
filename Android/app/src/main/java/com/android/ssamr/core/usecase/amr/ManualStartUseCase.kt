@@ -6,5 +6,7 @@ import javax.inject.Inject
 class ManualStartUseCase @Inject constructor(
     private val repository: AmrControlRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<Unit> = repository.manualStart(id)
+    suspend operator fun invoke(id: Long): Result<Unit> {
+        return repository.manualStart(id)
+    }
 }

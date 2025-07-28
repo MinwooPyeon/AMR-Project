@@ -10,3 +10,4 @@ class ManualReturnUseCase @Inject constructor(
         return repository.manualReturn(id)
     }
 }
+
