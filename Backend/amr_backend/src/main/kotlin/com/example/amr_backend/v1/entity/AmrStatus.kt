@@ -1,19 +1,25 @@
+package com.example.amr_backend.v1.entity
+
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EntityListeners
 import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.hibernate.proxy.HibernateProxy
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @Entity
+@EntityListeners(AuditingEntityListener::class)
 @Table(name = "amr_status")
 data class AmrStatus(
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long,
+    val id: Long = 0L,
 
     @Column(name = "name")
     val name: String,
@@ -41,10 +47,11 @@ data class AmrStatus(
 
     @Column(name = "last_update_date")
     val lastUpdateDate: LocalDateTime,
-
-    @CreatedDate
-    val createdAt: LocalDateTime
 ) {
+    @CreatedDate
+    @Column(name = "created_at")
+    lateinit var createdAt: LocalDateTime
+
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null) return false
