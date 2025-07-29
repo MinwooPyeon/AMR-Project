@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -26,6 +27,7 @@ import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen() {
@@ -41,10 +43,14 @@ fun MainScreen() {
             bottomNavScreens.any { it.route == currentRoute }
         }
     }
-
     val topBarConfig = currentRoute?.let { getTopBarConfig(it, navController) }
 
+    // Snackbar 임시 구현
+    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
+        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) },
         topBar = {
             if (showTopBar && topBarConfig != null) {
                 if (topBarConfig.isCustom) {
@@ -92,16 +98,13 @@ fun MainScreen() {
         ) {
             composable(DashboardScreen.route) {
                 DashboardRoute(
-                    navController = navController, // ✅ 추가
+                    navController = navController,
                     navigateToAmrDetail = { amrId ->
                         navController.navigate("amr_detail/$amrId")
                     },
                     navigateToMapFullScreen = {
                         navController.navigate("full_map")
                     },
-                    showSnackbar = { message ->
-                        // ...
-                    }
                 )
             }
             composable(AmrScreen.route) {

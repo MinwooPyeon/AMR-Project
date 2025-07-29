@@ -35,7 +35,6 @@ sealed class DashboardIntent {
 
 // UI에서 처리해야 할 일회성 이벤트
 sealed class DashboardEffect {
-    data class ShowError(val message: String) : DashboardEffect()
     data class NavigateToAmrDetail(val amrId: Long) : DashboardEffect()
 
     data object NavigateToMapFullScreen : DashboardEffect()

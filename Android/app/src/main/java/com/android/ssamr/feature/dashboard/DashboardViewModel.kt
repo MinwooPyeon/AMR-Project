@@ -69,9 +69,8 @@ class DashboardViewModel @Inject constructor(
                 )
             }.onSuccess { newState ->
                 _state.update { newState }
-            }.onFailure { throwable ->
-                _state.update { it.copy(isLoading = false, error = "데이터를 불러오는 데 실패했습니다.") }
-                emitEffect(DashboardEffect.ShowError("네트워크 오류가 발생했습니다."))
+            }.onFailure {
+                _state.update { it.copy(isLoading = false, error = "데이터 로딩 실패") }
             }
         }
     }

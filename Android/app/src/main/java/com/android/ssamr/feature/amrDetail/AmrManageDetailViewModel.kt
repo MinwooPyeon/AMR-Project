@@ -62,32 +62,51 @@ class AmrDetailViewModel @Inject constructor(
             is AmrDetailIntent.ClickManualStart -> {
                 viewModelScope.launch {
                     _state.value = _state.value.copy(showStartDialog = true)
+
                     val result = manualStartUseCase(amrId)
                     delay(1000)
+
                     _state.value = _state.value.copy(showStartDialog = false)
-                    _effect.emit(
-                        AmrDetailEffect.ShowError(
-                            if (result.isSuccess) "출발 요청이 전송되었습니다."
-                            else "출발 요청 실패: ${result.exceptionOrNull()?.message.orEmpty()}"
+
+                    if (result.isSuccess) {
+                        emitEffect(AmrDetailEffect.ShowSuccess("출발 요청이 전송되었습니다."))
+                    } else {
+                        emitEffect(
+                            AmrDetailEffect.ShowError(
+                                "출발 요청 실패: ${result.exceptionOrNull()?.message.orEmpty()}"
+                            )
                         )
-                    )
+                    }
                 }
             }
 
             is AmrDetailIntent.ClickManualReturn -> {
                 viewModelScope.launch {
                     _state.value = _state.value.copy(showReturnDialog = true)
+
                     val result = manualReturnUseCase(amrId)
                     delay(1000)
+
                     _state.value = _state.value.copy(showReturnDialog = false)
-                    _effect.emit(
-                        AmrDetailEffect.ShowError(
-                            if (result.isSuccess) "복귀 요청이 전송되었습니다."
-                            else "복귀 요청 실패: ${result.exceptionOrNull()?.message.orEmpty()}"
+
+                    if (result.isSuccess) {
+                        emitEffect(AmrDetailEffect.ShowSuccess("복귀 요청이 전송되었습니다."))
+                    } else {
+                        emitEffect(
+                            AmrDetailEffect.ShowError(
+                                "복귀 요청 실패: ${result.exceptionOrNull()?.message.orEmpty()}"
+                            )
                         )
-                    )
+                    }
                 }
             }
+        }
+    }
+
+    // 헬퍼 함수는 sendIntent 외부, 클래스 내부에 위치
+    private fun emitEffect(effect: AmrDetailEffect) {
+        viewModelScope.launch {
+            _effect.emit(effect)
         }
     }
 }

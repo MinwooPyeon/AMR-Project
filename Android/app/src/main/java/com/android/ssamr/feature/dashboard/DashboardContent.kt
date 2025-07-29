@@ -11,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ssamr.R
+import com.android.ssamr.ui.theme.SSAMRTheme
 
 @Composable
 fun TopSummarySection(
@@ -164,3 +166,64 @@ fun AmrStatusSection(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewTopSummarySection() {
+    SSAMRTheme {
+        TopSummarySection(
+            total = 10,
+            running = 4,
+            charging = 3,
+            checking = 3
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewFactoryMapSection() {
+    SSAMRTheme {
+        FactoryMapSection(
+            onExpandClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewAmrStatusSection() {
+    val dummyList = listOf(
+        DashboardAmrUiModel(
+            id = 1L,
+            name = "AMR-001",
+            location = "Zone A",
+            status = DashboardAmrStatus.RUNNING,
+            battery = 87,
+            job = "운반 중"
+        ),
+        DashboardAmrUiModel(
+            id = 2L,
+            name = "AMR-002",
+            location = "Zone B",
+            status = DashboardAmrStatus.CHARGING,
+            battery = 65,
+            job = "충전 중"
+        ),
+        DashboardAmrUiModel(
+            id = 3L,
+            name = "AMR-003",
+            location = "Zone C",
+            status = DashboardAmrStatus.CHECK,
+            battery = 45,
+            job = "점검 중"
+        )
+    )
+
+    SSAMRTheme {
+        AmrStatusSection(
+            amrs = dummyList,
+            onClick = {},
+            onViewAllClick = {}
+        )
+    }
+}

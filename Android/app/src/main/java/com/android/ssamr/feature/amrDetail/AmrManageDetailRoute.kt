@@ -24,6 +24,9 @@ fun AmrDetailRoute(
                 is AmrDetailEffect.ShowError -> {
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
                 }
+                is AmrDetailEffect.ShowSuccess -> {
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                }
                 is AmrDetailEffect.ShowStartDialog -> {} // 필요시 사용
                 is AmrDetailEffect.ShowReturnDialog -> {}
             }

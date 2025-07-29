@@ -13,7 +13,6 @@ fun DashboardRoute(
     navController: NavController,
     navigateToAmrDetail: (Long) -> Unit,
     navigateToMapFullScreen: () -> Unit,
-    showSnackbar: (String) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -31,7 +30,6 @@ fun DashboardRoute(
                         restoreState = true
                     }
                 }
-                is DashboardEffect.ShowError -> showSnackbar(effect.message)
             }
         }
     }
