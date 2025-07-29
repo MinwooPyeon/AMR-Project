@@ -10,11 +10,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+internal interface RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindAmrControlRepository(
+    fun bindAmrControlRepository(
         impl: AmrControlRepositoryImpl
     ): AmrControlRepository
 }

@@ -20,6 +20,7 @@ import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
 import com.android.ssamr.feature.dashboard.DashboardRoute
+import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -27,7 +28,6 @@ import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen() {
@@ -122,6 +122,12 @@ fun MainScreen() {
             ) { backStackEntry ->
                 val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
                 AmrDetailRoute(
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable("full_map") {
+                FullscreenMapRoute(
+                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
                     onBack = { navController.popBackStack() }
                 )
             }
