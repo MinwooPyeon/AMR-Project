@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Managers : MonoBehaviour
@@ -17,7 +18,7 @@ public class Managers : MonoBehaviour
     public static DataManager Data { get { return _data; } }
     #endregion
     #region Unity Methods
-    static void Init()
+    private void Awake()
     { 
         if (_instance == null)
         {
@@ -29,6 +30,8 @@ public class Managers : MonoBehaviour
             }
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
+            _device.SyncManager = _instance.gameObject.GetComponentInChildren<ModuleSyncManager>();
+
         }
     }
     #endregion

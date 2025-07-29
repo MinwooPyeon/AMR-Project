@@ -18,7 +18,7 @@ public class DeviceController : MonoBehaviour
     }
     #endregion
     #region Unity Methods
-    private void Awake()
+    private void Start()
     {
         _moveController = GetComponent<MoveController>();
 

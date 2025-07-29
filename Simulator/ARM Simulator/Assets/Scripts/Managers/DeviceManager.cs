@@ -5,9 +5,11 @@ public class DeviceManager
 {
     #region Attribute
     Dictionary<int, DeviceController> _devices = new();
+    ModuleSyncManager _syncManager;
     #endregion
 
     #region Methods
+    public ModuleSyncManager SyncManager { get { return _syncManager; } set { _syncManager = value; } }
     public void DeviceRegister(int id, DeviceController device)
     {
         if (device == null) return;
@@ -15,6 +17,8 @@ public class DeviceManager
         else _devices[id] = device;
 
         Managers.Data.RegisterDevice(id, device.gameObject.GetComponent<StateData>());
+        _syncManager.RegistModule(device.gameObject);
+        
     }
 
     public void DeviceUnregister(int id)
@@ -33,5 +37,6 @@ public class DeviceManager
 
         device.ExcuteOrder(order);
     }
+
     #endregion
 }
