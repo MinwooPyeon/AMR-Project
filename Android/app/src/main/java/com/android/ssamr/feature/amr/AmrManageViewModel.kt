@@ -1,9 +1,11 @@
 package com.android.ssamr.feature.amr
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.usecase.amr.GetAmrListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -64,6 +66,7 @@ class AmrManageViewModel @Inject constructor(
                         error = null
                     )
                 } catch (e: Exception) {
+                    if (e is CancellationException) throw e
                     _effect.emit(AmrEffect.ShowError("Amr 리스트 로드 실패: ${e.message}"))
                 }
                 delay(intervalMs)
@@ -73,6 +76,7 @@ class AmrManageViewModel @Inject constructor(
 
     fun refreshAmrList() {
         viewModelScope.launch {
+            Log.d("AmrManage", "refreshAmrList: ")
             try {
                 val list = getAmrListUseCase()
                 val filtered = filterList(list, _state.value.selectedCategory)
@@ -82,6 +86,7 @@ class AmrManageViewModel @Inject constructor(
                     isLoading = false,
                     error = null
                 )
+                Log.d("AmrManage", "refreshAmrList: 111")
             } catch (e: Exception) {
                 _effect.emit(AmrEffect.ShowError("AMR 리스트 로드 실패: ${e.message}"))
             }
