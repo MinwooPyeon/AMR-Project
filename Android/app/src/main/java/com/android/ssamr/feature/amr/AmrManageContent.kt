@@ -37,7 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.ssamr.R
 import com.android.ssamr.ui.theme.SSAMRTheme
 
@@ -144,8 +143,6 @@ fun AmrCard(
                             style = MaterialTheme.typography.bodyMedium,
                             color = statusColor
                         )
-                        Spacer(Modifier.weight(1f))
-                        Text(amr.lastUpdated, color = Color(0xFFBDBDBD), fontSize = 12.sp)
                     }
                 }
             }
@@ -238,7 +235,6 @@ fun AmrCardListPreview() {
             speed = "1.2",
             job = "화물 운반 중",
             battery = 85,
-            lastUpdated = "2분 전"
         ),
         AmrUiModel(
             id = 2L,
@@ -248,7 +244,6 @@ fun AmrCardListPreview() {
             speed = "0",
             job = "충전 중",
             battery = 45,
-            lastUpdated = "5분 전"
         ),
         AmrUiModel(
             id = 3L,
@@ -258,7 +253,6 @@ fun AmrCardListPreview() {
             speed = "0",
             job = "점검 중",
             battery = 92,
-            lastUpdated = "1시간 전"
         )
     )
     SSAMRTheme {

@@ -9,11 +9,11 @@ data class AmrUiModel(
     val speed: String,
     val job: String,
     val battery: Int,
-    val lastUpdated: String
 )
 
 data class AmrState(
     val selectedCategory: AmrCategory = AmrCategory.ALL,
+    val fullAmrList: List<AmrUiModel> = emptyList(),
     val amrList: List<AmrUiModel> = emptyList(),
     val categoryCounts: Map<AmrCategory, Int> = emptyMap(),
     val isLoading: Boolean = false,
