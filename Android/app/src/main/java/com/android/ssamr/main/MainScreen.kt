@@ -72,6 +72,9 @@ fun MainScreen() {
                     onTabSelected = { route ->
                         if (route != currentRoute) {
                             navController.navigate(route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                } // 추가 코드
                                 launchSingleTop = true
                                 restoreState = true
                                 popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -89,18 +92,15 @@ fun MainScreen() {
         ) {
             composable(DashboardScreen.route) {
                 DashboardRoute(
+                    navController = navController, // ✅ 추가
                     navigateToAmrDetail = { amrId ->
                         navController.navigate("amr_detail/$amrId")
                     },
                     navigateToMapFullScreen = {
                         navController.navigate("full_map")
                     },
-                    navigateToAmrList = {
-                        navController.navigate("amr")
-                    },
                     showSnackbar = { message ->
-                        // Snackbar 처리 예시:
-                        // coroutineScope.launch { snackbarHostState.showSnackbar(message) }
+                        // ...
                     }
                 )
             }
