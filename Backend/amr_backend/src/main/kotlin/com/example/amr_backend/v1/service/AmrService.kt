@@ -1,8 +1,10 @@
 package com.example.amr_backend.v1.service
 
+import com.example.amr_backend.v1.entity.AmrStatus
 import com.example.amr_backend.v1.mqtt.MqttClientFactory
 import com.example.amr_backend.v1.mqtt.MqttMessageHandler
 import com.example.amr_backend.v1.repository.AmrRepository
+import com.example.amr_backend.v1.repository.AmrStatusRepository
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.eclipse.paho.client.mqttv3.MqttClient
@@ -15,6 +17,7 @@ private const val STATUS_TOPIC = "status"
 @Service
 class AmrService(
     private val amrRepository: AmrRepository,
+    private val amrStatusRepository: AmrStatusRepository,
     private val mqttClientFactory: MqttClientFactory,
     private val mqttMessageHandler: MqttMessageHandler,
 ) {
@@ -38,4 +41,6 @@ class AmrService(
             client.unsubscribe(STATUS_TOPIC)
         }
     }
+
+    fun findAllLatestStatuses(): List<AmrStatus> = amrStatusRepository.findAllLatestStatuses()
 }
