@@ -10,7 +10,7 @@ def main():
         return
 
     # YOLOv8 모델 로드 (다운로드되어 있지 않다면 자동으로 다운로드됩니다)
-    model = YOLO("yolov8n.pt").to("cuda") # 'yolov8n.pt' 대신 원하는 모델 파일 사용
+    model = YOLO("epoch30.pt").to("cuda") # 'yolov8n.pt' 대신 원하는 모델 파일 사용
 
     while True:
         ret, frame = cap.read()
