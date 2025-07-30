@@ -21,6 +21,7 @@ import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
 import com.android.ssamr.feature.dashboard.DashboardRoute
 import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
+import com.android.ssamr.feature.more.MorescreenRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -115,19 +116,28 @@ fun MainScreen() {
                 )
             }
             composable(AlarmScreen.route) { /* AlarmScreen() */ }
-            composable(MoreScreen.route) { /* MoreScreen() */ }
+            composable(MoreScreen.route) {
+                MorescreenRoute(
+                    navController = navController, // 상위 NavController
+                    navigateToEditProfile = { navController.navigate("editProfile") },
+                    navigateToSetting = { navController.navigate("setting") },
+                    navigateToHelp = { navController.navigate("help") },
+                    navigateToNotice = { navController.navigate("notice") },
+                    navigateToVersionInfo = { navController.navigate("versionInfo") }
+                )
+            }
+            composable("full_map") {
+                FullscreenMapRoute(
+                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
+                    onBack = { navController.popBackStack() }
+                )
+            }
             composable(
                 route = "${AmrDetailScreen.route}/{amrId}",
                 arguments = listOf(navArgument("amrId") { type = NavType.LongType })
             ) { backStackEntry ->
                 val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
                 AmrDetailRoute(
-                    onBack = { navController.popBackStack() }
-                )
-            }
-            composable("full_map") {
-                FullscreenMapRoute(
-                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
                     onBack = { navController.popBackStack() }
                 )
             }
