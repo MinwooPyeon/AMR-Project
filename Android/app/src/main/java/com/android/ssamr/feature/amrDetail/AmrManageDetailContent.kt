@@ -102,7 +102,6 @@ fun AmrDetailInfoCard(
             InfoRow("모델명", amr.model)
             InfoRow("시리얼 번호", amr.serial)
             InfoRow("펌웨어 버전", amr.firmware)
-            InfoRow("마지막 업데이트", amr.lastUpdated)
         }
     }
 }

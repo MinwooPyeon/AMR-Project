@@ -13,7 +13,6 @@ data class AmrDetailUiModel(
     val model: String,
     val serial: String,
     val firmware: String,
-    val lastUpdated: String
 )
 
 data class AmrDetailState(

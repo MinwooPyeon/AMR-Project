@@ -3,6 +3,7 @@ package com.android.ssamr.feature.amrDetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.ssamr.core.domain.usecase.amr.GetAmrDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AmrDetailViewModel @Inject constructor(
-    // private val getAmrDetailUseCase: GetAmrDetailUseCase
+    private val getAmrDetailUseCase: GetAmrDetailUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,16 +41,24 @@ class AmrDetailViewModel @Inject constructor(
     fun sendIntent(intent: AmrDetailIntent) {
         when (intent) {
             is AmrDetailIntent.LoadAmrDetail -> {
-                // 실제로는 서버 API 호출 (예시로 딜레이 후 샘플 데이터)
                 viewModelScope.launch {
                     _state.value = _state.value.copy(isLoading = true)
-//                    val amr = getAmrDetailUseCase(amrId)
-                    delay(500)
-                    _state.value = _state.value.copy(
-                        isLoading = false,
-                        amr = sampleAmrDetail
-                    )
+                    try {
+                        val amr = getAmrDetailUseCase(amrId)
+                        delay(500)
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            amr = amr,
+                        )
+                    } catch (e: Exception) {
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            error = e.message ?: "상세정보 로드 실패"
+                        )
+                        _effect.emit(AmrDetailEffect.ShowError(e.message ?: "상세정보 로드 실패"))
+                    }
                 }
+
             }
 
             is AmrDetailIntent.ClickWebcam -> {

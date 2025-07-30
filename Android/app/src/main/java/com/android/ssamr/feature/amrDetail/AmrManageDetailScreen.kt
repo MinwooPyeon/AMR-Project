@@ -100,5 +100,4 @@ val sampleAmrDetail =
         model = "RB-100",
         serial = "RB100-2024-001",
         firmware = "v2.1.3",
-        lastUpdated = "2분 전"
     )
