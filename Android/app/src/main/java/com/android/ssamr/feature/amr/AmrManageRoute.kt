@@ -11,7 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun AmrManageRoute(
     navigateToAmrDetail: (Long) -> Unit,
-    viewModel: AmrManageViewModel = hiltViewModel()
+    viewModel: AmrManageViewModel = hiltViewModel(),
+    onRefresh: ((() -> Unit) -> Unit)? = null
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
@@ -38,6 +39,8 @@ fun AmrManageRoute(
             }
         }
     }
+
+    onRefresh?.invoke { viewModel.refreshAmrList() }
 
     AmrManageScreen(
         state = state,

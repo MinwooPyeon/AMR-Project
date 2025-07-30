@@ -1,20 +1,26 @@
 package com.android.ssamr.feature.amr
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.ssamr.core.domain.usecase.amr.GetAmrListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AmrManageViewModel @Inject constructor(
-//    private val getAmrListUseCase: GetAmrListUseCase
+    private val getAmrListUseCase: GetAmrListUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AmrState())
@@ -24,6 +30,8 @@ class AmrManageViewModel @Inject constructor(
     val effect: SharedFlow<AmrEffect>
         get() = _effect.asSharedFlow()
 
+    private var pollingJob: Job? = null
+
     init {
         fetchAmrList()
     }
@@ -31,55 +39,67 @@ class AmrManageViewModel @Inject constructor(
     fun sendIntent(intent: AmrIntent) {
         when (intent) {
             is AmrIntent.ClickAmrCategory -> {
-                _state.value = _state.value.copy(selectedCategory = intent.category)
-                filterAmrListByCategory(intent.category)
+                val filtered = filterList(_state.value.fullAmrList, intent.category)
+                _state.value = _state.value.copy(
+                    selectedCategory = intent.category,
+                    amrList = filtered
+                )
             }
 
             is AmrIntent.ClickAmrManageCard -> {
-                // TODO: AMR카드 선택시 AMRDetail 화면으로 전환
                 viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.amrId)) }
             }
         }
     }
 
-    private fun fetchAmrList() {
-        // TODO: 서버와 연결해서 List 가져오기 -> BaseViewModel 작성 후
-//        viewModelScope.launch {
-//            _state.value = _state.value.copy(isLoading = true)
-//            try {
-//                val amrList = getAmrListUseCase // 서버에서 받아오기
-//                // 카테고리별 숫자 집계
-//                val counts = AmrCategory.values().associateWith { cat ->
-//                    when (cat) {
-//                        AmrCategory.ALL -> amrList.size
-//                        AmrCategory.RUNNING -> amrList.count { it.status == AmrStatus.RUNNING }
-//                        AmrCategory.CHARGING -> amrList.count { it.status == AmrStatus.CHARGING }
-//                        AmrCategory.CHECK -> amrList.count { it.status == AmrStatus.CHECK }
-//                    }
-//                }
-//                _state.value = _state.value.copy(
-//                    amrList = amrList, // 기본 전체 리스트
-//                    categoryCounts = counts,
-//                    isLoading = false,
-//                    error = null
-//                )
-//            } catch (e: Exception) {
-//                _state.value = _state.value.copy(
-//                    isLoading = false,
-//                    error = "AMR 리스트 로드 실패: ${e.message}"
-//                )
-//            }
-//        }
+    private fun fetchAmrList(intervalMs: Long = 30000L) {
+        pollingJob?.cancel()
+        pollingJob = viewModelScope.launch {
+            while (isActive) {
+                try {
+                    val list = getAmrListUseCase()
+                    val filitered = filterList(list, _state.value.selectedCategory)
+                    _state.value = _state.value.copy(
+                        fullAmrList = list,
+                        amrList = filitered,
+                        isLoading = false,
+                        error = null
+                    )
+                } catch (e: Exception) {
+                    if (e is CancellationException) throw e
+                    _effect.emit(AmrEffect.ShowError("Amr 리스트 로드 실패: ${e.message}"))
+                }
+                delay(intervalMs)
+            }
+        }
     }
 
-    private fun filterAmrListByCategory(category: AmrCategory) {
-        val fullList = _state.value.amrList
-        val filteredList = when (category) {
-            AmrCategory.ALL -> fullList
-            AmrCategory.RUNNING -> fullList.filter { it.status == AmrStatus.RUNNING }
-            AmrCategory.CHARGING -> fullList.filter { it.status == AmrStatus.CHARGING }
-            AmrCategory.CHECK -> fullList.filter { it.status == AmrStatus.CHECK }
+    fun refreshAmrList() {
+        viewModelScope.launch {
+            Log.d("AmrManage", "refreshAmrList: ")
+            try {
+                val list = getAmrListUseCase()
+                val filtered = filterList(list, _state.value.selectedCategory)
+                _state.value = _state.value.copy(
+                    fullAmrList = list,
+                    amrList = filtered,
+                    isLoading = false,
+                    error = null
+                )
+                Log.d("AmrManage", "refreshAmrList: 111")
+            } catch (e: Exception) {
+                _effect.emit(AmrEffect.ShowError("AMR 리스트 로드 실패: ${e.message}"))
+            }
         }
-        _state.value = _state.value.copy(amrList = filteredList)
+    }
+
+    private fun filterList(list: List<AmrUiModel>, category: AmrCategory): List<AmrUiModel> {
+        return when (category) {
+            AmrCategory.ALL -> list
+            AmrCategory.RUNNING -> list.filter { it.status == AmrStatus.RUNNING }
+            AmrCategory.CHARGING -> list.filter { it.status == AmrStatus.CHARGING }
+            AmrCategory.CHECK -> list.filter { it.status == AmrStatus.CHECK }
+        }
+
     }
 }

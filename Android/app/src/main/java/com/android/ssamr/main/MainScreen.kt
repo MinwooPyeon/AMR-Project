@@ -5,7 +5,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -41,7 +43,10 @@ fun MainScreen() {
         }
     }
 
-    val topBarConfig = currentRoute?.let { getTopBarConfig(it, navController) }
+    var onCallbackAction: (() -> Unit)? by remember { mutableStateOf(null) }
+
+    val topBarConfig =
+        currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction) }
 
     Scaffold(
         topBar = {
@@ -91,7 +96,8 @@ fun MainScreen() {
                 AmrManageRoute(
                     navigateToAmrDetail = { amrId ->
                         navController.navigate("amr_detail/$amrId")
-                    }
+                    },
+                    onRefresh = { onCallbackAction = it }
                 )
             }
             composable(AlarmScreen.route) { /* AlarmScreen() */ }
