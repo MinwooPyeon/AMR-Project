@@ -32,9 +32,7 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
         }
-        Debug.Log(this.gameObject.GetComponentInChildren<ModuleSyncManager>());
         _device.SyncManager = this.gameObject.GetComponentInChildren<ModuleSyncManager>();
-        Debug.Log(_device.SyncManager);
     }
     #endregion
 }
