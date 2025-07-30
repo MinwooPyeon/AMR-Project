@@ -8,8 +8,3 @@ spring:
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
     url: ${POSTGRES_URL}
-  influx-db:
-    url: ${INFLUXDB_URL}
-    token: ${INFLUXDB_TOKEN}
-    org: ${INFLUXDB_ORG}
-    bucket: ${INFLUXDB_BUCKET_NAME}
