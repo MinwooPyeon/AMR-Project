@@ -21,8 +21,7 @@ public class LidarSensor : MonoBehaviour
     void OnEnable()
     {
         GenerateLocalDirections();
-        pointCloud = new Vector3[localDirections.Count];
-        LidarManager.Instance.RegisterSensor(this);
+        pointCloud = new Vector3[localDirections.Count];        
     }
 
 #if UNITY_EDITOR

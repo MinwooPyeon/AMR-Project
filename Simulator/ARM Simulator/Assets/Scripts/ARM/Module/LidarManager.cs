@@ -1,13 +1,17 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Collections.Generic;
+using System.Linq;
 
 public class LidarManager : MonoBehaviour
 {
-    [Header("µî·ÏµÈ LidarSensorµé")]
-    private List<LidarSensor> _sensors = new List<LidarSensor>();
-    public IReadOnlyList<LidarSensor> Sensors => _sensors;
+    private Dictionary<int, LidarSensor> _sensorMap = new();
+    private Dictionary<int, Vector3[]> _latestPointClouds = new();
+    private List<int> _sortedDeviceIds = new();
+
+    public IReadOnlyDictionary<int, LidarSensor> Sensors => _sensorMap;
+    public int DeviceCount => _sensorMap.Count;
 
     private NativeArray<int> _sensorOffsets;
     private NativeArray<int> _sensorCounts;
@@ -22,59 +26,34 @@ public class LidarManager : MonoBehaviour
 
     private int _totalRays;
 
-    public int DeviceCount => _sensors.Count;
-
-    #region Singleton
-    private static LidarManager _instance;
-    public static LidarManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<LidarManager>() ?? new GameObject("LidarManager").AddComponent<LidarManager>();
-                _instance.Initialize();
-            }
-            return _instance;
-        }
-    }
-
     private void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-            Initialize();
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
+       Initialize();
     }
 
     private void Initialize()
     {
-        if (!_commands.IsCreated && _sensors.Count > 0)
+        if (!_commands.IsCreated && _sensorMap.Count > 0)
             RebuildArrays();
     }
-    #endregion
 
-    #region Public Registration
-    public void RegisterSensor(LidarSensor sensor)
+    public void RegisterSensor(int deviceId, LidarSensor sensor)
     {
-        if (sensor == null || _sensors.Contains(sensor)) return;
-        _sensors.Add(sensor);
-        RebuildArrays();
+        if (!_sensorMap.ContainsKey(deviceId))
+        {
+            _sensorMap[deviceId] = sensor;
+            RebuildArrays();
+        }
     }
 
-    public void UnregisterSensor(LidarSensor sensor)
+    public void UnregisterSensor(int deviceId)
     {
-        if (sensor == null || !_sensors.Contains(sensor)) return;
-        _sensors.Remove(sensor);
-        RebuildArrays();
+        if (_sensorMap.ContainsKey(deviceId))
+        {
+            _sensorMap.Remove(deviceId);
+            RebuildArrays();
+        }
     }
-    #endregion
 
     private void OnDestroy() => DisposeAll();
 
@@ -96,29 +75,20 @@ public class LidarManager : MonoBehaviour
     {
         DisposeAll();
 
-        int sensorCount = _sensors.Count;
-        AllocateSensorArrays(sensorCount);
-        BuildSensorOffsetsAndCounts(sensorCount);
-        BuildLocalDirections(sensorCount);
-        AllocateRaycastBuffers();
-    }
+        _sortedDeviceIds = _sensorMap.Keys.OrderBy(id => id).ToList();
+        int count = _sortedDeviceIds.Count;
 
-    private void AllocateSensorArrays(int sensorCount)
-    {
-        _sensorOffsets = new NativeArray<int>(sensorCount, Allocator.Persistent);
-        _sensorCounts = new NativeArray<int>(sensorCount, Allocator.Persistent);
-        _sensorPositions = new NativeArray<Vector3>(sensorCount, Allocator.Persistent);
-        _sensorRotations = new NativeArray<Quaternion>(sensorCount, Allocator.Persistent);
-        _sensorMaxDistances = new NativeArray<float>(sensorCount, Allocator.Persistent);
-        _sensorLayerMasks = new NativeArray<int>(sensorCount, Allocator.Persistent);
-    }
+        _sensorOffsets = new NativeArray<int>(count, Allocator.Persistent);
+        _sensorCounts = new NativeArray<int>(count, Allocator.Persistent);
+        _sensorPositions = new NativeArray<Vector3>(count, Allocator.Persistent);
+        _sensorRotations = new NativeArray<Quaternion>(count, Allocator.Persistent);
+        _sensorMaxDistances = new NativeArray<float>(count, Allocator.Persistent);
+        _sensorLayerMasks = new NativeArray<int>(count, Allocator.Persistent);
 
-    private void BuildSensorOffsetsAndCounts(int sensorCount)
-    {
         _totalRays = 0;
-        for (int i = 0; i < sensorCount; i++)
+        for (int i = 0; i < count; i++)
         {
-            var sensor = _sensors[i];
+            var sensor = _sensorMap[_sortedDeviceIds[i]];
             int rayCount = sensor.localDirections.Count;
 
             _sensorOffsets[i] = _totalRays;
@@ -128,31 +98,26 @@ public class LidarManager : MonoBehaviour
 
             _totalRays += rayCount;
         }
-    }
 
-    private void BuildLocalDirections(int sensorCount)
-    {
         _localDirections = new NativeArray<Vector3>(_totalRays, Allocator.Persistent);
-        int index = 0;
-        foreach (var sensor in _sensors)
+        int idx = 0;
+        foreach (int id in _sortedDeviceIds)
         {
-            foreach (var dir in sensor.localDirections)
-                _localDirections[index++] = dir;
+            foreach (var dir in _sensorMap[id].localDirections)
+                _localDirections[idx++] = dir;
         }
-    }
 
-    private void AllocateRaycastBuffers()
-    {
         _commands = new NativeArray<RaycastCommand>(_totalRays, Allocator.Persistent);
         _points = new NativeArray<RaycastHit>(_totalRays, Allocator.Persistent);
         _outPoints = new NativeArray<Vector3>(_totalRays, Allocator.Persistent);
     }
 
-    public void ScanDevice(int index, long timestamp)
+    public void ScanDevice(int deviceId, long timestamp)
     {
-        if (index < 0 || index >= _sensors.Count) return;
+        int index = _sortedDeviceIds.IndexOf(deviceId);
+        if (index < 0 || !_sensorMap.ContainsKey(deviceId)) return;
 
-        var sensor = _sensors[index];
+        var sensor = _sensorMap[deviceId];
         int offset = _sensorOffsets[index];
         int count = _sensorCounts[index];
 
@@ -164,7 +129,7 @@ public class LidarManager : MonoBehaviour
         var dHandle = ScheduleDistributeJob(offset, count, rHandle);
 
         dHandle.Complete();
-        WriteBackSensorResults(sensor, offset, count, timestamp);
+        WriteBackSensorResults(deviceId, sensor, offset, count, timestamp);
     }
 
     private JobHandle ScheduleTransformJob()
@@ -193,7 +158,7 @@ public class LidarManager : MonoBehaviour
             dependency);
     }
 
-    private JobHandle ScheduleDistributeJob(int count, int offset, JobHandle dependency)
+    private JobHandle ScheduleDistributeJob(int offset, int count, JobHandle dependency)
     {
         var dJob = new DistributeJob
         {
@@ -204,13 +169,34 @@ public class LidarManager : MonoBehaviour
         return dJob.Schedule(count, 64, dependency);
     }
 
-    private void WriteBackSensorResults(LidarSensor sensor, int offset, int count, long timestamp)
+    private void WriteBackSensorResults(int deviceId, LidarSensor sensor, int offset, int count, long timestamp)
     {
+        Vector3[] points = new Vector3[count];
         for (int i = 0; i < count; i++)
-            sensor.pointCloud[i] = _outPoints[offset + i];
+            points[i] = _outPoints[offset + i];
+
+        sensor.pointCloud = points;
+        _latestPointClouds[deviceId] = points;
+
+        // âœ… ì¶”ê°€: DataManagerì— ì „ë‹¬
+        var amr = sensor.transform.parent.gameObject;
+        var state = amr.GetComponent<StateData>();
+        if (state != null)
+        {
+            Managers.Data.OnLidarScanned(deviceId, points, timestamp, state);
+        }
+        else
+        {
+            Debug.LogWarning($"[LidarManager] StateData not found on AMR {amr.name}");
+        }
 
         Debug.Log($"[Lidar:{sensor.name}] Scanned {count} points at {timestamp}");
-        // TODO: Tensor º¯È¯, Àü¼Û µî ÈÄÃ³¸® (timestamp Æ÷ÇÔ)
+    }
+
+
+    public Vector3[] GetLastPointCloud(int deviceId)
+    {
+        return _latestPointClouds.TryGetValue(deviceId, out var cloud) ? cloud : null;
     }
 }
 

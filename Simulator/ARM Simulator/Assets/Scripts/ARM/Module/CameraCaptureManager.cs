@@ -7,17 +7,18 @@ using UnityEngine.Rendering;
 
 public class CameraCaptureManager : MonoBehaviour
 {
-    public List<Camera> cameras;
+    public Dictionary<int, Camera> cameras = new Dictionary<int, Camera>();
+
     public int DeviceCount => cameras.Count;
     public int resolution = 224;
 
     public void CaptureDevice(int index, long timestamp)
     {
-        if (index < 0 || index >= cameras.Count) return;
-        StartCoroutine(CaptureCameraAsync(cameras[index], timestamp));
+        if (!cameras.ContainsKey(index)) return;
+        StartCoroutine(CaptureCameraAsync(index, cameras[index], timestamp));
     }
 
-    private IEnumerator CaptureCameraAsync(Camera cam, long timestamp)
+    private IEnumerator CaptureCameraAsync(int deviceIndex, Camera cam, long timestamp)
     {
         yield return new WaitForEndOfFrame();
 
@@ -25,14 +26,14 @@ public class CameraCaptureManager : MonoBehaviour
         cam.targetTexture = rt;
         cam.Render();
 
-        AsyncGPUReadback.Request(rt, 0, TextureFormat.RGB24, request => OnCompleteReadback(request, cam.name, timestamp));
+        AsyncGPUReadback.Request(rt, 0, TextureFormat.RGB24, request => OnCompleteReadback(request, deviceIndex, cam.name, timestamp));
 
         cam.targetTexture = null;
         RenderTexture.active = null;
         Destroy(rt);
     }
 
-    private void OnCompleteReadback(AsyncGPUReadbackRequest request, string camName, long timestamp)
+    private void OnCompleteReadback(AsyncGPUReadbackRequest request, int deviceIndex, string camName, long timestamp)
     {
         if (request.hasError)
         {
@@ -46,8 +47,10 @@ public class CameraCaptureManager : MonoBehaviour
         float[] grayscaleFrame = ProcessPixelsWithJob(pixels);
 
         Debug.Log($"[Camera:{camName}] Captured {grayscaleFrame.Length} floats at {timestamp}");
-        // TODO: Tensor 변환, 전송 등 후처리 (timestamp 포함)
+
+        Managers.Data.OnCameraCaptured(deviceIndex, grayscaleFrame, timestamp);
     }
+
 
     private float[] ProcessPixelsWithJob(Color32[] pixels)
     {

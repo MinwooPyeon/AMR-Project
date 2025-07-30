@@ -19,7 +19,8 @@ public class Managers : MonoBehaviour
     #endregion
     #region Unity Methods
     private void Awake()
-    { 
+    {
+        Debug.Log("Managers Start");
         if (_instance == null)
         {
             GameObject go = GameObject.Find("@Managers");
@@ -30,9 +31,10 @@ public class Managers : MonoBehaviour
             }
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
-            _device.SyncManager = _instance.gameObject.GetComponentInChildren<ModuleSyncManager>();
-
         }
+        Debug.Log(this.gameObject.GetComponentInChildren<ModuleSyncManager>());
+        _device.SyncManager = this.gameObject.GetComponentInChildren<ModuleSyncManager>();
+        Debug.Log(_device.SyncManager);
     }
     #endregion
 }
