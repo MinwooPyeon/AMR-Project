@@ -41,13 +41,6 @@ fun FullscreenMapContent(
             EmptyMapFallback()
         }
 
-        CloseButton(
-            onClick = { sendIntent(FullscreenMapIntent.Close) },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        )
-
         if (state.isLoading) {
             LoadingOverlay()
         }
@@ -107,18 +100,7 @@ private fun EmptyMapFallback() {
     }
 }
 
-@Composable
-private fun CloseButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TextButton(
-        onClick = onClick,
-        modifier = modifier
-    ) {
-        Text("돌아가기", color = Color.White)
-    }
-}
+
 
 @Composable
 private fun LoadingOverlay() {

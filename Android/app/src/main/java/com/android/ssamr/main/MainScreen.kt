@@ -40,7 +40,7 @@ fun MainScreen() {
     }
     val shouldShowBottomBar by remember(currentRoute) {
         derivedStateOf {
-            bottomNavScreens.any { it.route == currentRoute }
+            bottomNavScreens.any { it.route == currentRoute } || currentRoute == "full_map"
         }
     }
     val topBarConfig = currentRoute?.let { getTopBarConfig(it, navController) }
