@@ -9,8 +9,8 @@ interface AmrRepository {
 
     suspend fun getAmrDetail(amrId: Long): AmrDetailUiModel
 
-    suspend fun manualStart(id: Long): Result<Unit>
-    suspend fun manualReturn(id: Long): Result<Unit>
+    suspend fun manualStart(amrId: Long): Result<Unit>
+    suspend fun manualReturn(amrId: Long): Result<Unit>
 }
 
 

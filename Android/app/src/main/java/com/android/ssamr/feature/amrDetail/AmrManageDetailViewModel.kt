@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.usecase.amr.GetAmrDetailUseCase
+import com.android.ssamr.core.domain.usecase.amr.ManualReturnUseCase
+import com.android.ssamr.core.domain.usecase.amr.ManualStartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AmrDetailViewModel @Inject constructor(
     private val getAmrDetailUseCase: GetAmrDetailUseCase,
+    private val manualReturnUseCase: ManualReturnUseCase,
+    private val manualStartUseCase: ManualStartUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -68,16 +72,34 @@ class AmrDetailViewModel @Inject constructor(
             is AmrDetailIntent.ClickManualReturn -> {
                 _state.value = _state.value.copy(showReturnDialog = true)
                 viewModelScope.launch {
-                    delay(2000)
-                    _state.value = _state.value.copy(showReturnDialog = false)
+                    try {
+                        val result = manualReturnUseCase(amrId)
+                        if (result.isFailure) {
+                            _effect.emit(AmrDetailEffect.ShowError("복귀 요청 실패"))
+                        }
+                    } catch (e: Exception) {
+                        _effect.emit(AmrDetailEffect.ShowError("복귀 요청 실패: ${e.message}"))
+                    } finally {
+                        delay(2000)
+                        _state.value = _state.value.copy(showReturnDialog = false)
+                    }
                 }
             }
 
             is AmrDetailIntent.ClickManualStart -> {
                 _state.value = _state.value.copy(showStartDialog = true)
                 viewModelScope.launch {
-                    delay(2000)
-                    _state.value = _state.value.copy(showStartDialog = false)
+                    try {
+                        val result = manualStartUseCase(amrId)
+                        if (result.isFailure) {
+                            _effect.emit(AmrDetailEffect.ShowError("출발 요청 실패"))
+                        }
+                    } catch (e: Exception) {
+                        _effect.emit(AmrDetailEffect.ShowError("출발 요청 실패: ${e.message}"))
+                    } finally {
+                        delay(2000)
+                        _state.value = _state.value.copy(showStartDialog = false)
+                    }
                 }
             }
         }

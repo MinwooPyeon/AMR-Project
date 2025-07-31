@@ -23,11 +23,11 @@ class AmrRemoteDataSource @Inject constructor(
         return response.data?.toDetailModel() ?: throw IllegalStateException("상세정보 없음")
     }
 
-    suspend fun manualStart(id: Long): Response<Unit> {
-        return service.requestManualStart(id)
+    suspend fun manualStart(amrId: Long): Response<Unit> {
+        return service.requestManualStart(amrId)
     }
 
-    suspend fun manualReturn(id: Long): Response<Unit> {
-        return service.requestManualReturn(id)
+    suspend fun manualReturn(amrId: Long): Response<Unit> {
+        return service.requestManualReturn(amrId)
     }
 }

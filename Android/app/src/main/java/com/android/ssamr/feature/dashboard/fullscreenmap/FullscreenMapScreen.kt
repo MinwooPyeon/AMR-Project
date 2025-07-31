@@ -1,47 +1,32 @@
+// FullscreenMapScreen.kt
 package com.android.ssamr.feature.dashboard.fullscreenmap
 
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
-import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 
 @Composable
 fun FullscreenMapScreen(
-    viewModel: FullscreenMapViewModel = hiltViewModel(),
-    onBack: () -> Unit,
-    navigateToAmrDetail: (Long) -> Unit
+    state: FullscreenMapState,
+    sendIntent: (FullscreenMapIntent) -> Unit
 ) {
-    val state by viewModel.state.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    // 👇 여기가 핵심: 초기 Intent 발생
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(FullscreenMapIntent.LoadMap)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest { effect ->
-            when (effect) {
-                is FullscreenMapEffect.ShowError -> {
-                    coroutineScope.launch {
-                        snackbarHostState.showSnackbar(effect.message)
-                    }
-                }
-                is FullscreenMapEffect.ShowAmrDetail -> {
-                    navigateToAmrDetail(effect.amrId)
-                }
-                FullscreenMapEffect.NavigateBack -> {
-                    onBack()
-                }
+    Box(modifier = Modifier) {
+        when {
+            state.isLoading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            state.mapImage == null -> {
+                Text("지도를 불러오는 중...", modifier = Modifier.align(Alignment.Center))
+            }
+            else -> {
+                FullscreenMapContent(
+                    state = state,
+                    sendIntent = sendIntent
+                )
             }
         }
     }
-
-    FullscreenMapContent(
-        state = state,
-        sendIntent = viewModel::onIntent
-    )
 }

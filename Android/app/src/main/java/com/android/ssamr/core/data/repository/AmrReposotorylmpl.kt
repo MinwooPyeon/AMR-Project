@@ -22,17 +22,28 @@ class AmrRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAmrDetail(amrId: Long): AmrDetailUiModel {
-        // TODO: API 호출 후 DTO → UiModel 변환 처리
-        throw NotImplementedError("getAmrDetail() 구현 필요")
+        // return remoteDataSource.getAmrDetail(amrId)
+        return AmrDetailUiModel(
+            name = "AMR-00$amrId",
+            status = "대기중",
+            battery = 78,
+            location = "B-1 구역",
+            speed = "1.0m/s",
+            job = "화물 대기",
+            model = "RB-100",
+            serial = "RB100-TEST-$amrId",
+            firmware = "v1.0.0"
+        )
     }
 
-    override suspend fun manualStart(id: Long): Result<Unit> = runCatching {
-        val response = remoteDataSource.manualStart(id)
+
+    override suspend fun manualStart(amrId: Long): Result<Unit> = runCatching {
+        val response = remoteDataSource.manualStart(amrId)
         if (response.isSuccessful) Unit else throw HttpException(response)
     }
 
-    override suspend fun manualReturn(id: Long): Result<Unit> = runCatching {
-        val response = remoteDataSource.manualReturn(id)
+    override suspend fun manualReturn(amrId: Long): Result<Unit> = runCatching {
+        val response = remoteDataSource.manualReturn(amrId)
         if (response.isSuccessful) Unit else throw HttpException(response)
     }
 }
