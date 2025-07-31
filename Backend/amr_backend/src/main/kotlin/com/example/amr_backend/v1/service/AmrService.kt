@@ -5,6 +5,7 @@ import com.example.amr_backend.v1.mqtt.MqttClientFactory
 import com.example.amr_backend.v1.mqtt.MqttMessageHandler
 import com.example.amr_backend.v1.repository.AmrRepository
 import com.example.amr_backend.v1.repository.AmrStatusRepository
+import com.example.amr_backend.v1.repository.findAmrStatusById
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy
 import org.eclipse.paho.client.mqttv3.MqttClient
@@ -45,4 +46,6 @@ class AmrService(
     }
 
     fun findAllLatestStatuses(): List<AmrStatus> = amrStatusRepository.findAllLatestStatuses()
+
+    fun findAmrDetail(id: Long): AmrStatus = amrStatusRepository.findAmrStatusById(id)
 }
