@@ -49,11 +49,10 @@ struct DistributeJob : IJobParallelFor
     {
         var hit = points[i];
         var cmd = commands[i];
-        if (hit.distance > 0f && hit.distance < cmd.distance*0.99f)
+
+        if (hit.distance > 0)
             outPoints[i] = hit.point;
         else
-        {
-            //TODO
-        }
+            outPoints[i] = cmd.from + cmd.direction * cmd.distance;
     }
 }

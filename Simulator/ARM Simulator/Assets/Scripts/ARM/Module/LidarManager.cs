@@ -121,8 +121,8 @@ public class LidarManager : MonoBehaviour
         int offset = _sensorOffsets[index];
         int count = _sensorCounts[index];
 
-        _sensorPositions[index] = sensor.transform.position;
-        _sensorRotations[index] = sensor.transform.rotation;
+        _sensorPositions[index] = sensor.transform.parent.transform.position;
+        _sensorRotations[index] = sensor.transform.parent.transform.rotation;
 
         var tHandle = ScheduleTransformJob();
         var rHandle = ScheduleRaycastJob(offset, count, tHandle);

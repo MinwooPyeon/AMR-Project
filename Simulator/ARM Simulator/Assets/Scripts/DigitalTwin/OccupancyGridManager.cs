@@ -47,14 +47,18 @@ public class OccupancyGridManager : MonoBehaviour
     }
     public void AddLidarPoints(Vector3[] points, LidarSensor sensor)
     {
-        Vector3 start = sensor.gameObject.transform.position;
+        Vector3 start = sensor.gameObject.transform.parent.transform.position;
+        Debug.Log(start);
+
         foreach (var world in points)
         {
-            AddLidarPath(start, world, maxLidarRange);
+            float dist = Vector3.Distance(start, world);
+            bool actuallyHit = dist < maxLidarRange * 0.999f;
+            AddLidarPath(start, world, maxLidarRange, actuallyHit);
         }
         UpdateTexture();
     }
-    public void AddLidarPath(Vector3 start, Vector3 hit, float maxDistance)
+    public void AddLidarPath(Vector3 start, Vector3 hit, float maxDistance, bool actuallyHit)
     {
         Vector3 localStart = start - origin;
         Vector3 localHit = hit - origin;
@@ -64,13 +68,6 @@ public class OccupancyGridManager : MonoBehaviour
         int x1 = Mathf.FloorToInt((localHit.x + width * resolution / 2) / resolution);
         int y1 = Mathf.FloorToInt((localHit.z + height * resolution / 2) / resolution);
 
-        if (x0 == x1 && y0 == y1)
-        {
-            if (x0 >= 0 && x0 < width && y0 >= 0 && y0 < height)
-                grid[x0, y0] = 1;
-            return;
-        }
-
         int dx = Mathf.Abs(x1 - x0);
         int dy = Mathf.Abs(y1 - y0);
         int sx = x0 < x1 ? 1 : -1;
@@ -79,36 +76,32 @@ public class OccupancyGridManager : MonoBehaviour
 
         int x = x0;
         int y = y0;
-        int count = 0;
-        int maxIteration = 1000;
+        int maxIteration = width + height;
 
-        do
+        for (int i = 0; i < maxIteration; i++)
         {
             if (x >= 0 && x < width && y >= 0 && y < height)
             {
                 if (x == x1 && y == y1)
-                    grid[x, y] = 1;
+                {
+                    if (actuallyHit && InBounds(x, y))
+                        grid[x, y] = 1;
+                    break;
+                }
                 else
                     grid[x, y] = 0;
             }
 
-            if (x == x1 && y == y1) break;
-
             int e2 = 2 * err;
             if (e2 > -dy) { err -= dy; x += sx; }
             if (e2 < dx) { err += dx; y += sy; }
-
-            if (++count > maxIteration)
-            {
-                Debug.LogError($"Infinite loop detected: from ({x0},{y0}) to ({x1},{y1})");
-                break;
-            }
-
-        } while (true);
+        }
     }
 
-
-
+    private bool InBounds(int x, int y)
+    {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
     private void UpdateTexture()
     {
         for (int x = 0; x < width; x++)
