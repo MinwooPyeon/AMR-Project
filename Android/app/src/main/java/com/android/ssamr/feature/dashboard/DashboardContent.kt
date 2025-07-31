@@ -25,12 +25,18 @@ fun TopSummarySection(
     checking: Int
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth())
+        {
             SummaryCard("총 AMR", total, Color(0xFF58A74B), R.drawable.ic_robot, modifier = Modifier.weight(1f))
+
             SummaryCard("작동중", running, Color(0xFF3556F2), R.drawable.ic_running, modifier = Modifier.weight(1f))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth())
+        {
             SummaryCard("충전중", charging, Color(0xFFF7B500), R.drawable.ic_charging, modifier = Modifier.weight(1f))
+
             SummaryCard("점검중", checking, Color(0xFFF7575C), R.drawable.ic_checking, modifier = Modifier.weight(1f))
         }
     }

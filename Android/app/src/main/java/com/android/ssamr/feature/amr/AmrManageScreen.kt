@@ -72,7 +72,6 @@ val sampleAmrs = listOf(
         speed = "1.2",
         job = "화물 운반 중",
         battery = 85,
-        lastUpdated = "2분 전"
     ),
     AmrUiModel(
         id = 2L,
@@ -82,7 +81,6 @@ val sampleAmrs = listOf(
         speed = "0",
         job = "충전 중",
         battery = 45,
-        lastUpdated = "5분 전"
     ),
     AmrUiModel(
         id = 3L,
@@ -92,6 +90,5 @@ val sampleAmrs = listOf(
         speed = "0",
         job = "점검 중",
         battery = 92,
-        lastUpdated = "1시간 전"
     )
 )

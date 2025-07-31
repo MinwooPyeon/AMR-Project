@@ -21,10 +21,9 @@ import com.android.ssamr.ui.theme.SSAMRTheme
 @Composable
 fun AmrManageDetailScreen(
     state: AmrDetailState,
-    sendIntent: (AmrDetailIntent) -> Unit,
-    modifier: Modifier = Modifier
+    sendIntent: (AmrDetailIntent) -> Unit
 ) {
-    Box(modifier.fillMaxSize()) { // ✅ modifier 적용
+    Box(Modifier.fillMaxSize()) {
         when {
             state.isLoading -> {
                 CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -85,10 +84,8 @@ fun AmrManageDetailScreenPreview() {
             state = AmrDetailState(
                 amrId = 1,
                 amr = sampleAmrDetail,
-            ),
-            sendIntent = {},
-            modifier = Modifier.padding(16.dp) // 실제 innerPadding 대체
-        )
+            )
+        ) { }
     }
 }
 
@@ -103,5 +100,4 @@ val sampleAmrDetail =
         model = "RB-100",
         serial = "RB100-2024-001",
         firmware = "v2.1.3",
-        lastUpdated = "2분 전"
     )

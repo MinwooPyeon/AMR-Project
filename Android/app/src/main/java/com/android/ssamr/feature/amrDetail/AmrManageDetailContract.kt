@@ -13,7 +13,6 @@ data class AmrDetailUiModel(
     val model: String,
     val serial: String,
     val firmware: String,
-    val lastUpdated: String
 )
 
 data class AmrDetailState(
@@ -34,7 +33,6 @@ sealed class AmrDetailIntent {
 
 sealed class AmrDetailEffect {
     data class ShowError(val message: String) : AmrDetailEffect()
-    data class ShowSuccess(val message: String) : AmrDetailEffect() // 성공 메세지 관련 추가
     data object NavigateToWebcam : AmrDetailEffect()
     data object ShowReturnDialog : AmrDetailEffect()
     data object ShowStartDialog : AmrDetailEffect()

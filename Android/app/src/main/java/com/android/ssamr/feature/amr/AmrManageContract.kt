@@ -9,7 +9,6 @@ data class AmrUiModel(
     val speed: String,
     val job: String,
     val battery: Int,
-    val lastUpdated: String
 )
 
 data class AmrState(

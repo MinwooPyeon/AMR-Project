@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -46,12 +45,7 @@ fun MainScreen() {
     }
     val topBarConfig = currentRoute?.let { getTopBarConfig(it, navController) }
 
-    // Snackbar 임시 구현
-    val snackbarHostState = remember { androidx.compose.material3.SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
     Scaffold(
-        snackbarHost = { androidx.compose.material3.SnackbarHost(snackbarHostState) },
         topBar = {
             if (showTopBar && topBarConfig != null) {
                 if (topBarConfig.isCustom) {
@@ -79,9 +73,6 @@ fun MainScreen() {
                     onTabSelected = { route ->
                         if (route != currentRoute) {
                             navController.navigate(route) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
-                                } // 추가 코드
                                 launchSingleTop = true
                                 restoreState = true
                                 popUpTo(navController.graph.startDestinationId) { saveState = true }
@@ -99,13 +90,15 @@ fun MainScreen() {
         ) {
             composable(DashboardScreen.route) {
                 DashboardRoute(
-                    navController = navController,
-                    navigateToAmrDetail = { amrId ->
-                        navController.navigate("amr_detail/$amrId")
-                    },
-                    navigateToMapFullScreen = {
-                        navController.navigate("full_map")
-                    },
+                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
+                    navigateToMapFullScreen = { navController.navigate("full_map") },
+                    navigateToAmrList = {
+                        navController.navigate("amr") {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
             composable(AmrScreen.route) {

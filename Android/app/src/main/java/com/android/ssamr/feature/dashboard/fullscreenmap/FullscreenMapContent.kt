@@ -35,7 +35,9 @@ fun FullscreenMapContent(
         if (state.mapImage != null) {
             MapImageBackground(state)
             AmrMarkers(state, sendIntent)
-        } else {
+        }
+
+        else {
             EmptyMapFallback()
         }
 
