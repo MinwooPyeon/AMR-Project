@@ -46,3 +46,4 @@ class AmrRepositoryImpl @Inject constructor(
         if (response.isSuccessful) Unit else throw HttpException(response)
     }
 }
+
