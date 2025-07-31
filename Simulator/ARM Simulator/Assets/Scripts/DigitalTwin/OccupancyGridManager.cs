@@ -9,7 +9,7 @@ public class OccupancyGridManager : MonoBehaviour
     public int height = 200; // grid height in cells
     public float resolution = 0.1f; // cell size in world units
     public Vector3 origin = Vector3.zero; // center of grid in world space
-    public float maxLidarRange = 20f;
+    public float maxLidarRange = 9f;
 
     private int[,] grid;
     private Texture2D mapTexture;
@@ -48,12 +48,14 @@ public class OccupancyGridManager : MonoBehaviour
     public void AddLidarPoints(Vector3[] points, LidarSensor sensor)
     {
         Vector3 start = sensor.gameObject.transform.parent.transform.position;
-        Debug.Log(start);
+        
 
         foreach (var world in points)
         {
             float dist = Vector3.Distance(start, world);
+            
             bool actuallyHit = dist < maxLidarRange * 0.999f;
+            Debug.Log(dist + " < " + maxLidarRange * 0.999f + " = " + actuallyHit);
             AddLidarPath(start, world, maxLidarRange, actuallyHit);
         }
         UpdateTexture();

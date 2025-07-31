@@ -10,6 +10,7 @@ public class LidarManager : MonoBehaviour
     private Dictionary<int, Vector3[]> _latestPointClouds = new();
     private List<int> _sortedDeviceIds = new();
 
+
     public IReadOnlyDictionary<int, LidarSensor> Sensors => _sensorMap;
     public int DeviceCount => _sensorMap.Count;
 
