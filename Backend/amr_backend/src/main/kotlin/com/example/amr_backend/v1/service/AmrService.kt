@@ -21,15 +21,17 @@ class AmrService(
     private val mqttClientFactory: MqttClientFactory,
     private val mqttMessageHandler: MqttMessageHandler,
 ) {
-    private val clients = mutableSetOf<MqttClient>()
+    private val clients = mutableMapOf<Url, MqttClient>()
 
     @PostConstruct
     fun subscribeAllAmrs() {
         val amrs = amrRepository.findAll()
 
         for (amr in amrs) {
+            if (amr.mqttUrl in clients) continue
+
             val mqttClient = mqttClientFactory.create(amr.mqttUrl).also {
-                clients.add(it)
+                clients[amr.mqttUrl] = it
             }
             mqttClient.subscribe(STATUS_TOPIC, mqttMessageHandler)
         }
@@ -37,7 +39,7 @@ class AmrService(
 
     @PreDestroy
     fun unsubscribeAllAmrs() {
-        for (client in clients) {
+        for ((_, client) in clients) {
             client.unsubscribe(STATUS_TOPIC)
         }
     }
