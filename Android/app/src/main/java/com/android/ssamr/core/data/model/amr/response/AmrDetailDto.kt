@@ -1,6 +1,6 @@
 package com.android.ssamr.core.data.model.amr.response
 
-import com.android.ssamr.feature.amrDetail.AmrDetailUiModel
+import com.android.ssamr.core.domain.model.AmrDetailStatus
 
 data class AmrDetailDto(
     val name: String,
@@ -14,7 +14,7 @@ data class AmrDetailDto(
     val firmware: String,
 )
 
-fun AmrDetailDto.toDetailModel(): AmrDetailUiModel = AmrDetailUiModel(
+fun AmrDetailDto.toDetailModel(): AmrDetailStatus = AmrDetailStatus(
     name = this.name,
     status = this.status,
     battery = this.battery,

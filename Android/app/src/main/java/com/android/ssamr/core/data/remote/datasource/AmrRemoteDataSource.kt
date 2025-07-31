@@ -3,20 +3,21 @@ package com.android.ssamr.core.data.remote.datasource
 import com.android.ssamr.core.data.model.amr.response.toDetailModel
 import com.android.ssamr.core.data.model.amr.response.toUiModel
 import com.android.ssamr.core.data.remote.service.AmrService
-import com.android.ssamr.feature.amr.AmrUiModel
-import com.android.ssamr.feature.amrDetail.AmrDetailUiModel
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrDetailStatus
+import com.android.ssamr.core.domain.model.AmrStatus
 import javax.inject.Inject
 
 class AmrRemoteDataSource @Inject constructor(
     private val service: AmrService
 ) {
-    suspend fun getAmrList(): List<AmrUiModel> {
+    suspend fun getAmrList(): List<AmrStatus> {
         val response = service.getAmrList()
 
         return response.map { it.toUiModel() }
     }
 
-    suspend fun getAmrDetail(amrId: Long): AmrDetailUiModel {
+    suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
         val response = service.getAmrDetail(amrId)
 
         return response.toDetailModel()

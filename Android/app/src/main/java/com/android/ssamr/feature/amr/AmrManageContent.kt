@@ -38,11 +38,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
+import com.android.ssamr.core.domain.model.AmrCategory
+import com.android.ssamr.core.domain.model.AmrAction
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.ui.theme.SSAMRTheme
 
 @Composable
 fun AmrCardList(
-    amrs: List<AmrUiModel>,
+    amrs: List<AmrStatus>,
     onAmrCardClick: (Long) -> Unit
 ) {
     LazyColumn(
@@ -101,13 +105,13 @@ fun AmrCategoryTabRow(
 
 @Composable
 fun AmrCard(
-    amr: AmrUiModel,
+    amr: AmrStatus,
     onAmrCardClick: (Long) -> Unit
 ) {
     val statusColor = when (amr.status) {
-        AmrStatus.RUNNING -> Color(0xFF4CAF50)
-        AmrStatus.CHARGING -> Color(0xFFF7B500)
-        AmrStatus.CHECKING -> Color(0xFFF7575C)
+        AmrAction.RUNNING -> Color(0xFF4CAF50)
+        AmrAction.CHARGING -> Color(0xFFF7B500)
+        AmrAction.CHECKING -> Color(0xFFF7575C)
         else -> Color.Gray
     }
     Card(
@@ -227,28 +231,28 @@ fun AmrCategoryTabRowPreview() {
 @Composable
 fun AmrCardListPreview() {
     val sampleAmrs = listOf(
-        AmrUiModel(
+        AmrStatus(
             id = 1L,
             name = "AMR-001",
-            status = AmrStatus.RUNNING,
+            status = AmrAction.RUNNING,
             location = "A구역-라인1",
             speed = "1.2",
             job = "화물 운반 중",
             battery = 85,
         ),
-        AmrUiModel(
+        AmrStatus(
             id = 2L,
             name = "AMR-002",
-            status = AmrStatus.CHARGING,
+            status = AmrAction.CHARGING,
             location = "충전소-1번",
             speed = "0",
             job = "충전 중",
             battery = 45,
         ),
-        AmrUiModel(
+        AmrStatus(
             id = 3L,
             name = "AMR-003",
-            status = AmrStatus.CHECKING,
+            status = AmrAction.CHECKING,
             location = "B구역-라인3",
             speed = "0",
             job = "점검 중",

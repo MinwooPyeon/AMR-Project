@@ -29,14 +29,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.ui.theme.SSAMRTheme
 
 @Composable
 fun AmrDetailInfoCard(
-    amr: AmrDetailUiModel,
+    amr: AmrDetailStatus,
     modifier: Modifier = Modifier
 ) {
-    val amrStatus = AmrStatus.fromStatus(amr.status)
+    val amrStatus = AmrDetailAction.fromStatus(amr.status)
     val statusColor = amrStatus.color
 
     Surface(

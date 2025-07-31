@@ -1,7 +1,8 @@
 package com.android.ssamr.core.data.model.amr.response
 
-import com.android.ssamr.feature.amr.AmrStatus
-import com.android.ssamr.feature.amr.AmrUiModel
+import com.android.ssamr.core.domain.model.AmrAction
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrStatus
 
 data class AmrDto(
     val id: Long,
@@ -12,12 +13,12 @@ data class AmrDto(
     val battery: Int
 )
 
-fun AmrDto.toUiModel(): AmrUiModel = AmrUiModel(
-    id = this.id,
-    name = this.name,
-    status = AmrStatus.valueOf(this.status),
+fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
+    id = id,
+    name = name,
+    status = AmrAction.valueOf(status),
     location = "A구역-1",
-    speed = this.speed,
-    job = this.status,
-    battery = this.battery
+    speed = speed,
+    job = status,
+    battery = battery
 )
