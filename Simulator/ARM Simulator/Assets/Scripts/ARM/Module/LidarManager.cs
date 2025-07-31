@@ -184,13 +184,14 @@ public class LidarManager : MonoBehaviour
         if (state != null)
         {
             Managers.Data.OnLidarScanned(deviceId, points, timestamp, state);
+            OccupancyGridManager.Instance.AddLidarPoints(points, sensor);
         }
         else
         {
             Debug.LogWarning($"[LidarManager] StateData not found on AMR {amr.name}");
         }
 
-        Debug.Log($"[Lidar:{sensor.name}] Scanned {count} points at {timestamp}");
+        //Debug.Log($"[Lidar:{sensor.name}] Scanned {count} points at {timestamp}");
     }
 
 

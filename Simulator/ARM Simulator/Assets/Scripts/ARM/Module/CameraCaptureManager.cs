@@ -46,7 +46,7 @@ public class CameraCaptureManager : MonoBehaviour
 
         float[] grayscaleFrame = ProcessPixelsWithJob(pixels);
 
-        Debug.Log($"[Camera:{camName}] Captured {grayscaleFrame.Length} floats at {timestamp}");
+        //Debug.Log($"[Camera:{camName}] Captured {grayscaleFrame.Length} floats at {timestamp}");
 
         Managers.Data.OnCameraCaptured(deviceIndex, grayscaleFrame, timestamp);
     }

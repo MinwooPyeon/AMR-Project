@@ -99,7 +99,7 @@ public class DataManager
         {
             AddSensorFrame(deviceIndex, session.cameraData, session.lidarData, session.state, session.timestamp);
             _pendingSessions.Remove((deviceIndex, session.timestamp));
-            Debug.Log($"[DataManager] Frame saved for Device {deviceIndex} @ {session.timestamp}");
+            //Debug.Log($"[DataManager] Frame saved for Device {deviceIndex} @ {session.timestamp}");
         }
     }
 }

@@ -8,7 +8,7 @@ public class LidarSensor : MonoBehaviour
     public int horizontalResolution = 360;
     public int verticalResolution = 1;
     public float verticalFOV = 10f;
-    public float maxDistance = 50f;
+    public float maxDistance = 20f;
     public LayerMask layerMask = ~0;
 
     [HideInInspector]
