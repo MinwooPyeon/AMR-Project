@@ -65,8 +65,10 @@ class AmrManageViewModel @Inject constructor(
                         isLoading = false,
                         error = null
                     )
+                    Log.d("AMR", "fetchAmrList: ${list}")
                 } catch (e: Exception) {
                     if (e is CancellationException) throw e
+                    e.printStackTrace()
                     _effect.emit(AmrEffect.ShowError("Amr 리스트 로드 실패: ${e.message}"))
                 }
                 delay(intervalMs)
@@ -98,7 +100,7 @@ class AmrManageViewModel @Inject constructor(
             AmrCategory.ALL -> list
             AmrCategory.RUNNING -> list.filter { it.status == AmrStatus.RUNNING }
             AmrCategory.CHARGING -> list.filter { it.status == AmrStatus.CHARGING }
-            AmrCategory.CHECK -> list.filter { it.status == AmrStatus.CHECK }
+            AmrCategory.CHECKING -> list.filter { it.status == AmrStatus.CHECKING }
         }
 
     }

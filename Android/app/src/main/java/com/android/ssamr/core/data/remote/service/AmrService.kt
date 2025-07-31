@@ -2,14 +2,13 @@ package com.android.ssamr.core.data.remote.service
 
 import com.android.ssamr.core.data.model.amr.response.AmrDetailDto
 import com.android.ssamr.core.data.model.amr.response.AmrDto
-import com.android.ssamr.core.network.model.ApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface AmrService {
-    @GET("/amr/list")
-    suspend fun getAmrList(): ApiResponse<List<AmrDto>>
+    @GET("api/v1/amrs/latest-statuses")
+    suspend fun getAmrList(): List<AmrDto>
 
     @GET("/amr/detail")
-    suspend fun getAmrDetail(@Query("id") amrId: Long): ApiResponse<AmrDetailDto>
+    suspend fun getAmrDetail(@Query("id") amrId: Long): AmrDetailDto
 }

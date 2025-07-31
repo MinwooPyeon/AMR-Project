@@ -13,12 +13,12 @@ class AmrRemoteDataSource @Inject constructor(
     suspend fun getAmrList(): List<AmrUiModel> {
         val response = service.getAmrList()
 
-        return response.data?.map { it.toUiModel() } ?: emptyList()
+        return response.map { it.toUiModel() }
     }
 
     suspend fun getAmrDetail(amrId: Long): AmrDetailUiModel {
         val response = service.getAmrDetail(amrId)
 
-        return response.data?.toDetailModel() ?: throw IllegalStateException("상세정보 없음")
+        return response.toDetailModel()
     }
 }

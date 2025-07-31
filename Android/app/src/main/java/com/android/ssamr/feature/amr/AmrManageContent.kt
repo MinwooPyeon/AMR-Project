@@ -107,7 +107,7 @@ fun AmrCard(
     val statusColor = when (amr.status) {
         AmrStatus.RUNNING -> Color(0xFF4CAF50)
         AmrStatus.CHARGING -> Color(0xFFF7B500)
-        AmrStatus.CHECK -> Color(0xFFF7575C)
+        AmrStatus.CHECKING -> Color(0xFFF7575C)
         else -> Color.Gray
     }
     Card(
@@ -248,7 +248,7 @@ fun AmrCardListPreview() {
         AmrUiModel(
             id = 3L,
             name = "AMR-003",
-            status = AmrStatus.CHECK,
+            status = AmrStatus.CHECKING,
             location = "B구역-라인3",
             speed = "0",
             job = "점검 중",

@@ -53,7 +53,7 @@ fun AmrManageScreenPreview() {
                 AmrCategory.ALL to 6,
                 AmrCategory.RUNNING to 3,
                 AmrCategory.CHARGING to 1,
-                AmrCategory.CHECK to 2
+                AmrCategory.CHECKING to 2
             ),
             isLoading = false,
             error = null
@@ -78,16 +78,16 @@ val sampleAmrs = listOf(
         name = "AMR-002",
         status = AmrStatus.CHARGING,
         location = "충전소-1번",
-        speed = "0",
+        speed = "1.2",
         job = "충전 중",
         battery = 45,
     ),
     AmrUiModel(
         id = 3L,
         name = "AMR-003",
-        status = AmrStatus.CHECK,
+        status = AmrStatus.CHECKING,
         location = "B구역-라인3",
-        speed = "0",
+        speed = "1.2",
         job = "점검 중",
         battery = 92,
     )

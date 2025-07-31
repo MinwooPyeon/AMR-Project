@@ -36,11 +36,11 @@ enum class AmrCategory(val label: String) {
     ALL("전체"),
     RUNNING("작동중"),
     CHARGING("충전중"),
-    CHECK("점검")
+    CHECKING("점검")
 }
 
 enum class AmrStatus(val display: String) {
     RUNNING("작동중"),
     CHARGING("충전중"),
-    CHECK("점검중")
+    CHECKING("점검중")
 }
