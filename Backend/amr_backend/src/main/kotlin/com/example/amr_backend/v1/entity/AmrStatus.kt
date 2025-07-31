@@ -3,6 +3,8 @@ package com.example.amr_backend.v1.entity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -28,7 +30,8 @@ data class AmrStatus(
     val amr: Amr,
 
     @Column(name = "status")
-    val status: String,
+    @Enumerated(EnumType.STRING)
+    val status: Status,
 
     @Column(name = "battery_level")
     val batteryLevel: Int,
