@@ -407,10 +407,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02ab33f620250914aa5dc3c0a9d0a3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yamlFileName: 
-  imageFileName: 
+  yamlFileName: Map/test.yaml
+  imageFileName: Map/test.pgm
   loadAsPNG: 0
-  obstaclePrefab: {fileID: 0}
+  obstaclePrefab: {fileID: 6367951854641072274, guid: bb522d3a4fa21f245b0c48cd8450659d, type: 3}
+  freePrefab: {fileID: 6367951854641072274, guid: e18df715f788eb4429d0f3bbeb90c5be, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
