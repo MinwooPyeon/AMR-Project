@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
+import com.android.ssamr.core.domain.model.AmrAction
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.core.ui.SSAMRDialog
 import com.android.ssamr.ui.theme.SSAMRTheme
 
@@ -90,9 +93,9 @@ fun AmrManageDetailScreenPreview() {
 }
 
 val sampleAmrDetail =
-    AmrDetailUiModel(
+    AmrDetailStatus(
         name = "AMR-001",
-        status = "작동중",
+        status = AmrDetailAction.fromStatus("작동중"),
         battery = 85,
         location = "A구역-라인1",
         speed = "1.2m/s",

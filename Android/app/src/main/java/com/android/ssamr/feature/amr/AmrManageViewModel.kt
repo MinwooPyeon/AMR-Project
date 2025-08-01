@@ -3,6 +3,10 @@ package com.android.ssamr.feature.amr
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.ssamr.core.domain.model.AmrCategory
+import com.android.ssamr.core.domain.model.AmrAction
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.core.domain.usecase.amr.GetAmrListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -65,8 +69,10 @@ class AmrManageViewModel @Inject constructor(
                         isLoading = false,
                         error = null
                     )
+                    Log.d("AMR", "fetchAmrList: ${list}")
                 } catch (e: Exception) {
                     if (e is CancellationException) throw e
+                    e.printStackTrace()
                     _effect.emit(AmrEffect.ShowError("Amr 리스트 로드 실패: ${e.message}"))
                 }
                 delay(intervalMs)
@@ -93,12 +99,12 @@ class AmrManageViewModel @Inject constructor(
         }
     }
 
-    private fun filterList(list: List<AmrUiModel>, category: AmrCategory): List<AmrUiModel> {
+    private fun filterList(list: List<AmrStatus>, category: AmrCategory): List<AmrStatus> {
         return when (category) {
             AmrCategory.ALL -> list
-            AmrCategory.RUNNING -> list.filter { it.status == AmrStatus.RUNNING }
-            AmrCategory.CHARGING -> list.filter { it.status == AmrStatus.CHARGING }
-            AmrCategory.CHECK -> list.filter { it.status == AmrStatus.CHECK }
+            AmrCategory.RUNNING -> list.filter { it.status == AmrAction.RUNNING }
+            AmrCategory.CHARGING -> list.filter { it.status == AmrAction.CHARGING }
+            AmrCategory.CHECKING -> list.filter { it.status == AmrAction.CHECKING }
         }
 
     }
