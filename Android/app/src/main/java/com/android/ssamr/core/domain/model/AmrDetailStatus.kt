@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 data class AmrDetailStatus (
     val name: String,
-    val status: String,
+    val status: AmrDetailAction,
     val battery: Int,
     val location: String,
     val speed: String,
@@ -17,13 +17,13 @@ data class AmrDetailStatus (
 enum class AmrDetailAction(val display: String, val color: Color) {
     RUNNING("작동중", Color(0xFF23C06C)),    // 초록
     CHARGING("충전중", Color(0xFFFFC700)),   // 노랑
-    CHECK("점검중", Color(0xFFFF5050));      // 빨강
+    CHECKING("점검중", Color(0xFFFF5050));      // 빨강
 
     companion object {
         fun fromStatus(status: String): AmrDetailAction = when (status) {
             "작동중" -> RUNNING
             "충전중" -> CHARGING
-            "점검중" -> CHECK
+            "점검중" -> CHECKING
             else -> RUNNING // 기본값
         }
     }
