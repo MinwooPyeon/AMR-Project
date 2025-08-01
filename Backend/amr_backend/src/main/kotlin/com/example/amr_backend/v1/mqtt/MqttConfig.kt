@@ -11,6 +11,7 @@ class MqttConfig {
     fun mqttClient(): MqttClient {
         val client = MqttClient("tcp://localhost:1883", "spring-server-mqtt", null)
         val connectionOptions = MqttConnectOptions().apply {
+            isAutomaticReconnect = true
             isCleanSession = true
             connectionTimeout = 10
             keepAliveInterval = 60
