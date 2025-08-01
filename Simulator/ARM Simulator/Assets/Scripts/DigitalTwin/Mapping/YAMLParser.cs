@@ -1,131 +1,154 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class YAMLParser
 {
-    public YamlFile ParseYaml(string yamlPath)
+    /// <summary>
+    /// 상대/절대경로 처리 → Metadata 파싱 → Zones 파싱 → 결과 반환
+    /// </summary>
+    public void ParseYaml(string yamlPath, out YamlFile yaml)
     {
-        YamlFile yaml = new YamlFile();
-        List<Vector2Int> chargerCells = new List<Vector2Int>();
-        List<Vector2Int> loadCells = new List<Vector2Int>();
-        List<Vector2Int> dropCells = new List<Vector2Int>();
-        string currentZone = null;
+        yaml = new YamlFile();
 
-        string fullPath = Path.Combine(Application.streamingAssetsPath, yamlPath);
-        foreach(var raw in File.ReadAllLines(fullPath))
+        // 1) 파일 읽기
+        string fullPath = GetFullPath(yamlPath);
+        if (!File.Exists(fullPath))
+        {
+            Debug.LogError($"[YAMLParser] 파일이 없습니다: {fullPath}");
+            return;
+        }
+        var lines = File.ReadAllLines(fullPath);
+
+        // 2) 메타데이터 (키:값) 파싱
+        ParseMetadata(lines, ref yaml);
+
+        // 3) zones 파싱
+        ParseZones(lines, out yaml.chargerCells, out yaml.loadCells, out yaml.dropCells);
+
+        Debug.Log(
+          $"[YAMLParser] Done → resolution:{yaml.resolution} " +
+          $"occThresh:{yaml.occThresh} freeThresh:{yaml.freeThresh} " +
+          $"origin:{yaml.origin} charger:{yaml.chargerCells.Length} " +
+          $"load:{yaml.loadCells.Length} drop:{yaml.dropCells.Length}"
+        );
+    }
+
+    //───────────────────────────────────────────
+    // Metadata: resolution, occupied_thresh, free_thresh, origin
+    //───────────────────────────────────────────
+    private void ParseMetadata(string[] lines, ref YamlFile yaml)
+    {
+        foreach (var raw in lines)
         {
             var line = raw.Trim();
-            if (IsCommentOrEmpty(line)) continue;
-            var keyName = GetKeyName(line);
+            if (IsCommentOrEmpty(line) || line.StartsWith("zones"))
+                continue;
 
-            if (TryParseZoneDirective(keyName, ref currentZone)) continue;
-            if (TryParseZoneEntry(line, currentZone, chargerCells, loadCells, dropCells)) continue;
+            int idx = line.IndexOf(':');
+            if (idx < 0) continue;
 
-            TryParseKeyValue(line, yaml);
-        }
+            var key = line.Substring(0, idx).Trim();
+            var val = line.Substring(idx + 1).Trim();
 
-        yaml.chargerCells = chargerCells.ToArray();
-        yaml.loadCells = loadCells.ToArray();
-        yaml.dropCells = dropCells.ToArray();
-
-        return yaml;
-    }
-
-    private bool IsCommentOrEmpty(string line) => line.Length == 0 || line.StartsWith("#");
-
-    private string GetKeyName(string line)
-    {
-        int idx = line.IndexOf(':');
-        if (idx <= 0) return null;
-        return line.Substring(0, idx).Trim();
-    }
-
-    private bool TryParseZoneDirective(string keyName, ref string currentZone)
-    {
-        if (keyName == null) return false;
-        switch (keyName)
-        {
-            case "zones":
-                currentZone = null;
-                return true;
-            case "charger":
-            case "load":
-            case "drop":
-                currentZone = keyName;
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private bool TryParseZoneEntry(string line, string currentZone,
-                                   List<Vector2Int> chargerList,
-                                   List<Vector2Int> loadList,
-                                   List<Vector2Int> dropList)
-    {
-        if (currentZone == null || !line.StartsWith("-"))
-            return false;
-
-        // "- [20, 10]" → "20, 10"
-        var coord = line
-            .TrimStart('-').Trim()
-            .TrimStart('[').TrimEnd(']');
-        var parts = coord.Split(',');
-        if (parts.Length < 2)
-            return false;
-
-        if (int.TryParse(parts[0], out int x) &&
-            int.TryParse(parts[1], out int y))
-        {
-            var cell = new Vector2Int(x, y);
-            switch (currentZone)
+            switch (key)
             {
-                case "charger": chargerList.Add(cell); break;
-                case "load": loadList.Add(cell); break;
-                case "drop": dropList.Add(cell); break;
+                case "resolution":
+                    if (float.TryParse(val, out var r)) yaml.resolution = r;
+                    break;
+                case "occupied_thresh":
+                    if (float.TryParse(val, out var o)) yaml.occThresh = o;
+                    break;
+                case "free_thresh":
+                    if (float.TryParse(val, out var f)) yaml.freeThresh = f;
+                    break;
+                case "origin":
+                    var nums = val.TrimStart('[').TrimEnd(']').Split(',');
+                    if (nums.Length >= 3
+                        && float.TryParse(nums[0], out var ox)
+                        && float.TryParse(nums[1], out var oy)
+                        && float.TryParse(nums[2], out var oz))
+                    {
+                        yaml.origin = new Vector3(ox, 0, oy);
+                    }
+                    break;
             }
-            return true;
         }
-        return false;
     }
 
-    private void TryParseKeyValue(string line, YamlFile yaml)
+    //───────────────────────────────────────────
+    // Zones: charger, load, drop
+    //───────────────────────────────────────────
+    private void ParseZones(
+        string[] lines,
+        out Vector2Int[] charger,
+        out Vector2Int[] load,
+        out Vector2Int[] drop)
     {
-        var kv = line.Split(new[] { ':' }, 2);
-        if (kv.Length < 2) return;
-        var key = kv[0].Trim();
-        var val = kv[1].Trim();
+        var chargerList = new List<Vector2Int>();
+        var loadList = new List<Vector2Int>();
+        var dropList = new List<Vector2Int>();
 
-        switch (key)
+        string currentZone = null;
+        foreach (var raw in lines)
         {
-            case "resolution":
-                if (float.TryParse(val, out var r))
-                    yaml.resolution = r;
-                break;
+            var line = raw.Trim();
+            if (IsCommentOrEmpty(line))
+                continue;
 
-            case "occupied_thresh":
-                if (float.TryParse(val, out var o))
-                    yaml.occThresh = o;
-                break;
+            // directive
+            if (line.StartsWith("zones:"))
+            {
+                currentZone = null; continue;
+            }
+            if (line.StartsWith("charger:"))
+            {
+                currentZone = "charger"; continue;
+            }
+            if (line.StartsWith("load:"))
+            {
+                currentZone = "load"; continue;
+            }
+            if (line.StartsWith("drop:"))
+            {
+                currentZone = "drop"; continue;
+            }
 
-            case "free_thresh":
-                if (float.TryParse(val, out var f))
-                    yaml.freeThresh = f;
-                break;
-
-            case "origin":
-                // origin: [x, y, yaw]
-                var nums = val.TrimStart('[').TrimEnd(']').Split(',');
-                if (nums.Length >= 3
-                    && float.TryParse(nums[0], out var ox)
-                    && float.TryParse(nums[1], out var oy)
-                    && float.TryParse(nums[2], out var oz))
+            // entry "- [x, y]"
+            if (currentZone != null && line.StartsWith("-"))
+            {
+                var coord = line
+                    .TrimStart('-').Trim()
+                    .TrimStart('[').TrimEnd(']');
+                var parts = coord.Split(',');
+                if (parts.Length == 2
+                    && int.TryParse(parts[0], out var x)
+                    && int.TryParse(parts[1], out var y))
                 {
-                    yaml.origin = new Vector3(ox, 0, oy);
+                    var cell = new Vector2Int(x, y);
+                    switch (currentZone)
+                    {
+                        case "charger": chargerList.Add(cell); break;
+                        case "load": loadList.Add(cell); break;
+                        case "drop": dropList.Add(cell); break;
+                    }
                 }
-                break;
+            }
         }
+
+        charger = chargerList.ToArray();
+        load = loadList.ToArray();
+        drop = dropList.ToArray();
     }
+
+    //───────────────────────────────────────────
+    // Utility
+    //───────────────────────────────────────────
+    private bool IsCommentOrEmpty(string line)
+        => string.IsNullOrEmpty(line) || line.StartsWith("#");
+
+    private string GetFullPath(string yamlPath)
+        => Path.IsPathRooted(yamlPath)
+           ? yamlPath
+           : Path.Combine(Application.streamingAssetsPath, yamlPath);
 }

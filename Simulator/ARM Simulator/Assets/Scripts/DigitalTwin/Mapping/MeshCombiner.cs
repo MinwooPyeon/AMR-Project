@@ -64,9 +64,9 @@ public class MeshCombiner : MonoBehaviour
                             mesh = mesh,
                             subMeshIndex = si,
                             transform = Matrix4x4.TRS(
-                                cellOrigin + mf.transform.localPosition * resolution,
-                                mf.transform.localRotation,
-                                mf.transform.localScale * resolution)
+    cellOrigin + mf.transform.localPosition * resolution + Vector3.up * 0.01f,
+    mf.transform.localRotation,
+    mf.transform.localScale * resolution)
                         };
                         list.Add(ci);
                     }
@@ -145,7 +145,7 @@ public class MeshCombiner : MonoBehaviour
                         mesh = mesh,
                         subMeshIndex = si,
                         transform = Matrix4x4.TRS(
-                            cellOrigin + mf.transform.localPosition * resolution,
+                            cellOrigin + mf.transform.localPosition * resolution + Vector3.up * 0.2f,
                             mf.transform.localRotation,
                             mf.transform.localScale * resolution)
                     };
@@ -164,12 +164,17 @@ public class MeshCombiner : MonoBehaviour
             var combinedMesh = new Mesh { indexFormat = IndexFormat.UInt32 };
             combinedMesh.CombineMeshes(combines.ToArray(), false, true);
 
+            combinedMesh.RecalculateBounds();
+
             var go = new GameObject(goName + "_" + mat.name);
             go.transform.parent = transform;
             var mfOut = go.AddComponent<MeshFilter>();
             mfOut.mesh = combinedMesh;
             var mrOut = go.AddComponent<MeshRenderer>();
             mrOut.material = mat;
+
+            Debug.Log($"[{goName}] bounds center={combinedMesh.bounds.center}, size={combinedMesh.bounds.size}");
+
         }
     }
 }

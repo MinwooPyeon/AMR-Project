@@ -23,7 +23,8 @@ public class MapLoader : MonoBehaviour
     {
         // 1) 메타데이터 로드
         string yamlPath = Path.Combine(Application.streamingAssetsPath, yamlFileName);
-        yaml = new YAMLParser().ParseYaml(yamlPath);
+        var yamlParser = new YAMLParser();
+        yamlParser.ParseYaml(yamlPath, out yaml);
 
         // 2) 이미지 로드
         string imgPath = Path.Combine(Application.streamingAssetsPath, imageFileName);
@@ -32,6 +33,7 @@ public class MapLoader : MonoBehaviour
             image = imgParser.LoadPGM(imgPath);
         else
             image = imgParser.LoadPNG(imgPath);
+
 
         // 3) 맵 쿼드 시각화
         BuildMapQuad();
@@ -43,21 +45,20 @@ public class MapLoader : MonoBehaviour
     private void BuildMapQuad()
     {
         var quad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-        quad.name = "MapQuad";
-        Vector3 center = yaml.origin + new Vector3(
-            image.width * yaml.resolution * 0.5f,
-            0.1f,
-            image.height * yaml.resolution * 0.5f
-        );
-        quad.transform.position = center;
+        // 위치·스케일 설정은 그대로…
+        quad.transform.position = yaml.origin;
         quad.transform.localScale = new Vector3(
             image.width * yaml.resolution,
-            1,
-            image.height * yaml.resolution
-        );
+            image.height * yaml.resolution,
+            1f);
+
+        // ← 여기서 90도 회전하여 XZ 평면으로 누웁니다.
+        quad.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
         var mat = new Material(Shader.Find("Unlit/Texture"));
         mat.mainTexture = image.texture;
         quad.GetComponent<MeshRenderer>().material = mat;
+
     }
 
     private void CombineAll()
