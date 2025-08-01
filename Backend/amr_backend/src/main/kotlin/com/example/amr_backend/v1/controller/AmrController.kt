@@ -1,11 +1,14 @@
 package com.example.amr_backend.v1.controller
 
+import com.example.amr_backend.v1.dto.AmrManualControlMessage
 import com.example.amr_backend.v1.dto.AmrStatusResponse
 import com.example.amr_backend.v1.dto.toAmrDetailResponse
 import com.example.amr_backend.v1.dto.toResponse
 import com.example.amr_backend.v1.service.AmrService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -18,6 +21,10 @@ class AmrController(
     fun findAllLatestStatuses(): List<AmrStatusResponse> =
         amrService.findAllLatestStatuses().map { it.toResponse() }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/{id}/detail")
     fun findAmrDetailById(@PathVariable id: Long) = amrService.findAmrDetail(id).toAmrDetailResponse()
+
+    @PostMapping("/control")
+    fun sendManualControlMessage(@RequestBody message: AmrManualControlMessage) =
+        amrService.sendManualControlMessage(message)
 }
