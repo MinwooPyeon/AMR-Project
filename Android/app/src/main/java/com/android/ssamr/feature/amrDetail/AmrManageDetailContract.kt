@@ -7,6 +7,7 @@ data class AmrDetailUiModel(
     val name: String,
     val status: String,
     val battery: Int,
+    val ipAddress: String,
     val location: String,
     val speed: String,
     val job: String,
@@ -26,14 +27,14 @@ data class AmrDetailState(
 
 sealed class AmrDetailIntent {
     data object LoadAmrDetail : AmrDetailIntent()
-    data object ClickWebcam : AmrDetailIntent()
+    data class ClickWebcam(val idAddress: String) : AmrDetailIntent()
     data object ClickManualReturn : AmrDetailIntent()
     data object ClickManualStart : AmrDetailIntent()
 }
 
 sealed class AmrDetailEffect {
     data class ShowError(val message: String) : AmrDetailEffect()
-    data object NavigateToWebcam : AmrDetailEffect()
+    data class NavigateToWebcam(val idAddress: String) : AmrDetailEffect()
     data object ShowReturnDialog : AmrDetailEffect()
     data object ShowStartDialog : AmrDetailEffect()
 }

@@ -66,7 +66,7 @@ fun AmrManageDetailScreen(
                     AmrDetailInfoCard(amr = state.amr)
                     Spacer(Modifier.height(32.dp))
                     AmrDetailButtonGroup(
-                        onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam) },
+                        onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam(state.amr.ipAddress)) },
                         onManualReturnClick = { sendIntent(AmrDetailIntent.ClickManualReturn) },
                         onManualStartClick = { sendIntent(AmrDetailIntent.ClickManualStart) }
                     )
@@ -94,6 +94,7 @@ val sampleAmrDetail =
         name = "AMR-001",
         status = "작동중",
         battery = 85,
+        ipAddress = "111.111.1111",
         location = "A구역-라인1",
         speed = "1.2m/s",
         job = "화물 운반 중",
