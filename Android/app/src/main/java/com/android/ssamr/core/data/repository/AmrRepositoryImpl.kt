@@ -24,14 +24,14 @@ class AmrRepositoryImpl @Inject constructor(
     override suspend fun getAmrDetail(amrId: Long): AmrDetailUiModel {
 //        return remoteDataSource.getAmrDetail(amrId)
         return AmrDetailUiModel(
-            name = "AMR-001",
+            name = "AMR-${String.format("%03d", amrId)}",
             status = "작동중",
             battery = 85,
-            location = "A구역-라인1",
+            location = "A구역-라인${amrId}",
             speed = "1.2m/s",
             job = "화물 운반 중",
             model = "RB-100",
-            serial = "RB100-2024-001",
+            serial = "RB100-2024-${String.format("%03d", amrId)}",
             firmware = "v2.1.3",
         )
     }

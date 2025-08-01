@@ -23,6 +23,7 @@ class FullscreenMapViewModel : ViewModel() {
         when (intent) {
             is FullscreenMapIntent.LoadMap -> {
                 loadDummyMap()
+                // dto 관련 데이터 코드
             }
 
             is FullscreenMapIntent.ClickAmr -> {
@@ -42,9 +43,9 @@ class FullscreenMapViewModel : ViewModel() {
 
             // TODO: 실제 지도 이미지 및 SLAM 좌표 가져올 예정
             val dummyAmrs = listOf(
-                AmrMapPosition(1L, "AMR-001", x = 100f, y = 200f, status = DashboardAmrStatus.RUNNING),
-                AmrMapPosition(2L, "AMR-002", x = 300f, y = 400f, status = DashboardAmrStatus.CHARGING),
-                AmrMapPosition(3L, "AMR-003", x = 500f, y = 150f, status = DashboardAmrStatus.CHECK)
+                AmrMapPositionModel(1L, "AMR-001", x = 100f, y = 200f, status = DashboardAmrStatus.RUNNING),
+                AmrMapPositionModel(2L, "AMR-002", x = 300f, y = 400f, status = DashboardAmrStatus.CHARGING),
+                AmrMapPositionModel(3L, "AMR-003", x = 500f, y = 150f, status = DashboardAmrStatus.CHECK)
             )
 
             // dummy map image 추가

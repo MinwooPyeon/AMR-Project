@@ -2,6 +2,8 @@ package com.android.ssamr.feature.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.ssamr.core.data.model.amr.response.toDashboardModel
+import com.android.ssamr.core.domain.repository.DashboardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -10,6 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     // TODO: 실제 데이터 로딩용 UseCase 또는 Repository 주입 예정
+    private val repository: DashboardRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DashboardState())
@@ -48,12 +51,14 @@ class DashboardViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
 
             runCatching {
-                val amrs = listOf(
-                    DashboardAmrUiModel(1L, "AMR-001", 85, DashboardAmrStatus.RUNNING, "A구역", "화물 운반"),
-                    DashboardAmrUiModel(2L, "AMR-002", 45, DashboardAmrStatus.CHARGING, "충전소", "충전 중"),
-                    DashboardAmrUiModel(3L, "AMR-003", 92, DashboardAmrStatus.CHECK, "B구역", "점검 중"),
-                    DashboardAmrUiModel(4L, "AMR-004", 67, DashboardAmrStatus.RUNNING, "C구역", "운반")
-                )
+//                val amrs = listOf(
+//                    DashboardAmrUiModel(1L, "AMR-001", 85, DashboardAmrStatus.RUNNING, "A구역", "화물 운반"),
+//                    DashboardAmrUiModel(2L, "AMR-002", 45, DashboardAmrStatus.CHARGING, "충전소", "충전 중"),
+//                    DashboardAmrUiModel(3L, "AMR-003", 92, DashboardAmrStatus.CHECK, "B구역", "점검 중"),
+//                    DashboardAmrUiModel(4L, "AMR-004", 67, DashboardAmrStatus.RUNNING, "C구역", "운반")
+//                )
+                var dtos = repository.getDashboardAmrs()
+                val amrs = dtos.map { it.toDashboardModel() }
 
                 val runningCount = amrs.count { it.status == DashboardAmrStatus.RUNNING }
                 val chargingCount = amrs.count { it.status == DashboardAmrStatus.CHARGING }
