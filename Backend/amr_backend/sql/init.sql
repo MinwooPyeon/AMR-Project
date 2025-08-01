@@ -3,7 +3,8 @@ CREATE TABLE amr
 (
     id               BIGSERIAL PRIMARY KEY,
     name             VARCHAR(255) NOT NULL,
-    mqtt_url         VARCHAR(255) NOT NULL,
+    ip_address       VARCHAR(255) NOT NULL,
+    model            VARCHAR(255) NOT NULL,
     serial           VARCHAR(255) NOT NULL UNIQUE,
     firmware_version VARCHAR(255) NOT NULL,
     last_update_date TIMESTAMP    NOT NULL

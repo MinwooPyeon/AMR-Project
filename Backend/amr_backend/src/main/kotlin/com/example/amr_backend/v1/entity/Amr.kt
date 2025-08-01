@@ -20,11 +20,14 @@ data class Amr(
     @Column(name = "name")
     val name: String,
 
-    @Column(name = "mqtt_url", nullable = false)
-    val mqttUrl: String,
+    @Column(name = "ip_address", nullable = false)
+    val ipAddress: String,
 
     @Column(name = "serial", unique = true, nullable = false)
     val serial: String,
+
+    @Column(name = "model")
+    val model: String,
 
     @Column(name = "firmware_version")
     val firmwareVersion: String,
@@ -50,7 +53,6 @@ data class Amr(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , name = $name , mqttUrl = $mqttUrl , serial = $serial , firmwareVersion = $firmwareVersion , lastUpdateDate = $lastUpdateDate )"
+        return this::class.simpleName + "(id = $id , name = $name , ipAddress = $ipAddress , serial = $serial , model = $model , firmwareVersion = $firmwareVersion , lastUpdateDate = $lastUpdateDate )"
     }
-
 }
