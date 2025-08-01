@@ -1,8 +1,8 @@
 package com.android.ssamr.core.data.di
 
 import com.android.ssamr.core.data.remote.datasource.AmrRemoteDataSource
-import com.android.ssamr.core.data.remote.datasource.DashboardRemoteDataSource
 import com.android.ssamr.core.data.remote.service.AmrService
+import com.android.ssamr.core.data.remote.datasource.DashboardRemoteDataSource
 import com.android.ssamr.core.data.remote.service.DashboardService
 import dagger.Module
 import dagger.Provides
