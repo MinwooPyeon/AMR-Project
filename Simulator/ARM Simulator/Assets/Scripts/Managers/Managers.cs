@@ -17,7 +17,7 @@ public class Managers : MonoBehaviour
     public static ResourceManager Resource { get { return _resource; } }
     public static DeviceManager Device { get { return _device; } }
     public static DataManager Data { get { return _data; } }
-    public Camera camera;
+
     #endregion
     #region Unity Methods
     private void Awake()

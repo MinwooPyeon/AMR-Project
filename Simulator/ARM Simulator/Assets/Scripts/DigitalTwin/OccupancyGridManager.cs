@@ -55,7 +55,6 @@ public class OccupancyGridManager : MonoBehaviour
             float dist = Vector3.Distance(start, world);
             
             bool actuallyHit = dist < maxLidarRange * 0.999f;
-            Debug.Log(dist + " < " + maxLidarRange * 0.999f + " = " + actuallyHit);
             AddLidarPath(start, world, maxLidarRange, actuallyHit);
         }
         UpdateTexture();
