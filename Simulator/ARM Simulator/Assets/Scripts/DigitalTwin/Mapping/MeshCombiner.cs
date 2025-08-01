@@ -1,181 +1,149 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.Rendering;
 
+using UnityEngine;
+using System.Collections;
+
+/// <summary>
+/// 그리드 셀과 zone 셀을 청크 단위로 결합해
+/// 정적 Mesh GameObject를 생성하는 컴포넌트
+/// </summary>
 public class MeshCombiner : MonoBehaviour
 {
     /// <summary>
-    /// mask[x,y] == true 인 셀마다 prefab 전체(자식 포함)의 모든 서브메쉬를
-    /// material 별로 분리 결합합니다.
+    /// Grid mask를 chunkSize×chunkSize 단위로 묶어 Mesh를 생성
     /// </summary>
-    /// <param name="prefab">원본 프리팹</param>
-    /// <param name="mask">width×height 크기의 장애물 마스크</param>
-    /// <param name="origin">맵 원점 (world space)</param>
-    /// <param name="resolution">셀 크기 (world units)</param>
-    /// <param name="goName">결과 GameObject 이름</param>
-    public void CombineMask(
+    public IEnumerator CombineMaskInChunks(
         GameObject prefab,
         bool[,] mask,
         Vector3 origin,
         float resolution,
+        int chunkSize,
         string goName)
     {
-        if (prefab == null || mask == null) return;
-
-        int width = mask.GetLength(0);
-        int height = mask.GetLength(1);
-
-        // prefab 내부의 모든 MeshFilter & Renderer 수집
+        if (prefab == null || mask == null) yield break;
         var filters = prefab.GetComponentsInChildren<MeshFilter>();
-        var renderers = prefab.GetComponentsInChildren<MeshRenderer>();
+        int width = mask.GetLength(0), height = mask.GetLength(1);
 
-        // material 별 CombineInstance 리스트
-        var matToCombines = new Dictionary<Material, List<CombineInstance>>();
-
-        // 셀마다, 그리고 각 MeshFilter·subMeshIndex마다 CombineInstance 생성
-        foreach (var mf in filters)
+        for (int cy = 0; cy < height; cy += chunkSize)
         {
-            var mr = mf.GetComponent<MeshRenderer>();
-            if (mr == null) continue;
+            for (int cx = 0; cx < width; cx += chunkSize)
+            {
+                var matToCombines = new Dictionary<Material, List<CombineInstance>>();
+                int maxY = Mathf.Min(height, cy + chunkSize);
+                int maxX = Mathf.Min(width, cx + chunkSize);
 
-            var mesh = mf.sharedMesh;
-            var materials = mr.sharedMaterials;
-
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    if (!mask[x, y]) continue;
-
-                    Vector3 cellOrigin = origin + new Vector3(x * resolution, 0, y * resolution);
-
-                    for (int si = 0; si < mesh.subMeshCount; si++)
-                    {
-                        // 해당 subMeshIndex의 머티리얼
-                        var mat = si < materials.Length ? materials[si] : materials[0];
-
-                        if (!matToCombines.TryGetValue(mat, out var list))
+                for (int y = cy; y < maxY; y++)
+                    for (int x = cx; x < maxX; x++)
+                        if (mask[x, y])
                         {
-                            list = new List<CombineInstance>();
-                            matToCombines[mat] = list;
+                            Vector3 cellOrigin = origin + new Vector3(x * resolution, 0, y * resolution);
+                            foreach (var mf in filters)
+                            {
+                                var mr = mf.GetComponent<MeshRenderer>();
+                                if (mr == null) continue;
+                                var mesh = mf.sharedMesh;
+                                var materials = mr.sharedMaterials;
+                                for (int si = 0; si < mesh.subMeshCount; si++)
+                                {
+                                    var mat = si < materials.Length ? materials[si] : materials[0];
+                                    if (!matToCombines.TryGetValue(mat, out var list))
+                                        matToCombines[mat] = list = new List<CombineInstance>();
+                                    list.Add(new CombineInstance
+                                    {
+                                        mesh = mesh,
+                                        subMeshIndex = si,
+                                        transform = Matrix4x4.TRS(
+                                            cellOrigin + mf.transform.localPosition * resolution + Vector3.up * 0.01f,
+                                            mf.transform.localRotation,
+                                            mf.transform.localScale * resolution)
+                                    });
+                                }
+                            }
                         }
 
-                        var ci = new CombineInstance
-                        {
-                            mesh = mesh,
-                            subMeshIndex = si,
-                            transform = Matrix4x4.TRS(
-    cellOrigin + mf.transform.localPosition * resolution + Vector3.up * 0.01f,
-    mf.transform.localRotation,
-    mf.transform.localScale * resolution)
-                        };
-                        list.Add(ci);
-                    }
+                foreach (var kv in matToCombines)
+                {
+                    var mat = kv.Key;
+                    var combines = kv.Value;
+                    if (combines.Count == 0) continue;
+                    var combinedMesh = new Mesh { indexFormat = IndexFormat.UInt32 };
+                    combinedMesh.CombineMeshes(combines.ToArray(), false, true);
+                    combinedMesh.RecalculateBounds();
+                    var go = new GameObject($"{goName}_{mat.name}_{cx}_{cy}");
+                    go.transform.parent = transform;
+                    var mfOut = go.AddComponent<MeshFilter>(); mfOut.mesh = combinedMesh;
+                    var mrOut = go.AddComponent<MeshRenderer>(); mrOut.material = mat;
                 }
-        }
 
-        // material 별로 분리된 GameObject 생성
-        foreach (var kv in matToCombines)
-        {
-            var mat = kv.Key;
-            var combines = kv.Value;
-            if (combines.Count == 0) continue;
-
-            var combinedMesh = new Mesh { indexFormat = IndexFormat.UInt32 };
-            // subMesh 분리를 유지하려면 mergeSubMeshes=false
-            combinedMesh.CombineMeshes(combines.ToArray(), false, true);
-
-            var go = new GameObject(goName + "_" + mat.name);
-            go.transform.parent = transform;
-            var mfOut = go.AddComponent<MeshFilter>();
-            mfOut.mesh = combinedMesh;
-            var mrOut = go.AddComponent<MeshRenderer>();
-            mrOut.material = mat;
+                yield return null;
+            }
         }
     }
 
     /// <summary>
-    /// 각 cells 좌표마다 prefab 전체(자식 포함)의 모든 서브메쉬를
-    /// material 별로 분리 결합합니다.
+    /// Zone cells를 chunkSize 단위로 묶어 Mesh를 생성
     /// </summary>
-    /// <param name="prefab">원본 프리팹</param>
-    /// <param name="cells">Vector2Int[x,y] 배열</param>
-    /// <param name="origin">맵 원점 (world space)</param>
-    /// <param name="resolution">셀 크기 (world units)</param>
-    /// <param name="goName">결과 GameObject 이름</param>
-    public void CombineCells(
+    public IEnumerator CombineCellsInChunks(
         GameObject prefab,
         Vector2Int[] cells,
         Vector3 origin,
         float resolution,
+        int chunkSize,
         string goName)
     {
-        if (prefab == null || cells == null || cells.Length == 0) return;
-
-        // prefab 내부의 모든 MeshFilter & Renderer 수집
+        if (prefab == null || cells == null || cells.Length == 0) yield break;
         var filters = prefab.GetComponentsInChildren<MeshFilter>();
-        var renderers = prefab.GetComponentsInChildren<MeshRenderer>();
+        int total = cells.Length;
 
-        // material 별 CombineInstance 리스트
-        var matToCombines = new Dictionary<Material, List<CombineInstance>>();
-
-        foreach (var mf in filters)
+        for (int i = 0; i < total; i += chunkSize)
         {
-            var mr = mf.GetComponent<MeshRenderer>();
-            if (mr == null) continue;
+            var matToCombines = new Dictionary<Material, List<CombineInstance>>();
+            int end = Mathf.Min(total, i + chunkSize);
 
-            var mesh = mf.sharedMesh;
-            var materials = mr.sharedMaterials;
-
-            foreach (var c in cells)
+            for (int idx = i; idx < end; idx++)
             {
+                var c = cells[idx];
                 Vector3 cellOrigin = origin + new Vector3(c.x * resolution, 0, c.y * resolution);
-
-                for (int si = 0; si < mesh.subMeshCount; si++)
+                foreach (var mf in filters)
                 {
-                    var mat = si < materials.Length ? materials[si] : materials[0];
-
-                    if (!matToCombines.TryGetValue(mat, out var list))
+                    var mr = mf.GetComponent<MeshRenderer>();
+                    if (mr == null) continue;
+                    var mesh = mf.sharedMesh;
+                    var materials = mr.sharedMaterials;
+                    for (int si = 0; si < mesh.subMeshCount; si++)
                     {
-                        list = new List<CombineInstance>();
-                        matToCombines[mat] = list;
+                        var mat = si < materials.Length ? materials[si] : materials[0];
+                        if (!matToCombines.TryGetValue(mat, out var list))
+                            matToCombines[mat] = list = new List<CombineInstance>();
+                        list.Add(new CombineInstance
+                        {
+                            mesh = mesh,
+                            subMeshIndex = si,
+                            transform = Matrix4x4.TRS(
+                                cellOrigin + mf.transform.localPosition * resolution + Vector3.up * 0.01f,
+                                mf.transform.localRotation,
+                                mf.transform.localScale * resolution)
+                        });
                     }
-
-                    var ci = new CombineInstance
-                    {
-                        mesh = mesh,
-                        subMeshIndex = si,
-                        transform = Matrix4x4.TRS(
-                            cellOrigin + mf.transform.localPosition * resolution + Vector3.up * 0.2f,
-                            mf.transform.localRotation,
-                            mf.transform.localScale * resolution)
-                    };
-                    list.Add(ci);
                 }
             }
-        }
 
-        // material 별로 분리된 GameObject 생성
-        foreach (var kv in matToCombines)
-        {
-            var mat = kv.Key;
-            var combines = kv.Value;
-            if (combines.Count == 0) continue;
+            foreach (var kv in matToCombines)
+            {
+                var mat = kv.Key;
+                var combines = kv.Value;
+                if (combines.Count == 0) continue;
+                var combinedMesh = new Mesh { indexFormat = IndexFormat.UInt32 };
+                combinedMesh.CombineMeshes(combines.ToArray(), false, true);
+                combinedMesh.RecalculateBounds();
+                var go = new GameObject($"{goName}_{mat.name}_batch_{i}");
+                go.transform.parent = transform;
+                var mfOut = go.AddComponent<MeshFilter>(); mfOut.mesh = combinedMesh;
+                var mrOut = go.AddComponent<MeshRenderer>(); mrOut.material = mat;
+            }
 
-            var combinedMesh = new Mesh { indexFormat = IndexFormat.UInt32 };
-            combinedMesh.CombineMeshes(combines.ToArray(), false, true);
-
-            combinedMesh.RecalculateBounds();
-
-            var go = new GameObject(goName + "_" + mat.name);
-            go.transform.parent = transform;
-            var mfOut = go.AddComponent<MeshFilter>();
-            mfOut.mesh = combinedMesh;
-            var mrOut = go.AddComponent<MeshRenderer>();
-            mrOut.material = mat;
-
-            Debug.Log($"[{goName}] bounds center={combinedMesh.bounds.center}, size={combinedMesh.bounds.size}");
-
+            yield return null;
         }
     }
 }
