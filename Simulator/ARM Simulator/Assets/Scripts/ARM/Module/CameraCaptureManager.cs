@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.HighDefinition;
 
 public class CameraCaptureManager : MonoBehaviour
 {
@@ -15,8 +13,8 @@ public class CameraCaptureManager : MonoBehaviour
     [Header("출력 해상도")]
     public int resolution = 224;
 
-    // ID → RTHandle
-    private Dictionary<int, RTHandle> rtHandles = new Dictionary<int, RTHandle>();
+    // ID → RenderTexture
+    private Dictionary<int, RenderTexture> renderTextures = new Dictionary<int, RenderTexture>();
 
     // WaitForEndOfFrame 인스턴스 풀링
     private static readonly YieldInstruction FrameEnd = new WaitForEndOfFrame();
@@ -25,17 +23,14 @@ public class CameraCaptureManager : MonoBehaviour
     {
         // Inspector나 RegistCamera로 미리 cameras가 채워졌다고 가정
         foreach (var kv in cameras)
-        {
-            int id = kv.Key;
-            AllocateRTHandle(id);
-        }
+            AllocateRenderTexture(kv.Key);
     }
 
     void OnDisable()
     {
-        foreach (var handle in rtHandles.Values)
-            RTHandles.Release(handle);
-        rtHandles.Clear();
+        foreach (var rt in renderTextures.Values)
+            rt.Release();
+        renderTextures.Clear();
     }
 
     /// <summary>
@@ -44,7 +39,7 @@ public class CameraCaptureManager : MonoBehaviour
     public void RegistCamera(int id, Camera cam)
     {
         cameras[id] = cam;
-        AllocateRTHandle(id);
+        AllocateRenderTexture(id);
     }
 
     /// <summary>
@@ -52,23 +47,21 @@ public class CameraCaptureManager : MonoBehaviour
     /// </summary>
     public void UnregistCamera(int id)
     {
-        if (cameras.Remove(id) && rtHandles.TryGetValue(id, out var h))
+        cameras.Remove(id);
+        if (renderTextures.TryGetValue(id, out var rt))
         {
-            RTHandles.Release(h);
-            rtHandles.Remove(id);
+            rt.Release();
+            renderTextures.Remove(id);
         }
     }
 
-    private void AllocateRTHandle(int id)
+    private void AllocateRenderTexture(int id)
     {
-        if (rtHandles.ContainsKey(id)) return;
-        var handle = RTHandles.Alloc(
-            resolution, resolution,
-            colorFormat: GraphicsFormat.R8G8B8A8_UNorm,
-            useDynamicScale: true,
-            name: $"CamCapture_{id}"
-        );
-        rtHandles[id] = handle;
+        if (renderTextures.ContainsKey(id)) return;
+
+        var rt = new RenderTexture(resolution, resolution, 24, RenderTextureFormat.ARGB32);
+        rt.Create();
+        renderTextures[id] = rt;
     }
 
     /// <summary>
@@ -85,14 +78,13 @@ public class CameraCaptureManager : MonoBehaviour
         // GPU 렌더링이 끝난 뒤 실행
         yield return FrameEnd;
 
-        var rt = rtHandles[id];
+        var rt = renderTextures[id];
         cam.targetTexture = rt;
         cam.Render();
         cam.targetTexture = null;
 
         // 비동기 GPU→CPU 복사
-        AsyncGPUReadback.Request(
-            rt, 0, TextureFormat.RGB24,
+        AsyncGPUReadback.Request(rt, 0, TextureFormat.RGB24,
             req => OnCompleteReadback(req, id, timestamp)
         );
     }
@@ -106,17 +98,10 @@ public class CameraCaptureManager : MonoBehaviour
         }
 
         // Color32 → 그레이스케일 처리 (Job 사용)
-        var pixels = request.GetData<Color32>().ToArray();
-        float[] gray = ProcessPixelsWithJob(pixels);
+        var pixelData = request.GetData<Color32>();
+        int n = pixelData.Length;
 
-        // 최종 콜백
-        Managers.Data.OnCameraCaptured(id, gray, timestamp);
-    }
-
-    private float[] ProcessPixelsWithJob(Color32[] pixels)
-    {
-        int n = pixels.Length;
-        var input = new NativeArray<Color32>(pixels, Allocator.TempJob);
+        var input = new NativeArray<Color32>(pixelData.ToArray(), Allocator.TempJob);
         var output = new NativeArray<float>(n, Allocator.TempJob);
 
         var job = new PixelProcessingJob
@@ -127,10 +112,12 @@ public class CameraCaptureManager : MonoBehaviour
         var handle = job.Schedule(n, 64);
         handle.Complete();
 
-        float[] result = output.ToArray();
+        float[] gray = output.ToArray();
         input.Dispose();
         output.Dispose();
-        return result;
+
+        // 최종 콜백
+        Managers.Data.OnCameraCaptured(id, gray, timestamp);
     }
 
     // 그레이스케일 변환 Job

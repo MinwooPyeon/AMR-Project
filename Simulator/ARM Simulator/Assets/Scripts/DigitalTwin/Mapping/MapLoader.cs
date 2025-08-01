@@ -74,5 +74,6 @@ public class MapLoader : MonoBehaviour
         combiner.CombineCells(chargerPrefab, yaml.chargerCells, yaml.origin, yaml.resolution, "CombinedCharger");
         combiner.CombineCells(loadPrefab, yaml.loadCells, yaml.origin, yaml.resolution, "CombinedLoad");
         combiner.CombineCells(dropPrefab, yaml.dropCells, yaml.origin, yaml.resolution, "CombinedDrop");
+
     }
 }
