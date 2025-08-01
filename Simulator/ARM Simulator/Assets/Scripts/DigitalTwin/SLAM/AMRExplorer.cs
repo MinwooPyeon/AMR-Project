@@ -13,32 +13,11 @@ public class AMRExplorer : MonoBehaviour
     private float rotateTime = 1.0f;
     private float timer = 0f;
 
-    void Start()
-    {
-        SetRandomBehavior();
-    }
-
+    
     void Update()
     {
         timer += Time.deltaTime;
-
-        switch (currentMode)
-        {
-            case Mode.MoveForward:
-                transform.position += transform.forward * moveSpeed * Time.deltaTime;
-                break;
-            case Mode.Rotate:
-                transform.Rotate(Vector3.up, rotateSpeed * Time.deltaTime);
-                break;
-        }
-
-        if (timer >= (currentMode == Mode.MoveForward ? moveTime : rotateTime))
-            SetRandomBehavior();
+        transform.position += transform.forward * moveSpeed * Time.deltaTime;
     }
 
-    void SetRandomBehavior()
-    {
-        currentMode = (Random.value > 0.5f) ? Mode.MoveForward : Mode.Rotate;
-        timer = 0f;
-    }
 }

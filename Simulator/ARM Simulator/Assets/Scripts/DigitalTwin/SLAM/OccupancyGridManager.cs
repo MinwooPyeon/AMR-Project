@@ -31,7 +31,7 @@ public class OccupancyGridManager : MonoBehaviour
         displayPlane = GameObject.CreatePrimitive(PrimitiveType.Quad);
         displayPlane.name = "OccupancyMap";
         displayPlane.transform.localScale = new Vector3(width * resolution, height * resolution, 1);
-        displayPlane.transform.position = origin + new Vector3(0, 0.01f, 0); // slightly above ground
+        displayPlane.transform.position = origin + new Vector3(0, 2f, 0); // slightly above ground
         displayPlane.transform.rotation = Quaternion.Euler(90, 0, 0); // face upward
         displayPlane.GetComponent<Renderer>().material = new Material(Shader.Find("Unlit/Texture"));
         displayPlane.GetComponent<Renderer>().material.mainTexture = mapTexture;
@@ -47,6 +47,7 @@ public class OccupancyGridManager : MonoBehaviour
     }
     public void AddLidarPoints(Vector3[] points, LidarSensor sensor)
     {
+        Debug.Log("[GridManager] Adding Lidar Points: " + points.Length + " points.");
         Vector3 start = sensor.gameObject.transform.parent.transform.position;
         
 
@@ -54,7 +55,8 @@ public class OccupancyGridManager : MonoBehaviour
         {
             float dist = Vector3.Distance(start, world);
             
-            bool actuallyHit = dist < maxLidarRange * 0.999f;
+            bool actuallyHit = dist < maxLidarRange;
+            Debug.Log(dist);
             AddLidarPath(start, world, maxLidarRange, actuallyHit);
         }
         UpdateTexture();
