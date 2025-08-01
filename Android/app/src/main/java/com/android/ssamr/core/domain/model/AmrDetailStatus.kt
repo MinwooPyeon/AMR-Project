@@ -11,6 +11,7 @@ data class AmrDetailStatus (
     val model: String,
     val serial: String,
     val firmware: String,
+    val ipAddress: String
 )
 
 enum class AmrDetailAction(val display: String, val color: Color) {

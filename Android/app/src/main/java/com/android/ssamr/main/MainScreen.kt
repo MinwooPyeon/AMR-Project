@@ -20,11 +20,13 @@ import com.android.ssamr.core.ui.SSAMRCustomTopAppBar
 import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
+import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.MoreScreen
+import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
 
@@ -108,8 +110,20 @@ fun MainScreen() {
             ) { backStackEntry ->
                 val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
                 AmrDetailRoute(
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    navigateToWebcam = { ipAddress ->
+                        navController.navigate("amr_webcam/$amrId/$ipAddress")
+                    }
                 )
+            }
+            composable(
+                route = "${WebcamScreen.route}/{amrId}/{ipAddress}",
+                arguments = listOf(
+                    navArgument("amrId") { type = NavType.LongType },
+                    navArgument("ipAddress") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                AmrWebcamRoute()
             }
         }
     }

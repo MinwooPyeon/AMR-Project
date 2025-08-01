@@ -10,6 +10,7 @@ data class AmrDetailDto(
     val model: String,
     val serial: String,
     val firmware: String,
+    val ipAddress: String
 )
 
 fun AmrDetailDto.toDetailModel(): AmrDetailStatus = AmrDetailStatus(
@@ -22,5 +23,6 @@ fun AmrDetailDto.toDetailModel(): AmrDetailStatus = AmrDetailStatus(
     job = this.status,
     model = this.model,
     serial = this.serial,
-    firmware = this.firmware
+    firmware = this.firmware,
+    ipAddress = this.ipAddress
 )

@@ -9,3 +9,8 @@ data object AmrDetailScreen : DetailRoute {
     override val route = "amr_detail"
     override val label = "AMR 상세"
 }
+
+data object WebcamScreen: DetailRoute {
+    override val route = "amr_webcam"
+    override val label = "Amr 웹캠"
+}
