@@ -317,7 +317,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1088782211}
-  - component: {fileID: 1088782210}
   - component: {fileID: 1088782214}
   - component: {fileID: 1088782213}
   - component: {fileID: 1088782215}
@@ -328,25 +327,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1088782210
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1088782209}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbd0c557a09a27242959fc1f78bbb6c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  yamlFileName: Map/test.yaml
-  imageFileName: Map/test.png
-  obstaclePrefab: {fileID: 6367951854641072274, guid: bb522d3a4fa21f245b0c48cd8450659d, type: 3}
-  chargerPrefab: {fileID: 6603727346776819930, guid: 7273a999af0bfc7428d4cf764b4e2ef1, type: 3}
-  loadPrefab: {fileID: 8791553212763182605, guid: c51db1dc31b4c624187de0c7386b7158, type: 3}
-  dropPrefab: {fileID: 6873474067821122631, guid: 2bd0a291eac43e74cb1fcc0efce0e6cf, type: 3}
-  combiner: {fileID: 1088782215}
 --- !u!4 &1088782211
 Transform:
   m_ObjectHideFlags: 0
@@ -424,9 +404,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1088782209}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96a7b22cdfaf4b54cb6c471a406608b5, type: 3}
+  m_Script: {fileID: 11500000, guid: 02ab33f620250914aa5dc3c0a9d0a3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  yamlFileName: 
+  imageFileName: 
+  loadAsPNG: 0
+  obstaclePrefab: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
