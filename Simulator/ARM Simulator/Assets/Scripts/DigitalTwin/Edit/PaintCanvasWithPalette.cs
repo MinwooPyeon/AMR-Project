@@ -27,6 +27,7 @@ public class PaintCanvasWithUICamera : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("canvasIamge: " + canvasImage.name);
         rt = canvasImage.rectTransform;
 
         // 1) YAML 파싱 (해상도·원점·threshold 등) :contentReference[oaicite:2]{index=2}
