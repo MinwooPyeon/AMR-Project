@@ -6,8 +6,7 @@ public class ImageParser
     public ImageFile LoadPNG(string pngPath)
     {
         ImageFile image = new ImageFile();
-        string path = Path.Combine(Application.streamingAssetsPath, pngPath);
-        byte[] bytes = File.ReadAllBytes(path);
+        byte[] bytes = File.ReadAllBytes(pngPath);
         image.texture = new Texture2D(2, 2, TextureFormat.R8, false);
         image.texture.LoadImage(bytes);
         image.texture.Apply();

@@ -12,13 +12,13 @@ public class YAMLParser
         yaml = new YamlFile();
 
         // 1) 파일 읽기
-        string fullPath = GetFullPath(yamlPath);
-        if (!File.Exists(fullPath))
-        {
-            Debug.LogError($"[YAMLParser] 파일이 없습니다: {fullPath}");
-            return;
-        }
-        var lines = File.ReadAllLines(fullPath);
+        //string fullPath = GetFullPath(yamlPath);
+        //if (!File.Exists(fullPath))
+        //{
+        //    Debug.LogError($"[YAMLParser] 파일이 없습니다: {fullPath}");
+        //    return;
+        //}
+        var lines = File.ReadAllLines(yamlPath);
 
         // 2) 메타데이터 (키:값) 파싱
         ParseMetadata(lines, ref yaml);
