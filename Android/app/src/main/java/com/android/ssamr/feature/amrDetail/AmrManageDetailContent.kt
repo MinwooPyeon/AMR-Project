@@ -3,6 +3,7 @@ package com.android.ssamr.feature.amrDetail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,29 +76,7 @@ fun AmrDetailInfoCard(
                     )
                 }
             }
-            Spacer(Modifier.height(16.dp))
-
-            Text(
-                "배터리", color = Color(0xFFBCC0C6), style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(Modifier.height(6.dp))
-            LinearProgressIndicator(
-                progress = amr.battery / 100f,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(6.dp)),
-                color = statusColor,
-                trackColor = Color(0xFFE5E5E5)
-            )
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text("${amr.battery}%", color = Color(0xFF7C838A))
-            }
-
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(40.dp))
 
             InfoRow("현재 위치", amr.location)
             InfoRow("이동 속도", amr.speed)
@@ -118,8 +97,8 @@ private fun InfoRow(title: String, value: String) {
             .padding(vertical = 2.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(title, color = Color(0xFF6D6D6D), style = MaterialTheme.typography.bodyMedium)
-        Text(value, color = Color(0xFF323232), style = MaterialTheme.typography.bodyMedium)
+        Text(title, color = Color(0xFF6D6D6D), style = MaterialTheme.typography.bodyLarge)
+        Text(value, color = Color(0xFF323232), style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -136,44 +115,54 @@ fun AmrDetailButtonGroup(
     ) {
         Button(
             onClick = onWebcamClick,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2167EA))
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB)),
+            contentPadding = PaddingValues(horizontal = 20.dp)
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_webcam),
                 contentDescription = "웹캠",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(24.dp)
             )
             Spacer(Modifier.width(8.dp))
-            Text("실시간 웹캠 보기", color = Color.White)
+            Text("실시간 웹캠 보기", color = Color.White, style = MaterialTheme.typography.bodyLarge)
         }
 
         Button(
             onClick = onManualReturnClick,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7024))
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEA580C))
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_home),
                 contentDescription = "복귀",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(24.dp)
             )
             Spacer(Modifier.width(8.dp))
-            Text("수동 복귀", color = Color.White)
+            Text("수동 복귀", color = Color.White, style = MaterialTheme.typography.bodyLarge)
         }
 
         Button(
             onClick = onManualStartClick,
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF23C06C))
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_play),
                 contentDescription = "출발",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(24.dp)
             )
             Spacer(Modifier.width(8.dp))
-            Text("수동 출발", color = Color.White)
+            Text("수동 출발", color = Color.White, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

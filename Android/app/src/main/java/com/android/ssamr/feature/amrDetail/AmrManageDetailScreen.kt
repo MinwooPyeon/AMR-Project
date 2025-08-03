@@ -96,7 +96,6 @@ val sampleAmrDetail =
     AmrDetailStatus(
         name = "AMR-001",
         status = AmrDetailAction.fromStatus("작동중"),
-        battery = 85,
         location = "A구역-라인1",
         speed = "1.2m/s",
         job = "화물 운반 중",

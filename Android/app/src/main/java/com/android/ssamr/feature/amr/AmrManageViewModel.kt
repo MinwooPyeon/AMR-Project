@@ -63,9 +63,18 @@ class AmrManageViewModel @Inject constructor(
                 try {
                     val list = getAmrListUseCase()
                     val filitered = filterList(list, _state.value.selectedCategory)
+                    val counts = AmrCategory.values().associateWith { cat ->
+                        when (cat) {
+                            AmrCategory.ALL -> list.size
+                            AmrCategory.RUNNING -> list.count { it.status == AmrAction.RUNNING }
+                            AmrCategory.CHARGING -> list.count { it.status == AmrAction.CHARGING }
+                            AmrCategory.CHECKING -> list.count { it.status == AmrAction.CHECKING }
+                        }
+                    }
                     _state.value = _state.value.copy(
                         fullAmrList = list,
                         amrList = filitered,
+                        categoryCounts = counts,
                         isLoading = false,
                         error = null
                     )
@@ -86,9 +95,18 @@ class AmrManageViewModel @Inject constructor(
             try {
                 val list = getAmrListUseCase()
                 val filtered = filterList(list, _state.value.selectedCategory)
+                val counts = AmrCategory.values().associateWith { cat ->
+                    when (cat) {
+                        AmrCategory.ALL -> list.size
+                        AmrCategory.RUNNING -> list.count { it.status == AmrAction.RUNNING }
+                        AmrCategory.CHARGING -> list.count { it.status == AmrAction.CHARGING }
+                        AmrCategory.CHECKING -> list.count { it.status == AmrAction.CHECKING }
+                    }
+                }
                 _state.value = _state.value.copy(
                     fullAmrList = list,
                     amrList = filtered,
+                    categoryCounts = counts,
                     isLoading = false,
                     error = null
                 )

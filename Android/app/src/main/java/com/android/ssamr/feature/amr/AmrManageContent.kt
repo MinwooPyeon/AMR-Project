@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -29,9 +32,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -123,91 +128,90 @@ fun AmrCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         onClick = { onAmrCardClick(amr.id) }
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .background(statusColor, CircleShape)
-                )
-                Spacer(Modifier.width(8.dp))
-                Column(Modifier.padding(horizontal = 4.dp, vertical = 0.dp)) {
-                    Row {
-                        Text(
-                            amr.name,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(Modifier.weight(1f))
-                        Text("${amr.battery}%", color = statusColor, fontWeight = FontWeight.Bold)
-                    }
-                    Row {
-                        Text(
-                            amr.status.display,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = statusColor
-                        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 0.dp)
+                .height(IntrinsicSize.Min)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .background(statusColor, CircleShape)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Column(Modifier.padding(horizontal = 4.dp, vertical = 0.dp)) {
+                        Row {
+                            Text(
+                                amr.name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(Modifier.weight(1f))
+//                        Text("${amr.battery}%", color = statusColor, fontWeight = FontWeight.Bold)
+                        }
+                        Row {
+                            Text(
+                                amr.status.display,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = statusColor
+                            )
+                        }
                     }
                 }
+                Spacer(Modifier.height(8.dp))
+                Row {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.current_location),
+                        contentDescription = "현재 위치",
+                        tint = Color(0xFFD1D5DC)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("위치: ${amr.location}", style = MaterialTheme.typography.bodyMedium)
+
+                }
+                Row {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.fast_forward),
+                        contentDescription = "속도",
+                        tint = Color(0xFFD1D5DC)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("속도: ${amr.speed} m/s", style = MaterialTheme.typography.bodyMedium)
+                }
+                Row {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.check_box),
+                        contentDescription = "작업",
+                        tint = Color(0xFFD1D5DC)
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text("작업: ${amr.job}", style = MaterialTheme.typography.bodyMedium)
+
+                }
             }
-            Spacer(Modifier.height(8.dp))
-            Row {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.current_location),
-                    contentDescription = "현재 위치",
-                    tint = Color(0xFFD1D5DC)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("위치: ${amr.location}", style = MaterialTheme.typography.bodyMedium)
-
-            }
-            Row {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.fast_forward),
-                    contentDescription = "속도",
-                    tint = Color(0xFFD1D5DC)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("속도: ${amr.speed} m/s", style = MaterialTheme.typography.bodyMedium)
-            }
-            Row {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.check_box),
-                    contentDescription = "작업",
-                    tint = Color(0xFFD1D5DC)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text("작업: ${amr.job}", style = MaterialTheme.typography.bodyMedium)
-
-            }
-
-            Spacer(Modifier.height(16.dp))
-
-            HorizontalDivider(thickness = 1.dp, color = Color(0xFFF5F6F8))
-
-            Spacer(Modifier.height(16.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .fillMaxHeight()
+                    .background(statusColor)
+                    .clip(RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp)),
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
                     modifier = Modifier
-                        .size(20.dp)
-                        .rotate(90f),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.battery),
-                    contentDescription = "배터리",
-                    tint = Color(0xFFD1D5DC),
-                )
-                Spacer(Modifier.width(8.dp))
-                LinearProgressIndicator(
-                    progress = amr.battery.toFloat() / 100f,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .background(Color(0xFFE5E5E5), shape = RoundedCornerShape(3.dp)),
-                    color = statusColor
+                        .size(40.dp),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_right_arrow),
+                    contentDescription = "화살표",
+                    tint = Color.White
                 )
             }
 
@@ -238,7 +242,6 @@ fun AmrCardListPreview() {
             location = "A구역-라인1",
             speed = "1.2",
             job = "화물 운반 중",
-            battery = 85,
         ),
         AmrStatus(
             id = 2L,
@@ -247,7 +250,6 @@ fun AmrCardListPreview() {
             location = "충전소-1번",
             speed = "0",
             job = "충전 중",
-            battery = 45,
         ),
         AmrStatus(
             id = 3L,
@@ -256,7 +258,6 @@ fun AmrCardListPreview() {
             location = "B구역-라인3",
             speed = "0",
             job = "점검 중",
-            battery = 92,
         )
     )
     SSAMRTheme {
