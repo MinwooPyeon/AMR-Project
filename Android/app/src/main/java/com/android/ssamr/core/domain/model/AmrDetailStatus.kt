@@ -5,7 +5,6 @@ import androidx.compose.ui.graphics.Color
 data class AmrDetailStatus (
     val name: String,
     val status: AmrDetailAction,
-    val battery: Int,
     val location: String,
     val speed: String,
     val job: String,

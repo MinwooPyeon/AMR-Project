@@ -73,7 +73,6 @@ val sampleAmrs = listOf(
         location = "A구역-라인1",
         speed = "1.2",
         job = "화물 운반 중",
-        battery = 85,
     ),
     AmrStatus(
         id = 2L,
@@ -82,7 +81,6 @@ val sampleAmrs = listOf(
         location = "충전소-1번",
         speed = "1.2",
         job = "충전 중",
-        battery = 45,
     ),
     AmrStatus(
         id = 3L,
@@ -91,6 +89,5 @@ val sampleAmrs = listOf(
         location = "B구역-라인3",
         speed = "1.2",
         job = "점검 중",
-        battery = 92,
     )
 )

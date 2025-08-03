@@ -7,7 +7,6 @@ data class AmrStatus (
     val location: String,
     val speed: String,
     val job: String,
-    val battery: Int,
 )
 
 enum class AmrCategory(val label: String) {

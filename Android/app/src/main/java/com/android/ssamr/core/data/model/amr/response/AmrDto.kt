@@ -10,7 +10,6 @@ data class AmrDto(
     val status: String,
     val location: String,
     val speed: String,
-    val battery: Int
 )
 
 fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
@@ -20,5 +19,4 @@ fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
     location = "A구역-1",
     speed = speed,
     job = status,
-    battery = battery
 )
