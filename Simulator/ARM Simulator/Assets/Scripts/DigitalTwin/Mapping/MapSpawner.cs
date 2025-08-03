@@ -6,7 +6,6 @@ public class MapSpawner : MonoBehaviour
     [Header("파일 경로 (StreamingAssets)")]
     public string yamlFileName;      // ex) "map.yaml"
     public string imageFileName;     // ex) "map.pgm" or "map.png"
-    public bool loadAsPNG = false;   // true→PNG, false→PGM
 
     [Header("프리팹")]
     public GameObject obstaclePrefab;
