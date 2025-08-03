@@ -2614,13 +2614,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b4e9fe746e72684dbc1383ee4438ed2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VirtualMapCanvas: {fileID: 0}
+  VirtualMapCanvas: {fileID: 1717191101}
   PathEditCanvas: {fileID: 1994920910}
   TimeLapseCanvas: {fileID: 773208495}
   DeviceInfoCanvas: {fileID: 1571839629}
   DeviceSettingCanvas: {fileID: 2088755300}
   MapEditCanvas: {fileID: 580412610}
-  EditorPathEditCanvas: {fileID: 237112643}
   mapSpawner: {fileID: 0}
 --- !u!4 &383758271
 Transform:
