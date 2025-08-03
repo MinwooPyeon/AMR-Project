@@ -5,11 +5,6 @@ public struct YamlFile
     public float resolution;
     public Vector3 origin;
     public float occThresh, freeThresh;
-    
-    public Vector2Int[] chargerCells;
-    public Vector2Int[] loadCells;
-    public Vector2Int[] dropCells;
-
 }
 
 public struct ImageFile

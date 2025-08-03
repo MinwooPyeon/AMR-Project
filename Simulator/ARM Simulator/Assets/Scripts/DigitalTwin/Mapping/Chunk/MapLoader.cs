@@ -29,7 +29,7 @@ public class MapLoader : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(SetupAndCombineCoroutine(chunkSize: 32));
+        //StartCoroutine(SetupAndCombineCoroutine(chunkSize: 32));
     }
 
     /// <summary>
@@ -37,60 +37,60 @@ public class MapLoader : MonoBehaviour
     /// 2) 이미지 로드
     /// 3) 청크 단위 결합
     /// </summary>
-    IEnumerator SetupAndCombineCoroutine(int chunkSize)
-    {
-        // 1) YAML 파싱
-        string ypath = Path.Combine(Application.streamingAssetsPath, yamlFileName);
-        new YAMLParser().ParseYaml(ypath, out yaml);
+    //IEnumerator SetupAndCombineCoroutine(int chunkSize)
+    //{
+    //    // 1) YAML 파싱
+    //    string ypath = Path.Combine(Application.streamingAssetsPath, yamlFileName);
+    //    new YAMLParser().ParseYaml(ypath, out yaml);
 
-        // 2) Map 이미지 로드
-        string ipath = Path.Combine(Application.streamingAssetsPath, imageFileName);
-        var ip = new ImageParser();
-        image = ip.LoadPNG(ipath);
+    //    // 2) Map 이미지 로드
+    //    string ipath = Path.Combine(Application.streamingAssetsPath, imageFileName);
+    //    var ip = new ImageParser();
+    //    image = ip.LoadPNG(ipath);
 
-        // 3) 맵 쿼드 만들기 (시각화)
-        BuildMapQuad();
+    //    // 3) 맵 쿼드 만들기 (시각화)
+    //    BuildMapQuad();
 
-        // 4) 청크 결합: 장애물
-        bool[,] mask = new bool[image.width, image.height];
-        for (int y = 0; y < image.height; y++)
-            for (int x = 0; x < image.width; x++)
-                mask[x, y] = image.probGrid[x, y] > yaml.occThresh;
-        yield return StartCoroutine(
-            combiner.CombineMaskInChunks(
-                obstaclePrefab,
-                mask,
-                yaml.origin,
-                yaml.resolution,
-                chunkSize,
-                "CombinedObstacles"));
+    //    // 4) 청크 결합: 장애물
+    //    bool[,] mask = new bool[image.width, image.height];
+    //    for (int y = 0; y < image.height; y++)
+    //        for (int x = 0; x < image.width; x++)
+    //            mask[x, y] = image.probGrid[x, y] > yaml.occThresh;
+    //    //yield return StartCoroutine(
+    //    //    combiner.CombineMaskInChunks(
+    //    //        obstaclePrefab,
+    //    //        mask,
+    //    //        yaml.origin,
+    //    //        yaml.resolution,
+    //    //        chunkSize,
+    //    //        "CombinedObstacles"));
 
-        // 5) zones 청크 결합: 충전소, 로드, 드롭
-        yield return StartCoroutine(
-            combiner.CombineCellsInChunks(
-                chargerPrefab,
-                yaml.chargerCells,
-                yaml.origin,
-                yaml.resolution,
-                chunkSize,
-                "CombinedCharger"));
-        yield return StartCoroutine(
-            combiner.CombineCellsInChunks(
-                loadPrefab,
-                yaml.loadCells,
-                yaml.origin,
-                yaml.resolution,
-                chunkSize,
-                "CombinedLoad"));
-        yield return StartCoroutine(
-            combiner.CombineCellsInChunks(
-                dropPrefab,
-                yaml.dropCells,
-                yaml.origin,
-                yaml.resolution,
-                chunkSize,
-                "CombinedDrop"));
-    }
+    //    //// 5) zones 청크 결합: 충전소, 로드, 드롭
+    //    //yield return StartCoroutine(
+    //    //    combiner.CombineCellsInChunks(
+    //    //        chargerPrefab,
+    //    //        yaml.chargerCells,
+    //    //        yaml.origin,
+    //    //        yaml.resolution,
+    //    //        chunkSize,
+    //    //        "CombinedCharger"));
+    //    //yield return StartCoroutine(
+    //    //    combiner.CombineCellsInChunks(
+    //    //        loadPrefab,
+    //    //        yaml.loadCells,
+    //    //        yaml.origin,
+    //    //        yaml.resolution,
+    //    //        chunkSize,
+    //    //        "CombinedLoad"));
+    //    //yield return StartCoroutine(
+    //    //    combiner.CombineCellsInChunks(
+    //    //        dropPrefab,
+    //    //        yaml.dropCells,
+    //    //        yaml.origin,
+    //    //        yaml.resolution,
+    //    //        chunkSize,
+    //    //        "CombinedDrop"));
+    //}
 
     /// <summary>
     /// 맵을 XZ 평면에 시각화합니다.

@@ -8,60 +8,61 @@ public class MainUIAction : MonoBehaviour
     public Canvas DeviceInfoCanvas;
     public Canvas DeviceSettingCanvas;
     public Canvas MapEditCanvas;
-    public Canvas EditorPathEditCanvas;
+
+    public MapSpawner mapSpawner;
 
     public void OnPathEditButtonClicked()
     {
-        VirtualMapCanvas.enabled = true;
-        PathEditCanvas.enabled = true;
-        TimeLapseCanvas.enabled = false;
-        DeviceInfoCanvas.enabled = false;
-        DeviceSettingCanvas.enabled = false;
-        MapEditCanvas.enabled = false;
-        EditorPathEditCanvas.enabled = false;
+        VirtualMapCanvas.gameObject.SetActive(true);
+        PathEditCanvas.gameObject.SetActive(true);
+        TimeLapseCanvas.gameObject.SetActive(false);
+        DeviceInfoCanvas.gameObject.SetActive(false);
+        DeviceSettingCanvas.gameObject.SetActive(false);
+        MapEditCanvas.gameObject.SetActive(false);
     }
 
     public void OnTimelapseButtonClicked()
     {
-        VirtualMapCanvas.enabled = true;
-       PathEditCanvas.enabled = false;
-        TimeLapseCanvas.enabled = true;
-        DeviceInfoCanvas.enabled = false;
-        DeviceSettingCanvas.enabled = false;
-        MapEditCanvas.enabled = false;
-        EditorPathEditCanvas.enabled = false;
+        VirtualMapCanvas.gameObject.SetActive(true);
+        PathEditCanvas.gameObject.SetActive(false);
+        TimeLapseCanvas.gameObject.SetActive(true);
+        DeviceInfoCanvas.gameObject.SetActive(false);
+        DeviceSettingCanvas.gameObject.SetActive(false);
+        MapEditCanvas.gameObject.SetActive(false);
     }
 
     public void OnDeviceInfoButtonClicked()
     {
-        VirtualMapCanvas.enabled = true;
-        PathEditCanvas.enabled = false;
-        TimeLapseCanvas.enabled = false;
-        DeviceInfoCanvas.enabled = true;
-        DeviceSettingCanvas.enabled = false;
-        MapEditCanvas.enabled = false;
-        EditorPathEditCanvas.enabled = false;
+        VirtualMapCanvas.gameObject.SetActive(false);
+        PathEditCanvas.gameObject.SetActive(false);
+        TimeLapseCanvas.gameObject.SetActive(false);
+        DeviceInfoCanvas.gameObject.SetActive(true);
+        DeviceSettingCanvas.gameObject.SetActive(false);
+        MapEditCanvas.gameObject.SetActive(false);
     }
 
     public void OnDeviceSettingButtonClicked()
     {
-        VirtualMapCanvas.enabled = false;
-        PathEditCanvas.enabled = false;
-        TimeLapseCanvas.enabled = false;
-        DeviceInfoCanvas.enabled = false;
-        DeviceSettingCanvas.enabled = true;
-        MapEditCanvas.enabled = false;
-        EditorPathEditCanvas.enabled = false;
+        VirtualMapCanvas.gameObject.SetActive(true);
+        PathEditCanvas.gameObject.SetActive(false);
+        TimeLapseCanvas.gameObject.SetActive(false);
+        DeviceInfoCanvas.gameObject.SetActive(false);
+        DeviceSettingCanvas.gameObject.SetActive(true);
+        MapEditCanvas.gameObject.SetActive(false);
     }
 
     public void OnEditorButtonClicked()
     {
-        VirtualMapCanvas.enabled = false;
-        PathEditCanvas.enabled = false;
-        TimeLapseCanvas.enabled = false;
-        DeviceInfoCanvas.enabled = false;
-        DeviceSettingCanvas.enabled = false;
-        MapEditCanvas.enabled = true;
-        EditorPathEditCanvas.enabled = true;
+        VirtualMapCanvas.gameObject.SetActive(false);
+        PathEditCanvas.gameObject.SetActive(false);
+        TimeLapseCanvas.gameObject.SetActive(false);
+        DeviceInfoCanvas.gameObject.SetActive(false);
+        DeviceSettingCanvas.gameObject.SetActive(false);
+        MapEditCanvas.gameObject.SetActive(true);
+    }
+
+    public void OnLoadButtonClicked()
+    {
+        mapSpawner.Load();
     }
 }

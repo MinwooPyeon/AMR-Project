@@ -23,15 +23,6 @@ public class YAMLParser
         // 2) 詭顫等檜攪 (酈:高) だ諒
         ParseMetadata(lines, ref yaml);
 
-        // 3) zones だ諒
-        ParseZones(lines, out yaml.chargerCells, out yaml.loadCells, out yaml.dropCells);
-
-        Debug.Log(
-          $"[YAMLParser] Done ⊥ resolution:{yaml.resolution} " +
-          $"occThresh:{yaml.occThresh} freeThresh:{yaml.freeThresh} " +
-          $"origin:{yaml.origin} charger:{yaml.chargerCells.Length} " +
-          $"load:{yaml.loadCells.Length} drop:{yaml.dropCells.Length}"
-        );
     }
 
     //式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
@@ -77,78 +68,9 @@ public class YAMLParser
     }
 
     //式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
-    // Zones: charger, load, drop
-    //式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
-    private void ParseZones(
-        string[] lines,
-        out Vector2Int[] charger,
-        out Vector2Int[] load,
-        out Vector2Int[] drop)
-    {
-        var chargerList = new List<Vector2Int>();
-        var loadList = new List<Vector2Int>();
-        var dropList = new List<Vector2Int>();
-
-        string currentZone = null;
-        foreach (var raw in lines)
-        {
-            var line = raw.Trim();
-            if (IsCommentOrEmpty(line))
-                continue;
-
-            // directive
-            if (line.StartsWith("zones:"))
-            {
-                currentZone = null; continue;
-            }
-            if (line.StartsWith("charger:"))
-            {
-                currentZone = "charger"; continue;
-            }
-            if (line.StartsWith("load:"))
-            {
-                currentZone = "load"; continue;
-            }
-            if (line.StartsWith("drop:"))
-            {
-                currentZone = "drop"; continue;
-            }
-
-            // entry "- [x, y]"
-            if (currentZone != null && line.StartsWith("-"))
-            {
-                var coord = line
-                    .TrimStart('-').Trim()
-                    .TrimStart('[').TrimEnd(']');
-                var parts = coord.Split(',');
-                if (parts.Length == 2
-                    && int.TryParse(parts[0], out var x)
-                    && int.TryParse(parts[1], out var y))
-                {
-                    var cell = new Vector2Int(x, y);
-                    switch (currentZone)
-                    {
-                        case "charger": chargerList.Add(cell); break;
-                        case "load": loadList.Add(cell); break;
-                        case "drop": dropList.Add(cell); break;
-                    }
-                }
-            }
-        }
-
-        charger = chargerList.ToArray();
-        load = loadList.ToArray();
-        drop = dropList.ToArray();
-    }
-
-    //式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
     // Utility
     //式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式
     private bool IsCommentOrEmpty(string line)
         => string.IsNullOrEmpty(line) || line.StartsWith("#");
 
-    private string GetFullPath(string yamlPath)
-        => Path.IsPathRooted(yamlPath)
-           ? yamlPath
-           : Path.Combine(Application.streamingAssetsPath, yamlPath);
 }
