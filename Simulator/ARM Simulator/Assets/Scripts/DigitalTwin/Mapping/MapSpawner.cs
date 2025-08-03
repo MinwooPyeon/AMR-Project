@@ -49,9 +49,7 @@ public class MapSpawner : MonoBehaviour
     /// </summary>
     void LoadImage()
     {
-        imgData = loadAsPNG
-            ? imageParser.LoadPNG(imageFileName)
-            : imageParser.LoadPGM(imageFileName);
+        imgData = imageParser.LoadPNG(imageFileName);
 
         Debug.Log($"[MapSpawner] Image loaded: size={imgData.width}¡¿{imgData.height}");
     }

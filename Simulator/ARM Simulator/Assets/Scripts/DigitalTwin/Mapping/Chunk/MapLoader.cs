@@ -46,10 +46,7 @@ public class MapLoader : MonoBehaviour
         // 2) Map 이미지 로드
         string ipath = Path.Combine(Application.streamingAssetsPath, imageFileName);
         var ip = new ImageParser();
-        if (Path.GetExtension(imageFileName).ToLower() == ".pgm")
-            image = ip.LoadPGM(ipath);
-        else
-            image = ip.LoadPNG(ipath);
+        image = ip.LoadPNG(ipath);
 
         // 3) 맵 쿼드 만들기 (시각화)
         BuildMapQuad();

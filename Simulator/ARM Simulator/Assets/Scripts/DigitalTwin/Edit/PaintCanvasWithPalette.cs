@@ -1,21 +1,22 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Globalization;
 
-public class PaintCanvasWithUICamera : MonoBehaviour
+public class PaintCanvasWithPalette : MonoBehaviour
 {
     [Header("파일 (StreamingAssets)")]
-    public string yamlFileName;     // e.g. "map.yaml"
-    public string imageFileName;    // e.g. "map.pgm" or "map.png"
-    public bool loadAsPNG = false;
+    public string yamlFileName = "map.yaml";
+    public string imageFileName = "map.png";
+    public bool loadAsPNG = true;
 
     [Header("UI 컴포넌트")]
-    public RawImage canvasImage;    // Screen Space – Camera Canvas의 RawImage
-    public Camera uiCamera;       // Canvas의 Render Camera
+    public RawImage canvasImage;
+    public Camera uiCamera;
 
     [Header("브러시 설정")]
     public Color brushColor = Color.black;
-    public int brushSize = 8;
+    public int brushSize = 1;
 
     private Texture2D canvasTex;
     private float[,] probGrid;
@@ -27,33 +28,27 @@ public class PaintCanvasWithUICamera : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("canvasIamge: " + canvasImage.name);
         rt = canvasImage.rectTransform;
-
-        // 1) YAML 파싱 (해상도·원점·threshold 등) :contentReference[oaicite:2]{index=2}
         yamlParser.ParseYaml(yamlFileName, out var yamlData);
-
-        // 2) 이미지 로드 (probGrid 생성) :contentReference[oaicite:3]{index=3}
-        var img = loadAsPNG
-            ? imageParser.LoadPNG(imageFileName)
-            : imageParser.LoadPGM(imageFileName);
+        var img = imageParser.LoadPNG(imageFileName);
 
         probGrid = img.probGrid;
         texSize = new Vector2Int(img.width, img.height);
-        rt.anchorMin = new Vector2(0.5f, 0.5f); // 중앙 기준
-        rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.pivot = new Vector2(0.5f, 0.5f); // 중심 정렬
-        rt.sizeDelta = new Vector2(img.width, img.height); // 텍스처 픽셀 크기 그대로
-        rt.anchoredPosition = Vector2.zero; // Canvas 중앙에 위치
 
-        // 3) 캔버스 텍스처 생성
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(img.width, img.height);
+        rt.anchoredPosition = Vector2.zero;
+
         canvasTex = new Texture2D(texSize.x, texSize.y, TextureFormat.RGBA32, false);
-        canvasTex.filterMode = FilterMode.Point; // ← 필수: Point 필터링
+        canvasTex.filterMode = FilterMode.Point;
+
         for (int x = 0; x < texSize.x; x++)
             for (int y = 0; y < texSize.y; y++)
             {
                 float v = probGrid[x, y];
-                canvasTex.SetPixel(x, y, new Color(v, v, v, 1f));
+                canvasTex.SetPixel(x, y, ColorMapper.ConvertProbToColor(v));
             }
         canvasTex.Apply();
 
@@ -63,40 +58,48 @@ public class PaintCanvasWithUICamera : MonoBehaviour
     void Update()
     {
         if (!Input.GetMouseButton(0)) return;
+        Vector2Int? pixel = GetHoveredPixel();
+        if (pixel.HasValue)
+        {
+            PaintPixel(pixel.Value.x, pixel.Value.y);
+            canvasTex.Apply();
+        }
+    }
 
+    Vector2Int? GetHoveredPixel()
+    {
         Vector2 mousePos = Input.mousePosition;
-        if (!RectTransformUtility.RectangleContainsScreenPoint(rt, mousePos, uiCamera))
-            return;
+        if (!RectTransformUtility.RectangleContainsScreenPoint(rt, mousePos, uiCamera)) return null;
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rt, mousePos, uiCamera, out Vector2 local
-        );
-
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, mousePos, uiCamera, out Vector2 local);
         Rect rect = rt.rect;
         float u = (local.x - rect.x) / rect.width;
         float v = (local.y - rect.y) / rect.height;
         int px = Mathf.FloorToInt(u * texSize.x);
         int py = Mathf.FloorToInt(v * texSize.y);
 
-        PaintPixel(px, py);
-        canvasTex.Apply();  // 여러 픽셀 찍지 않으니 매 프레임 Apply 비용도 작습니다
+        return new Vector2Int(px, py);
     }
+    
     void PaintPixel(int x, int y)
     {
         if (x < 0 || x >= texSize.x || y < 0 || y >= texSize.y) return;
         canvasTex.SetPixel(x, y, brushColor);
+        probGrid[x, y] = ColorMapper.ConvertColorToProb(brushColor);
     }
-    void PaintCircle(int cx, int cy)
+
+
+    public void ChangeColor(BrushColor color)
     {
-        int r = brushSize;
-        for (int dx = -r; dx <= r; dx++)
-            for (int dy = -r; dy <= r; dy++)
-                if (dx * dx + dy * dy <= r * r)
-                {
-                    int x = cx + dx, y = cy + dy;
-                    if (x >= 0 && x < texSize.x && y >= 0 && y < texSize.y)
-                        canvasTex.SetPixel(x, y, brushColor);
-                }
+        switch (color)
+        {
+            case BrushColor.White: brushColor = Color.white; break;
+            case BrushColor.Black: brushColor = Color.black; break;
+            case BrushColor.Red: brushColor = Color.red; break;
+            case BrushColor.Blue: brushColor = Color.blue; break;
+            case BrushColor.Green: brushColor = Color.green; break;
+            case BrushColor.Yellow: brushColor = Color.yellow; break;
+        }
     }
 
     public void ClearCanvas()
@@ -104,14 +107,33 @@ public class PaintCanvasWithUICamera : MonoBehaviour
         Color32[] cols = new Color32[texSize.x * texSize.y];
         for (int i = 0; i < cols.Length; i++) cols[i] = Color.white;
         canvasTex.SetPixels32(cols);
+
+        for (int x = 0; x < texSize.x; x++)
+            for (int y = 0; y < texSize.y; y++)
+                probGrid[x, y] = 0f;
+
         canvasTex.Apply();
     }
 
     public void SaveCanvas(string fileName = "canvas.png")
     {
-        byte[] png = canvasTex.EncodeToPNG();
+        Texture2D saveTex = new Texture2D(texSize.x, texSize.y, TextureFormat.RGBA32, false);
+        for (int x = 0; x < texSize.x; x++)
+        {
+            for (int y = 0; y < texSize.y; y++)
+            {
+                float prob = probGrid[x, y];
+                Color color = new Color(prob, prob, prob, 1f);
+                saveTex.SetPixel(x, y, color);
+            }
+        }
+        saveTex.Apply();
+
+        // 2. PNG로 저장
+        byte[] pngBytes = saveTex.EncodeToPNG();
         string path = Path.Combine(Application.persistentDataPath, fileName);
-        File.WriteAllBytes(path, png);
-        Debug.Log($"[PaintCanvasWithUICamera] Saved to {path}");
+        File.WriteAllBytes(path, pngBytes);
+
+        Debug.Log($"[PaintCanvasWithPalette] Saved PNG to {path}");
     }
 }

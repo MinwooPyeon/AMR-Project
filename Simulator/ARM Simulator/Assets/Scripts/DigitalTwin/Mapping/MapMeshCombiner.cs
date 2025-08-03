@@ -52,9 +52,7 @@ public class MapMeshCombiner : MonoBehaviour
 
     void LoadImage()
     {
-        imageData = loadAsPNG
-            ? imageParser.LoadPNG(imageFileName)
-            : imageParser.LoadPGM(imageFileName);
+        imageData = imageParser.LoadPNG(imageFileName);
     }
 
     /// <summary>

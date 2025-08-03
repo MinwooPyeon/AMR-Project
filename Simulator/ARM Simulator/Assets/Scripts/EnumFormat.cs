@@ -22,3 +22,7 @@ public enum UIEvent
     DRAG
 }
 
+public enum BrushColor
+{
+    White, Black, Red, Blue, Green, Yellow
+}
