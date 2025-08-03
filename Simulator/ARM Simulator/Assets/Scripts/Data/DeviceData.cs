@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class DeviceData
+public class DeviceData : MonoBehaviour
 {
+    
+
     
 }
