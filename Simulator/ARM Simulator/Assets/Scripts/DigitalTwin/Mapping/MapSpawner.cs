@@ -13,6 +13,7 @@ public class MapSpawner : MonoBehaviour
     public GameObject chargerPrefab;
     public GameObject loadPrefab;
     public GameObject dropPrefab;
+    public GameObject freePrefab;
 
     // 내부 파서 인스턴스
     private YAMLParser yamlParser;
@@ -27,7 +28,7 @@ public class MapSpawner : MonoBehaviour
         imageParser = new ImageParser();
     }
 
-    void Start()
+    public void Load()
     {
         LoadYaml();
         LoadImage();
