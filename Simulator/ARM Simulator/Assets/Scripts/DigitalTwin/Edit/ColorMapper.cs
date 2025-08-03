@@ -7,7 +7,6 @@ public static class ColorMapper
     /// </summary>
     public static float ConvertColorToProb(Color color)
     {
-        Debug.Log(color);
         if (color == Color.black) return 1.0f;
         if (color == Color.white) return 0.0f;
         if (color == Color.red) return 0.66f;
@@ -22,7 +21,6 @@ public static class ColorMapper
     /// </summary>
     public static Color ConvertProbToColor(float prob)
     {
-        Debug.Log(prob);
         if (prob > 0.9f) return Color.white;
         if (prob < 0.1f) return Color.black;
 
