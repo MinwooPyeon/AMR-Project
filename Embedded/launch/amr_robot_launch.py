@@ -10,12 +10,7 @@ def generate_launch_description():
             parameters=['config/slam_params.yaml']
         ),
 
-        Node(
-            package='amr_project',
-            executable='battery_publisher',
-            name='battery_publisher',
-            parameters=['config/battery_config.yaml']
-        ),
+
 
         Node(
             package='amr_project',
