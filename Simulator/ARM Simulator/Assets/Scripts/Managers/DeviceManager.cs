@@ -9,6 +9,11 @@ public class DeviceManager
     #endregion
 
     #region Methods
+    public Dictionary<string, DeviceController> Devices
+    {
+        get { return _devices; }
+    }
+
     public ModuleSyncManager SyncManager { get { return _syncManager; } set { _syncManager = value; } }
     public void DeviceRegister(string id, DeviceController device)
     {

@@ -13,7 +13,7 @@ public class MoveController : MonoBehaviour
     public void MoveForward(float acceleration)
     {
         // 다른 행동 중이면 이동 명령 무시
-        if (_stateData.ArmState != ARM_STATE.IDLE)
+        if (_stateData.ArmState != AMR_STATE.IDLE)
         {
             Debug.LogWarning($"MoveForward ignored: current state is {_stateData.ArmState}");
             return;
@@ -22,14 +22,14 @@ public class MoveController : MonoBehaviour
         StopActiveCoroutine();
 
         _stateData.Acceleration = acceleration;
-        _stateData.ArmState = ARM_STATE.RUNNING;
+        _stateData.ArmState = AMR_STATE.RUNNING;
         activeCoroutine = StartCoroutine(MoveForwardCoroutine());
     }
 
     public void Stop(float value = 0)
     {
         StopActiveCoroutine();
-        _stateData.ArmState = ARM_STATE.IDLE;
+        _stateData.ArmState = AMR_STATE.IDLE;
     }
 
     public void RotateLeft() => Rotate(-90f);
@@ -40,7 +40,7 @@ public class MoveController : MonoBehaviour
         // 회전 동작 중에는 MoveForward가 실행되지 않음
         StopActiveCoroutine();
 
-        _stateData.ArmState = ARM_STATE.ROTATING;
+        _stateData.ArmState = AMR_STATE.ROTATING;
         activeCoroutine = StartCoroutine(RotateCoroutine(deltaAngle));
     }
 
@@ -49,7 +49,7 @@ public class MoveController : MonoBehaviour
 
     private IEnumerator MoveForwardCoroutine()
     {
-        while (_stateData.ArmState == ARM_STATE.RUNNING)
+        while (_stateData.ArmState == AMR_STATE.RUNNING)
         {
             transform.Translate(Vector3.forward * _stateData.Acceleration * Time.deltaTime);
             yield return null;
@@ -69,7 +69,7 @@ public class MoveController : MonoBehaviour
             yield return null;
         }
 
-        _stateData.ArmState = ARM_STATE.IDLE;
+        _stateData.ArmState = AMR_STATE.IDLE;
         activeCoroutine = null;
     }
 

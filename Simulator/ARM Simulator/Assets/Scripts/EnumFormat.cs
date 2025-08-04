@@ -1,11 +1,10 @@
 
-public enum ARM_STATE
+public enum AMR_STATE
 {
     IDLE,
-    RUNNING,
-    ROTATING,
     RECHARGE,
-    BROKEN,
+    DROP,
+    LOAD,
 }
 public enum  ACTION_STATE
 {

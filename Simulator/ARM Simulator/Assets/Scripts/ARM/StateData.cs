@@ -7,9 +7,20 @@ public class StateData : MonoBehaviour
     Vector2 _position = Vector2.zero;
     string _serialNumber;
 
-    ARM_STATE _state = ARM_STATE.IDLE;
+    AMR_STATE _state = AMR_STATE.IDLE;
     ACTION_STATE _actionState = ACTION_STATE.STOP;
 
+    public string SerialNumber
+    {
+        get { return _serialNumber; }
+        set { _serialNumber = value; }
+    }
+    
+    public Vector2 Position
+    {
+        get { return _position; }
+        set { _position = value; }
+    }
     public float Acceleration
     {
         get { return _acceleration; }
@@ -20,7 +31,7 @@ public class StateData : MonoBehaviour
         get { return _chargeAmount; }
         set { _chargeAmount = value; }
     }
-    public ARM_STATE ArmState
+    public AMR_STATE ArmState
     {
         get { return _state; }
         set { _state = value; }

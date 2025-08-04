@@ -10,7 +10,7 @@ public class DataManager
         public Vector3[] lidarPoints;
         public float acceleration;
         public float chargeAmount;
-        public ARM_STATE armState;
+        public AMR_STATE armState;
         public ACTION_STATE actionState;
         public long timestamp;
     }
