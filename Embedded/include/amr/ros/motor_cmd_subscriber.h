@@ -1,6 +1,6 @@
 #pragma once
-#include <rclcpp/rclcpp.h>
-#include <std_msgs/msg/int32.h>
+#include "rclcpp/rclcpp.hpp"
+#include "std_msgs/msg/int32.hpp"
 #include "../motor_cmd_interface.h"
 
 namespace amr {
