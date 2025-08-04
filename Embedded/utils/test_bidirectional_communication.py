@@ -7,28 +7,24 @@
 
 import time
 import threading
-import logging
-from amr_real_data_sync import AMRRealDataSync
-from backend_mqtt_subscriber import BackendMQTTSubscriber
-
-# 로깅 설정
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from main.amr_real_data_sync import AMRRealDataSync
+from mqtt.backend_mqtt_subscriber import BackendMQTTSubscriber
+from utils.logger import mqtt_logger
 
 def test_unidirectional_communication():
     """단방향 MQTT 통신 테스트 (임베디드 → 백엔드)"""
-    print("=== 단방향 MQTT 통신 테스트 ===")
-    print("임베디드에서 백엔드로 데이터를 전송하는 단방향 통신을 테스트합니다.")
-    print("임베디드: 데이터 전송")
-    print("백엔드: 데이터 수신")
-    print("=" * 60)
+    mqtt_logger.info("=== 단방향 MQTT 통신 테스트 ===")
+    mqtt_logger.info("임베디드에서 백엔드로 데이터를 전송하는 단방향 통신을 테스트합니다.")
+    mqtt_logger.info("임베디드: 데이터 전송")
+    mqtt_logger.info("백엔드: 데이터 수신")
+    mqtt_logger.info("=" * 60)
     
     # AMR 시스템 생성 (임베디드)
-    print("임베디드 시스템 초기화 중...")
+    mqtt_logger.info("임베디드 시스템 초기화 중...")
     amr_sync = AMRRealDataSync("AMR001", enable_mqtt=True)
     
     # 백엔드 시스템 생성
-    print("백엔드 시스템 초기화 중...")
+    mqtt_logger.info("백엔드 시스템 초기화 중...")
     backend = BackendMQTTSubscriber("192.168.100.141", 1883)
     
     # AMR 데이터 콜백 설정 (백엔드에서 수신)
