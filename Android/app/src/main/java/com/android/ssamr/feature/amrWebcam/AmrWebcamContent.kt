@@ -1,6 +1,7 @@
 package com.android.ssamr.feature.amrWebcam
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,18 +50,18 @@ fun AmrWebcamInfoPanel (
                     Spacer(Modifier.width(8.dp))
                     Text("실시간", color = Color.White)
                 }
-//                Text(state.lastUpdated, color = Color.White)
-                Text("오후 5:30:12", color = Color.White)
+                Text(state.lastUpdated, color = Color.White)
+//                Text("오후 5:30:12", color = Color.White)
             }
             Spacer(Modifier.height(8.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-//                Text("위치\n${state.location}", color = Color.White)
-//                Text("상태\n${state.status}", color = Color.White)
-                Text("위치\nA구역-라인1", color = Color.White)
-                Text("상태\n작동중", color = Color.White)
+                Text("위치\n${state.amr?.location}", color = Color.White)
+                Text("상태\n${state.amr?.status}", color = Color.White)
+//                Text("위치\nA구역-라인1", color = Color.White)
+//                Text("상태\n작동중", color = Color.White)
                 Spacer(Modifier.width(16.dp))
             }
         }
@@ -72,6 +73,14 @@ fun RtspPlayerView(
     url: String,
     modifier: Modifier = Modifier
 ) {
+    Log.d("RTSP", "RtspPlayerView 실행, url=$url")
+
+    if (url.isNullOrBlank()) {
+        // url이 비어있으면 ExoPlayer 생성하지 않음
+        Log.d("RTSP", "RtspPlayerView: 빈 url로 인해 생성하지 않음")
+        return
+    }
+
     val context = LocalContext.current
 
     // ExoPlayer 인스턴스 생성 및 세팅
@@ -93,6 +102,7 @@ fun RtspPlayerView(
             }
         }
     )
+    Log.d("RTSP", "RtspPlayerView: $url")
 
     // 컴포저블이 dispose될 때 플레이어도 정리
     DisposableEffect(Unit) {

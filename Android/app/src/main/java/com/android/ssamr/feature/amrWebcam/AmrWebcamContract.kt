@@ -1,10 +1,10 @@
 package com.android.ssamr.feature.amrWebcam
 
+import com.android.ssamr.core.domain.model.AmrDetailStatus
+
 data class AmrWebcamState(
-    val amrName: String = "",
+    val amr: AmrDetailStatus? = null,
     val lastUpdated: String = "",
-    val location: String = "",
-    val status: String = "",
     val rtspUrl: String = "",
     val isFullScreen: Boolean = false,
     val isLoading: Boolean = false,
