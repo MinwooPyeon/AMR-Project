@@ -69,7 +69,7 @@ fun AmrManageDetailScreen(
                     AmrDetailInfoCard(amr = state.amr)
                     Spacer(Modifier.height(32.dp))
                     AmrDetailButtonGroup(
-                        onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam) },
+                        onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam(state.amr.ipAddress)) },
                         onManualReturnClick = { sendIntent(AmrDetailIntent.ClickManualReturn) },
                         onManualStartClick = { sendIntent(AmrDetailIntent.ClickManualStart) }
                     )
@@ -95,11 +95,12 @@ fun AmrManageDetailScreenPreview() {
 val sampleAmrDetail =
     AmrDetailStatus(
         name = "AMR-001",
-        status = AmrDetailAction.fromStatus("작동중"),
+        status = AmrDetailAction.RUNNING,
         location = "A구역-라인1",
         speed = "1.2m/s",
         job = "화물 운반 중",
         model = "RB-100",
         serial = "RB100-2024-001",
         firmware = "v2.1.3",
+        ipAddress = "111.111.1111",
     )

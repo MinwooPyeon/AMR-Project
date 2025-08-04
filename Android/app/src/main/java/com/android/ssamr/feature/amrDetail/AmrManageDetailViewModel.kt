@@ -62,7 +62,7 @@ class AmrDetailViewModel @Inject constructor(
             }
 
             is AmrDetailIntent.ClickWebcam -> {
-                viewModelScope.launch { _effect.emit(AmrDetailEffect.NavigateToWebcam) }
+                viewModelScope.launch { _effect.emit(AmrDetailEffect.NavigateToWebcam(intent.ipAddress)) }
             }
 
             is AmrDetailIntent.ClickManualReturn -> {

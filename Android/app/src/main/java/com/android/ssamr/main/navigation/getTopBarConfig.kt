@@ -73,6 +73,12 @@ fun getTopBarConfig(
             onBackClick = { navController.popBackStack() }
         )
 
+        route.startsWith("amr_webcam") -> TopBarConfig(
+            title = "AMR 웹캠",
+            showBack = true,
+            onBackClick = { navController.popBackStack() }
+        )
+
         // ... 기타 화면
         else -> null
     }

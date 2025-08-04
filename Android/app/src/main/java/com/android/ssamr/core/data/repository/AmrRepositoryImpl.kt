@@ -1,6 +1,7 @@
 package com.android.ssamr.core.data.repository
 
 import com.android.ssamr.core.data.remote.datasource.AmrRemoteDataSource
+import com.android.ssamr.core.domain.model.AmrAction
 import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.core.domain.model.AmrStatus
@@ -12,16 +13,17 @@ class AmrRepositoryImpl @Inject constructor(
 ) : AmrRepository {
 
     override suspend fun getAmrList(): List<AmrStatus> {
-//        return listOf(
-//            AmrUiModel(1L, "1번로봇", AmrStatus.RUNNING, "A-1구역", "1.4m/s", "자재이동", 92),
-//            AmrUiModel(2L, "2번로봇", AmrStatus.CHARGING, "충전소", "0.0m/s", "대기", 54),
-//            AmrUiModel(3L, "3번로봇", AmrStatus.CHECK, "B-3구역", "0.0m/s", "점검", 80)
-//        )
-        return remoteDataSource.getAmrList()
+        return listOf(
+            AmrStatus(1L, "1번로봇", AmrAction.RUNNING, "A-1구역", "1.4m/s", "자재이동"),
+            AmrStatus(2L, "2번로봇", AmrAction.CHARGING, "충전소", "0.0m/s", "대기"),
+            AmrStatus(3L, "3번로봇", AmrAction.CHECKING, "B-3구역", "0.0m/s", "점검")
+        )
+//        return remoteDataSource.getAmrList()
     }
 
     override suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
-        return remoteDataSource.getAmrDetail(amrId)
+        return AmrDetailStatus("AMR-001", AmrDetailAction.RUNNING, "A-1구역", "1.4m/s", "자재이동", "RB-100", "RB100-2024-001", "v2.1.3", "111.111.1111")
+//        return remoteDataSource.getAmrDetail(amrId)
     }
 
 }
