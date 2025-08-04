@@ -8,13 +8,9 @@ AMR에서 전송하는 데이터를 받고, 백엔드에서 명령을 보낼 수
 import json
 import time
 import threading
-import logging
 from typing import Dict, Optional, Callable, Any
 import paho.mqtt.client as mqtt
-
-# 로깅 설정
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from utils.logger import mqtt_logger
 
 class BackendMQTTSubscriber:
     """백엔드 MQTT Subscriber 클래스"""
@@ -47,12 +43,12 @@ class BackendMQTTSubscriber:
         self.total_received = 0
         self.last_received_time = 0
         
-        logger.info(f"Backend MQTT Subscriber 초기화 완료 - Broker: {mqtt_broker}:{mqtt_port}")
+        mqtt_logger.success(f"Backend MQTT Subscriber 초기화 완료 - Broker: {mqtt_broker}:{mqtt_port}")
     
     def connect_mqtt(self) -> bool:
         """MQTT 브로커에 연결"""
         try:
-            logger.info(f"MQTT 브로커에 연결 중: {self.mqtt_broker}:{self.mqtt_port}")
+            mqtt_logger.info(f"MQTT 브로커에 연결 중: {self.mqtt_broker}:{self.mqtt_port}")
             self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, 60)
             self.mqtt_client.loop_start()
             
@@ -63,14 +59,14 @@ class BackendMQTTSubscriber:
                 time.sleep(0.1)
             
             if self.mqtt_connected:
-                logger.info("MQTT 브로커 연결 성공")
+                mqtt_logger.success("MQTT 브로커 연결 성공")
                 return True
             else:
-                logger.error("MQTT 연결 시간 초과")
+                mqtt_logger.error("MQTT 연결 시간 초과")
                 return False
                 
         except Exception as e:
-            logger.error(f"MQTT 연결 실패: {e}")
+            mqtt_logger.error(f"MQTT 연결 실패: {e}")
             return False
     
     def disconnect_mqtt(self):
@@ -186,12 +182,15 @@ class BackendMQTTSubscriber:
             data = json.loads(msg.payload.decode('utf-8'))
             topic = msg.topic
             
-            logger.debug(f"메시지 수신 - 토픽: {topic}, 데이터: {data}")
+            mqtt_logger.debug(f"메시지 수신 - 토픽: {topic}, 데이터: {data}")
             
             # 통계 업데이트
             with self.stats_lock:
                 self.total_received += 1
                 self.last_received_time = time.time()
+            
+            # MQTT 수신 성공 로그
+            mqtt_logger.mqtt_receive_success(topic, data)
             
             # 토픽에 따른 처리
             if topic.startswith("status/"):
@@ -209,13 +208,13 @@ class BackendMQTTSubscriber:
                     self.command_callback(data)
             
         except json.JSONDecodeError as e:
-            logger.error(f"JSON 파싱 오류: {e}")
+            mqtt_logger.error(f"JSON 파싱 오류: {e}")
         except Exception as e:
-            logger.error(f"메시지 처리 오류: {e}")
+            mqtt_logger.error(f"메시지 처리 오류: {e}")
     
     def _on_mqtt_publish(self, client, userdata, mid):
         """MQTT 발행 완료 콜백"""
-        logger.debug(f"MQTT 메시지 발행 완료. ID: {mid}")
+        mqtt_logger.debug(f"MQTT 메시지 발행 완료. ID: {mid}")
 
 def test_backend_mqtt_subscriber():
     """백엔드 MQTT Subscriber 테스트"""
