@@ -232,7 +232,7 @@ def test_backend_mqtt_subscriber():
         print(f"\r📡 AMR 데이터 수신: "
               f"시리얼={data.get('serial', 'N/A')} | "
               f"상태={data.get('status', 'N/A')} | "
-              f"배터리={data.get('battery_level', 0):.1f}% | "
+
               f"위치=({data.get('x', 0):.1f}, {data.get('y', 0):.1f}) | "
               f"속도={data.get('speed', 0):.1f}", end="")
     
