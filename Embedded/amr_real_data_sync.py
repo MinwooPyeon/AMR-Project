@@ -69,6 +69,18 @@ class AMRRealDataSync:
         self.ai_position = {"x": 0.0, "y": 0.0}
         self.position_lock = threading.Lock()
         
+        # LCD 디스플레이 컨트롤러
+        self.lcd_controller = None
+        try:
+            from lcd_display_controller import LCDDisplayController
+            self.lcd_controller = LCDDisplayController(16, 2)
+            self.lcd_controller.start_display()
+            logger.info("LCD 디스플레이 컨트롤러 초기화 완료")
+        except ImportError as e:
+            logger.warning(f"LCD 디스플레이 컨트롤러 초기화 실패: {e}")
+        except Exception as e:
+            logger.warning(f"LCD 디스플레이 컨트롤러 오류: {e}")
+        
         # AI Position Subscriber (선택적)
         self.ai_subscriber = None
         try:
@@ -802,6 +814,10 @@ class AMRRealDataSync:
             if situation:
                 logger.info(f"AI 상황 감지: {situation}")
                 self._trigger_situation_backup(situation)
+                
+                # LCD 디스플레이 업데이트
+                if self.lcd_controller:
+                    self.lcd_controller.update_ai_situation(situation)
             
             # 이미지 정보 로깅
             img = ai_data.get("img", "")
@@ -891,6 +907,12 @@ class AMRRealDataSync:
             "remaining_time": remaining_time,
             "situation_backup_start_time": self.situation_backup_start_time
         }
+    
+    def get_lcd_display_status(self) -> Dict:
+        """LCD 디스플레이 상태 조회"""
+        if self.lcd_controller:
+            return self.lcd_controller.get_display_status()
+        return {"enabled": False, "error": "LCD 컨트롤러가 초기화되지 않음"}
 
 def test_amr_real_data_sync():
     """실제 AMR 데이터 동기화 테스트"""
@@ -900,7 +922,8 @@ def test_amr_real_data_sync():
     print("MQTT 토픽: status/AMR001")
     print("전송 주기: 1초마다 (1Hz)")
     print("백업 기능: MQTT 연결 없을 때 또는 AI 상황 발생 시")
-    print("상황 백업 기간: 30초")
+    print("상황 백업 기간: 180초")
+    print("LCD 디스플레이: 평소 😄, 위험 상황 시 🚨")
     print("=" * 80)
     
     # AMR 실제 데이터 동기화 시스템 생성 (MQTT 활성화)
@@ -915,11 +938,17 @@ def test_amr_real_data_sync():
         average_speed = (left_speed + right_speed) / 2.0
         
         mqtt_status = "✅ MQTT" if amr_sync.enable_mqtt else "❌ MQTT"
+        
+        # LCD 상태 가져오기
+        lcd_status = amr_sync.get_lcd_display_status()
+        lcd_emoji = lcd_status.get("current_emoji", "❓")
+        lcd_mode = lcd_status.get("current_mode", "unknown")
+        
         print(f"\r실시간 센서 데이터: "
               f"속도 {average_speed:.1f} | "
               f"위치 ({data['position'][0]:.1f}, {data['position'][1]:.1f}) | "
               f"모터 상태: L={motor_speeds['left_speed']:.1f}, R={motor_speeds['right_speed']:.1f} | "
-              f"{mqtt_status}", end="")
+              f"{mqtt_status} | LCD: {lcd_emoji} ({lcd_mode})", end="")
     
     amr_sync.set_data_callback(data_callback)
     
