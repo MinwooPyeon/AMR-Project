@@ -1,20 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+public class SensorFrame
+{
+    public float[] grayscaleCameraData;
+    public Vector3[] lidarPoints;
+    public float acceleration;
+    public float chargeAmount;
+    public Vector3 position;
+    public AMR_STATE amrState;
+    public ACTION_STATE actionState;
+    public long timestamp;
+}
 public class DataManager
 {
-    [System.Serializable]
-    public class SensorFrame
-    {
-        public float[] grayscaleCameraData;
-        public Vector3[] lidarPoints;
-        public float acceleration;
-        public float chargeAmount;
-        public AMR_STATE armState;
-        public ACTION_STATE actionState;
-        public long timestamp;
-    }
-
     private Dictionary<string, List<SensorFrame>> _deviceFrameHistory = new();
 
     public void AddSensorFrame(string deviceIndex, float[] cameraData, Vector3[] lidarData, StateData state, long timestamp)
@@ -28,8 +26,9 @@ public class DataManager
             lidarPoints = lidarData,
             acceleration = state.Acceleration,
             chargeAmount = state.ChargeAmount,
-            armState = state.AmrState,
+            amrState = state.AmrState,
             actionState = state.ActionState,
+            position = state.transform.position,
             timestamp = timestamp
         });
     }

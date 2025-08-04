@@ -1,16 +1,22 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DeviceDetailPanel : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public Text timeStampText;
+    public Text positionText;
+    public Text amrStateText;
+    public Text actionStateText;
+    public Text issueText;
+    public RawImage image;
 
-    // Update is called once per frame
-    void Update()
+    public void SetData(SensorFrame frame)
     {
-        
+        timeStampText.text = frame.timestamp.ToString("yyyy-MM-dd HH:mm:ss");
+        positionText.text = $"X: {frame.position.x}, Y: {frame.position.z}";
+        amrStateText.text = frame.amrState.ToString();
+        actionStateText.text = frame.actionState.ToString();
+        //TODO Error Case
+        //TODO Image
     }
 }
