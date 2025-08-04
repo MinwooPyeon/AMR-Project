@@ -15,29 +15,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.ssamr.R
+import com.android.ssamr.core.domain.model.DashboardAmr
+import com.android.ssamr.core.domain.model.DashboardAmrStatus
 import com.android.ssamr.ui.theme.SSAMRTheme
 
+data class DashboardSummaryItem(
+    val title: String,
+    val count: Int,
+    val color: Color,
+    val iconResId: Int
+)
+
 @Composable
-fun TopSummarySection(
-    total: Int,
-    running: Int,
-    charging: Int,
-    checking: Int
-) {
+fun TopSummarySection(summaryItems: List<DashboardSummaryItem>) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth())
-        {
-            SummaryCard("총 AMR", total, Color(0xFF58A74B), R.drawable.ic_robot, modifier = Modifier.weight(1f))
-
-            SummaryCard("작동중", running, Color(0xFF3556F2), R.drawable.ic_running, modifier = Modifier.weight(1f))
-        }
-
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth())
-        {
-            SummaryCard("충전중", charging, Color(0xFFF7B500), R.drawable.ic_charging, modifier = Modifier.weight(1f))
-
-            SummaryCard("점검중", checking, Color(0xFFF7575C), R.drawable.ic_checking, modifier = Modifier.weight(1f))
+        summaryItems.chunked(2).forEach { rowItems ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                rowItems.forEach { item ->
+                    SummaryCard(
+                        title = item.title,
+                        count = item.count,
+                        color = item.color,
+                        iconResId = item.iconResId,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
         }
     }
 }
@@ -65,7 +71,7 @@ private fun SummaryCard(
                     .size(32.dp)
                     .background(
                         color = color.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(8.dp) // 모서리 반지름 조절
+                        shape = RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -127,7 +133,7 @@ fun FactoryMapSection(
 
 @Composable
 fun AmrStatusSection(
-    amrs: List<DashboardAmrUiModel>,
+    amrs: List<DashboardAmr>,
     onClick: (Long) -> Unit,
     onViewAllClick: () -> Unit
 ) {
@@ -151,9 +157,8 @@ fun AmrStatusSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFF4F6FA), shape = RoundedCornerShape(12.dp))
-                        .padding(vertical = 12.dp, horizontal = 12.dp)
                         .clickable { onClick(amr.id) }
-                        .padding(vertical = 8.dp), // 내부 간격 확보
+                        .padding(vertical = 12.dp, horizontal = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -165,7 +170,7 @@ fun AmrStatusSection(
                         Text(amr.status.display, color = amr.status.color)
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp)) // 각 항목 간 간격
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
@@ -174,13 +179,14 @@ fun AmrStatusSection(
 @Preview(showBackground = true)
 @Composable
 fun PreviewTopSummarySection() {
+    val summaryItems = listOf(
+        DashboardSummaryItem("총 AMR", 10, Color(0xFF58A74B), R.drawable.ic_robot),
+        DashboardSummaryItem("작동중", 4, Color(0xFF3556F2), R.drawable.ic_running),
+        DashboardSummaryItem("충전중", 3, Color(0xFFF7B500), R.drawable.ic_charging),
+        DashboardSummaryItem("점검중", 3, Color(0xFFF7575C), R.drawable.ic_checking)
+    )
     SSAMRTheme {
-        TopSummarySection(
-            total = 10,
-            running = 4,
-            charging = 3,
-            checking = 3
-        )
+        TopSummarySection(summaryItems)
     }
 }
 
@@ -188,9 +194,7 @@ fun PreviewTopSummarySection() {
 @Composable
 fun PreviewFactoryMapSection() {
     SSAMRTheme {
-        FactoryMapSection(
-            onExpandClick = {}
-        )
+        FactoryMapSection(onExpandClick = {})
     }
 }
 
@@ -198,29 +202,10 @@ fun PreviewFactoryMapSection() {
 @Composable
 fun PreviewAmrStatusSection() {
     val dummyList = listOf(
-        DashboardAmrUiModel(
-            id = 1L,
-            name = "AMR-001",
-            location = "Zone A",
-            status = DashboardAmrStatus.RUNNING,
-            job = "운반 중"
-        ),
-        DashboardAmrUiModel(
-            id = 2L,
-            name = "AMR-002",
-            location = "Zone B",
-            status = DashboardAmrStatus.CHARGING,
-            job = "충전 중"
-        ),
-        DashboardAmrUiModel(
-            id = 3L,
-            name = "AMR-003",
-            location = "Zone C",
-            status = DashboardAmrStatus.CHECK,
-            job = "점검 중"
-        )
+        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "Zone A", "운반 중"),
+        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "Zone B", "충전 중"),
+        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECK, "Zone C", "점검 중")
     )
-
     SSAMRTheme {
         AmrStatusSection(
             amrs = dummyList,

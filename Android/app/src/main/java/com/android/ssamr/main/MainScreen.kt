@@ -25,6 +25,7 @@ import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
+import com.android.ssamr.main.navigation.FullmapRoute
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
@@ -119,9 +120,11 @@ fun MainScreen() {
                     navigateToVersionInfo = { navController.navigate("versionInfo") }
                 )
             }
-            composable("full_map") {
+            composable(FullmapRoute.route) {
                 FullscreenMapRoute(
-                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
+                    navigateToAmrDetail = { amrId ->
+                        navController.navigate(AmrDetailScreen.routeWithArgs(amrId))
+                    },
                     onBack = { navController.popBackStack() }
                 )
             }

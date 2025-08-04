@@ -1,11 +1,13 @@
+// ViewModel
 package com.android.ssamr.feature.dashboard.fullscreenmap
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.repository.DashboardRepository
 import com.android.ssamr.core.data.model.amr.response.toAmrMapPositionModel
+import com.android.ssamr.core.domain.model.AmrMapPosition
+import com.android.ssamr.core.domain.model.DashboardAmrStatus
 import com.android.ssamr.core.ui.ImageDecoder
-import com.android.ssamr.feature.dashboard.DashboardAmrStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -16,28 +18,20 @@ class FullscreenMapViewModel @Inject constructor(
     private val repository: DashboardRepository
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = false
+    private val USE_DUMMY_DATA = true
     private var isMapImageLoaded = false
 
     private val _state = MutableStateFlow(FullscreenMapState())
     val state: StateFlow<FullscreenMapState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<FullscreenMapEffect>()
-    val effect: SharedFlow<FullscreenMapEffect> = _effect.asSharedFlow()
-
     fun onIntent(intent: FullscreenMapIntent) {
         when (intent) {
-            is FullscreenMapIntent.LoadMap -> {
-                loadMapFromRepository()
-            }
-
+            is FullscreenMapIntent.LoadMap -> loadMapFromRepository()
             is FullscreenMapIntent.ClickAmr -> {
                 _state.update { it.copy(selectedAmrId = intent.id) }
-                emitEffect(FullscreenMapEffect.ShowAmrDetail(intent.id))
             }
-
             is FullscreenMapIntent.Close -> {
-                emitEffect(FullscreenMapEffect.NavigateBack)
+                // 처리 필요 시 추가
             }
         }
     }
@@ -48,18 +42,13 @@ class FullscreenMapViewModel @Inject constructor(
 
             if (USE_DUMMY_DATA) {
                 val dummyAmrs = listOf(
-                    AmrMapPositionModel(1L, "AMR-001", x = 100f, y = 200f, status = DashboardAmrStatus.RUNNING),
-                    AmrMapPositionModel(2L, "AMR-002", x = 300f, y = 400f, status = DashboardAmrStatus.CHARGING),
-                    AmrMapPositionModel(3L, "AMR-003", x = 500f, y = 150f, status = DashboardAmrStatus.CHECK)
+                    AmrMapPosition(1L, "AMR-001", 100f, 200f, DashboardAmrStatus.RUNNING),
+                    AmrMapPosition(2L, "AMR-002", 300f, 400f, DashboardAmrStatus.CHARGING),
+                    AmrMapPosition(3L, "AMR-003", 500f, 150f, DashboardAmrStatus.CHECK)
                 )
                 val dummyMap = generateDummyMapImage(720, 1280)
-
                 _state.update {
-                    it.copy(
-                        isLoading = false,
-                        amrPositions = dummyAmrs,
-                        mapImage = dummyMap
-                    )
+                    it.copy(isLoading = false, amrPositions = dummyAmrs, mapImage = dummyMap)
                 }
                 return@launch
             }
@@ -85,14 +74,7 @@ class FullscreenMapViewModel @Inject constructor(
                 }
             }.onFailure { e ->
                 _state.update { it.copy(isLoading = false, error = "지도 로딩 실패: ${e.message}") }
-                emitEffect(FullscreenMapEffect.ShowError("지도 로딩 실패"))
             }
-        }
-    }
-
-    private fun emitEffect(effect: FullscreenMapEffect) {
-        viewModelScope.launch {
-            _effect.emit(effect)
         }
     }
 }

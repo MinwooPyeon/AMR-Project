@@ -8,7 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.ssamr.core.domain.model.DashboardAmr
+import com.android.ssamr.core.domain.model.DashboardAmrStatus
 import com.android.ssamr.ui.theme.SSAMRTheme
+import com.android.ssamr.R
 
 @Composable
 fun DashboardScreen(
@@ -23,12 +26,13 @@ fun DashboardScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            // TopSummarySection은 DashboardContent.kt에 정의됨
             TopSummarySection(
-                total = state.totalCount,
-                running = state.runningCount,
-                charging = state.chargingCount,
-                checking = state.checkingCount
+                summaryItems = listOf(
+                    DashboardSummaryItem("총 AMR", state.totalCount, Color(0xFF58A74B), R.drawable.ic_robot),
+                    DashboardSummaryItem("작동중", state.runningCount, Color(0xFF3556F2), R.drawable.ic_running),
+                    DashboardSummaryItem("충전중", state.chargingCount, Color(0xFFF7B500), R.drawable.ic_charging),
+                    DashboardSummaryItem("점검중", state.checkingCount, Color(0xFFF7575C), R.drawable.ic_checking)
+                )
             )
         }
 
@@ -66,21 +70,21 @@ fun DashboardScreenPreview() {
 
 // 샘플 데이터
 val sampleDashboardAmrs = listOf(
-    DashboardAmrUiModel(
+    DashboardAmr(
         id = 1L,
         name = "AMR-001",
         status = DashboardAmrStatus.RUNNING,
         location = "A구역-라인1",
         job = "화물 운반 중"
     ),
-    DashboardAmrUiModel(
+    DashboardAmr(
         id = 2L,
         name = "AMR-002",
         status = DashboardAmrStatus.CHARGING,
         location = "충전소-1번",
         job = "충전 중"
     ),
-    DashboardAmrUiModel(
+    DashboardAmr(
         id = 3L,
         name = "AMR-003",
         status = DashboardAmrStatus.CHECK,

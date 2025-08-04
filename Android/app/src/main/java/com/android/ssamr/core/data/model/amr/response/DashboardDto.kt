@@ -1,7 +1,8 @@
 package com.android.ssamr.core.data.model.amr.response
 
-import com.android.ssamr.feature.dashboard.DashboardAmrStatus
-import com.android.ssamr.feature.dashboard.DashboardAmrUiModel
+import com.android.ssamr.core.domain.model.DashboardAmr
+import com.android.ssamr.core.domain.model.DashboardAmrStatus
+
 
 data class DashboardDto(
     val id: Long,
@@ -11,7 +12,7 @@ data class DashboardDto(
     val job: String
 )
 
-fun DashboardDto.toDashboardModel() : DashboardAmrUiModel = DashboardAmrUiModel(
+fun DashboardDto.toDashboardModel() : DashboardAmr = DashboardAmr(
     id = this.id,
     name = this.name,
     status = this.status,

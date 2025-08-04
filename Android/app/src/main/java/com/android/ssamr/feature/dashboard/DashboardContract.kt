@@ -1,19 +1,11 @@
 package com.android.ssamr.feature.dashboard
 
 import androidx.compose.ui.graphics.Color
-
-// 화면에 표시될 단일 AMR 정보
-data class DashboardAmrUiModel(
-    val id: Long,
-    val name: String,
-    val status: DashboardAmrStatus,
-    val location: String,
-    val job: String
-)
+import com.android.ssamr.core.domain.model.DashboardAmr
 
 // 화면 전체에 사용될 데이터 목록 및 상태
 data class DashboardState(
-    val amrList: List<DashboardAmrUiModel> = emptyList(),
+    val amrList: List<DashboardAmr> = emptyList(),
     val totalCount: Int = 0,
     val runningCount: Int = 0,
     val chargingCount: Int = 0,
@@ -38,20 +30,4 @@ sealed class DashboardEffect {
 
     data object NavigateToMapFullScreen : DashboardEffect()
     data object NavigateToAmrList : DashboardEffect()
-}
-
-// 상태 정보 Enum
-enum class DashboardAmrStatus(val display: String, val color: Color) {
-    RUNNING("작동중", Color(0xFF23C06C)),     // 초록
-    CHARGING("충전중", Color(0xFFFFC700)),    // 노랑
-    CHECK("점검중", Color(0xFFFF5050));       // 빨강
-
-    companion object {
-        fun from(status: String): DashboardAmrStatus = when (status) {
-            "작동중" -> RUNNING
-            "충전중" -> CHARGING
-            "점검중" -> CHECK
-            else -> CHECK
-        }
-    }
 }

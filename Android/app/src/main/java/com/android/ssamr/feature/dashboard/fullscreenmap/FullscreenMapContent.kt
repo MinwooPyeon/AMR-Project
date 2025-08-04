@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
-import com.android.ssamr.feature.dashboard.DashboardAmrStatus
+
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -24,7 +24,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color as AndroidColor
 import android.graphics.Paint
-
+import com.android.ssamr.core.domain.model.AmrMapPosition
+import com.android.ssamr.core.domain.model.DashboardAmrStatus
 
 @Composable
 fun FullscreenMapContent(
@@ -129,9 +130,9 @@ fun FullscreenMapContentPreview() {
     val previewState = FullscreenMapState(
         isLoading = false,
         amrPositions = listOf(
-            AmrMapPositionModel(1L, "AMR-001", x = 100f, y = 150f, status = DashboardAmrStatus.RUNNING),
-            AmrMapPositionModel(2L, "AMR-002", x = 200f, y = 300f, status = DashboardAmrStatus.CHARGING),
-            AmrMapPositionModel(3L, "AMR-003", x = 120f, y = 400f, status = DashboardAmrStatus.CHECK),
+            AmrMapPosition(1L, "AMR-001", x = 100f, y = 150f, status = DashboardAmrStatus.RUNNING),
+            AmrMapPosition(2L, "AMR-002", x = 200f, y = 300f, status = DashboardAmrStatus.CHARGING),
+            AmrMapPosition(3L, "AMR-003", x = 120f, y = 400f, status = DashboardAmrStatus.CHECK),
         ),
         mapImage = generateDummyMapImage()
     )

@@ -2,8 +2,9 @@ package com.android.ssamr.feature.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.ssamr.core.data.model.amr.response.toDashboardModel
-import com.android.ssamr.core.domain.repository.DashboardRepository
+import com.android.ssamr.core.domain.model.DashboardAmr
+import com.android.ssamr.core.domain.model.DashboardAmrStatus
+import com.android.ssamr.core.domain.usecase.amr.GetDashboardAmrsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -11,10 +12,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val repository: DashboardRepository
+    private val getDashboardAmrsUseCase: GetDashboardAmrsUseCase
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = false // true: 더미 사용 / false: 실제 API 사용
+    private val USE_DUMMY_DATA = true // true: 더미 사용 / false: 실제 API 사용
 
     private val _state = MutableStateFlow(DashboardState())
     val state: StateFlow<DashboardState> = _state.asStateFlow()
@@ -52,16 +53,15 @@ class DashboardViewModel @Inject constructor(
             _state.update { it.copy(isLoading = true, error = null) }
 
             runCatching {
-                val amrs = if (USE_DUMMY_DATA) {
+                val amrs: List<DashboardAmr> = if (USE_DUMMY_DATA) {
                     listOf(
-                        DashboardAmrUiModel(1L, "AMR-001", DashboardAmrStatus.RUNNING, "A구역", "화물 운반"),
-                        DashboardAmrUiModel(2L, "AMR-002", DashboardAmrStatus.CHARGING, "충전소", "충전 중"),
-                        DashboardAmrUiModel(3L, "AMR-003", DashboardAmrStatus.CHECK, "B구역", "점검 중"),
-                        DashboardAmrUiModel(4L, "AMR-004", DashboardAmrStatus.RUNNING, "C구역", "운반")
+                        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "A구역", "화물 운반"),
+                        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "충전소", "충전 중"),
+                        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECK, "B구역", "점검 중"),
+                        DashboardAmr(4L, "AMR-004", DashboardAmrStatus.RUNNING, "C구역", "운반")
                     )
                 } else {
-                    val dtos = repository.getDashboardAmrs()
-                    dtos.map { it.toDashboardModel() }
+                    getDashboardAmrsUseCase().getOrThrow()
                 }
 
                 val runningCount = amrs.count { it.status == DashboardAmrStatus.RUNNING }
