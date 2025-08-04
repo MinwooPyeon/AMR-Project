@@ -1,11 +1,11 @@
 #ifndef AMR_VISUAL_LIDAR_SLAM_NODE_H
 #define AMR_VISUAL_LIDAR_SLAM_NODE_H
 
-#include "rclcpp/rclcpp.h"
-#include <sensor_msgs/msg/image.h>
-#include <sensor_msgs/msg/laser_scan.h>
-#include <opencv2/core.h>
-#include <opencv2/features2d.h>
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/image.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "opencv2/core.hpp"
+#include "opencv2/features2d.hpp"
 
 namespace amr {
 
