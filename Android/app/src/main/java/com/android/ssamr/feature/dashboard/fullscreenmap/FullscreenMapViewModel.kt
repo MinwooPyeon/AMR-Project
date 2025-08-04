@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.repository.DashboardRepository
 import com.android.ssamr.core.data.model.amr.response.toAmrMapPositionModel
+import com.android.ssamr.core.ui.ImageDecoder
 import com.android.ssamr.feature.dashboard.DashboardAmrStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -15,7 +16,8 @@ class FullscreenMapViewModel @Inject constructor(
     private val repository: DashboardRepository
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = true // ← 여기를 false로 바꾸면 실제 데이터 사용
+    private val USE_DUMMY_DATA = false
+    private var isMapImageLoaded = false
 
     private val _state = MutableStateFlow(FullscreenMapState())
     val state: StateFlow<FullscreenMapState> = _state.asStateFlow()
@@ -62,16 +64,23 @@ class FullscreenMapViewModel @Inject constructor(
                 return@launch
             }
 
-            // 실제 API 연동
             runCatching {
-                val dtos = repository.getMapAmrs()
-                val positions = dtos.map { it.toAmrMapPositionModel() }
+                val amrDtos = repository.getMapAmrPositions()
+                val amrPositions = amrDtos.map { it.toAmrMapPositionModel() }
+
+                val mapImage = if (!isMapImageLoaded) {
+                    isMapImageLoaded = true
+                    val base64 = repository.getMapImage()
+                    ImageDecoder.decodeBase64ToImageBitmap(base64)
+                } else {
+                    _state.value.mapImage
+                }
 
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        amrPositions = positions,
-                        mapImage = generateDummyMapImage(720, 1280) // TODO: 실제 맵 이미지로 교체
+                        amrPositions = amrPositions,
+                        mapImage = mapImage
                     )
                 }
             }.onFailure { e ->

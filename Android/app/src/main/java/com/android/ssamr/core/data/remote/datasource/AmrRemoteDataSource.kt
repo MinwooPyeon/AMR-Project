@@ -9,7 +9,6 @@ import com.android.ssamr.core.domain.model.AmrStatus
 import retrofit2.Response
 import javax.inject.Inject
 
-
 class AmrRemoteDataSource @Inject constructor(
     private val service: AmrService
 ) {

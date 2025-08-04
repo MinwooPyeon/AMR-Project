@@ -13,8 +13,13 @@ class DashboardRemoteDataSource @Inject constructor(
         return response.data ?: emptyList()
     }
 
-    suspend fun getDashMapPositions(): List<DashMapDto> {
-        val response = service.getMapAmrs()
+    suspend fun getMapAmrPositions(): List<DashMapDto> {
+        val response = service.getMapAmrPositions()
         return response.data ?: emptyList()
+    }
+
+    suspend fun getMapImage(): String {
+        val response = service.getMapImage()
+        return response.data ?: ""
     }
 }

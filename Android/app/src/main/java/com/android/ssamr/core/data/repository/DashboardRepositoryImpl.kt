@@ -14,7 +14,11 @@ class DashboardRepositoryImpl @Inject constructor(
         return remoteDataSource.getDashboardAmrs()
     }
 
-    override suspend fun getMapAmrs(): List<DashMapDto> {
-        return remoteDataSource.getDashMapPositions()
+    override suspend fun getMapAmrPositions(): List<DashMapDto> {
+        return remoteDataSource.getMapAmrPositions()
+    }
+
+    override suspend fun getMapImage(): String {
+        return remoteDataSource.getMapImage()
     }
 }

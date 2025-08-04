@@ -9,6 +9,9 @@ interface DashboardService {
     @GET("/dashboard/list")
     suspend fun getDashboardAmrs(): ApiResponse<List<DashboardDto>>
 
-    @GET("/dashboard/map/list")
-    suspend fun getMapAmrs(): ApiResponse<List<DashMapDto>>
+    @GET("/dashboard/map/positions")
+    suspend fun getMapAmrPositions(): ApiResponse<List<DashMapDto>>
+
+    @GET("/dashboard/map/image")
+    suspend fun getMapImage(): ApiResponse<String> // base64 or URL
 }

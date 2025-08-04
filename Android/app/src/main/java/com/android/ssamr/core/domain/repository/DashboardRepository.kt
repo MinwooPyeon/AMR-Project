@@ -5,5 +5,6 @@ import com.android.ssamr.core.data.model.amr.response.DashMapDto
 
 interface DashboardRepository {
     suspend fun getDashboardAmrs(): List<DashboardDto>
-    suspend fun getMapAmrs(): List<DashMapDto>
+    suspend fun getMapAmrPositions(): List<DashMapDto>
+    suspend fun getMapImage(): String
 }
