@@ -9,7 +9,7 @@ SensorDataPublisher::SensorDataPublisher(
     : Node("sensor_data_publisher"), backend_(backend)
 {
   lidar_ = std::make_shared<amr::LidarSensor>(parent_node);
-  pub_ = this->create_publisher<sensor_msgs::msg::Float32>("/sensor_data", 10);
+  pub_ = this->create_publisher<std_msgs::msg::Float32>("/sensor_data", 10);
 
   timer_ = this->create_wall_timer(
     std::chrono::milliseconds(500),  // 500ms
@@ -20,13 +20,13 @@ SensorDataPublisher::SensorDataPublisher(
 void SensorDataPublisher::timerCallback() {
   float distance = lidar_->getDistance();
 
-  sensor_msgs::msg::Float32 msg;
+  std_msgs::msg::Float32 msg;
   msg.data = distance;
   pub_->publish(msg);
   RCLCPP_INFO(this->get_logger(), "센서 거리 퍼블리시: %.2f", distance);
 
   if (backend_) {
-    backend_->sendSensor(distance);
+    backend_->sendLog("Sensor distance: " + std::to_string(distance));
   } else {
     RCLCPP_WARN(this->get_logger(), "BackendWsClient 연결 없음");
   }
