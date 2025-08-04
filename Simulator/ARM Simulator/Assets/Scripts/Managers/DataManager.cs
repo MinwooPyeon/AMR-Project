@@ -1,23 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+public class SensorFrame
+{
+    public float[] grayscaleCameraData;
+    public Vector3[] lidarPoints;
+    public float acceleration;
+    public float chargeAmount;
+    public Vector3 position;
+    public AMR_STATE amrState;
+    public ACTION_STATE actionState;
+    public long timestamp;
+}
 public class DataManager
 {
-    [System.Serializable]
-    public class SensorFrame
-    {
-        public float[] grayscaleCameraData;
-        public Vector3[] lidarPoints;
-        public float acceleration;
-        public float chargeAmount;
-        public ARM_STATE armState;
-        public ACTION_STATE actionState;
-        public long timestamp;
-    }
+    private Dictionary<string, List<SensorFrame>> _deviceFrameHistory = new();
 
-    private Dictionary<int, List<SensorFrame>> _deviceFrameHistory = new();
-
-    public void AddSensorFrame(int deviceIndex, float[] cameraData, Vector3[] lidarData, StateData state, long timestamp)
+    public void AddSensorFrame(string deviceIndex, float[] cameraData, Vector3[] lidarData, StateData state, long timestamp)
     {
         if (!_deviceFrameHistory.ContainsKey(deviceIndex))
             _deviceFrameHistory[deviceIndex] = new List<SensorFrame>();
@@ -28,25 +26,26 @@ public class DataManager
             lidarPoints = lidarData,
             acceleration = state.Acceleration,
             chargeAmount = state.ChargeAmount,
-            armState = state.ArmState,
+            amrState = state.AmrState,
             actionState = state.ActionState,
+            position = state.transform.position,
             timestamp = timestamp
         });
     }
 
-    public SensorFrame GetLatestFrame(int deviceIndex)
+    public SensorFrame GetLatestFrame(string deviceIndex)
     {
         if (_deviceFrameHistory.TryGetValue(deviceIndex, out var frames) && frames.Count > 0)
             return frames[^1];
         return null;
     }
 
-    public List<SensorFrame> GetFrameHistory(int deviceIndex)
+    public List<SensorFrame> GetFrameHistory(string deviceIndex)
     {
         return _deviceFrameHistory.TryGetValue(deviceIndex, out var frames) ? frames : new List<SensorFrame>();
     }
 
-    public Dictionary<int, List<SensorFrame>> GetAllHistories()
+    public Dictionary<string, List<SensorFrame>> GetAllHistories()
     {
         return _deviceFrameHistory;
     }
@@ -64,9 +63,9 @@ public class DataManager
         public long timestamp;
     }
 
-    private Dictionary<(int deviceIndex, long timestamp), CaptureSession> _pendingSessions = new();
+    private Dictionary<(string deviceIndex, long timestamp), CaptureSession> _pendingSessions = new();
 
-    public void OnCameraCaptured(int deviceIndex, float[] data, long timestamp)
+    public void OnCameraCaptured(string deviceIndex, float[] data, long timestamp)
     {
         var key = (deviceIndex, timestamp);
         if (!_pendingSessions.TryGetValue(key, out var session))
@@ -79,7 +78,7 @@ public class DataManager
         TryFinalizeSession(deviceIndex, session);
     }
 
-    public void OnLidarScanned(int deviceIndex, Vector3[] data, long timestamp, StateData state)
+    public void OnLidarScanned(string deviceIndex, Vector3[] data, long timestamp, StateData state)
     {
         var key = (deviceIndex, timestamp);
         if (!_pendingSessions.TryGetValue(key, out var session))
@@ -93,7 +92,7 @@ public class DataManager
         TryFinalizeSession(deviceIndex, session);
     }
 
-    private void TryFinalizeSession(int deviceIndex, CaptureSession session)
+    private void TryFinalizeSession(string deviceIndex, CaptureSession session)
     {
         if (session.cameraData != null && session.lidarData != null && session.state != null)
         {

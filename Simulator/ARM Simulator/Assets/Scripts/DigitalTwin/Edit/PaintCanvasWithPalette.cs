@@ -8,6 +8,7 @@ public class PaintCanvasWithPalette : MonoBehaviour
     [Header("파일 (StreamingAssets)")]
     public string yamlFileName = "map.yaml";
     public string imageFileName = "map.png";
+    public string saveFileName = "canvas.png";
     public bool loadAsPNG = true;
 
     [Header("UI 컴포넌트")]
@@ -26,7 +27,7 @@ public class PaintCanvasWithPalette : MonoBehaviour
     private YAMLParser yamlParser = new YAMLParser();
     private ImageParser imageParser = new ImageParser();
 
-    void Start()
+    public void Load()
     {
         rt = canvasImage.rectTransform;
         yamlParser.ParseYaml(yamlFileName, out var yamlData);
@@ -54,7 +55,6 @@ public class PaintCanvasWithPalette : MonoBehaviour
 
         canvasImage.texture = canvasTex;
     }
-
     void Update()
     {
         if (!Input.GetMouseButton(0)) return;
@@ -101,20 +101,6 @@ public class PaintCanvasWithPalette : MonoBehaviour
             case BrushColor.Yellow: brushColor = Color.yellow; break;
         }
     }
-
-    public void ClearCanvas()
-    {
-        Color32[] cols = new Color32[texSize.x * texSize.y];
-        for (int i = 0; i < cols.Length; i++) cols[i] = Color.white;
-        canvasTex.SetPixels32(cols);
-
-        for (int x = 0; x < texSize.x; x++)
-            for (int y = 0; y < texSize.y; y++)
-                probGrid[x, y] = 0f;
-
-        canvasTex.Apply();
-    }
-
     public void SaveCanvas(string fileName = "canvas.png")
     {
         Texture2D saveTex = new Texture2D(texSize.x, texSize.y, TextureFormat.RGBA32, false);
@@ -131,9 +117,8 @@ public class PaintCanvasWithPalette : MonoBehaviour
 
         // 2. PNG로 저장
         byte[] pngBytes = saveTex.EncodeToPNG();
-        string path = Path.Combine(Application.persistentDataPath, fileName);
-        File.WriteAllBytes(path, pngBytes);
+        File.WriteAllBytes(saveFileName, pngBytes);
 
-        Debug.Log($"[PaintCanvasWithPalette] Saved PNG to {path}");
+        Debug.Log($"[PaintCanvasWithPalette] Saved PNG to {saveFileName}");
     }
 }

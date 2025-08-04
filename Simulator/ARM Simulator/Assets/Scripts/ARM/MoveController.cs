@@ -13,34 +13,41 @@ public class MoveController : MonoBehaviour
     public void MoveForward(float acceleration)
     {
         // 다른 행동 중이면 이동 명령 무시
-        if (_stateData.ArmState != ARM_STATE.IDLE)
+        if (_stateData.AmrState != AMR_STATE.IDLE)
         {
-            Debug.LogWarning($"MoveForward ignored: current state is {_stateData.ArmState}");
+            Debug.LogWarning($"MoveForward ignored: current state is {_stateData.AmrState}");
             return;
         }
 
         StopActiveCoroutine();
 
         _stateData.Acceleration = acceleration;
-        _stateData.ArmState = ARM_STATE.RUNNING;
+        _stateData.ActionState = ACTION_STATE.MOVE_FORWARD;
         activeCoroutine = StartCoroutine(MoveForwardCoroutine());
     }
 
     public void Stop(float value = 0)
     {
         StopActiveCoroutine();
-        _stateData.ArmState = ARM_STATE.IDLE;
+        _stateData.AmrState = AMR_STATE.IDLE;
     }
 
-    public void RotateLeft() => Rotate(-90f);
-    public void RotateRight() => Rotate(90f);
+    public void RotateLeft()
+    {
+        _stateData.ActionState = ACTION_STATE.ROTATE_LEFT;
+        Rotate(-90f);
+    }
+    public void RotateRight()
+    {
+        _stateData.ActionState =(ACTION_STATE.ROTATE_RIGHT);
+        Rotate(90f);
+    }
 
     private void Rotate(float deltaAngle)
     {
         // 회전 동작 중에는 MoveForward가 실행되지 않음
         StopActiveCoroutine();
 
-        _stateData.ArmState = ARM_STATE.ROTATING;
         activeCoroutine = StartCoroutine(RotateCoroutine(deltaAngle));
     }
 
@@ -49,7 +56,7 @@ public class MoveController : MonoBehaviour
 
     private IEnumerator MoveForwardCoroutine()
     {
-        while (_stateData.ArmState == ARM_STATE.RUNNING)
+        while (_stateData.ActionState == ACTION_STATE.MOVE_FORWARD)
         {
             transform.Translate(Vector3.forward * _stateData.Acceleration * Time.deltaTime);
             yield return null;
@@ -69,7 +76,7 @@ public class MoveController : MonoBehaviour
             yield return null;
         }
 
-        _stateData.ArmState = ARM_STATE.IDLE;
+        _stateData.ActionState = ACTION_STATE.STOP;
         activeCoroutine = null;
     }
 

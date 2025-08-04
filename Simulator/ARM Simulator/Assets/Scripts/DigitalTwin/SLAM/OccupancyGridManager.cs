@@ -5,6 +5,7 @@ using UnityEditor;
 
 public class OccupancyGridManager : MonoBehaviour
 {
+    public Material mapMaterial;
     public int width = 200; // grid width in cells
     public int height = 200; // grid height in cells
     public float resolution = 0.1f; // cell size in world units
@@ -33,7 +34,7 @@ public class OccupancyGridManager : MonoBehaviour
         displayPlane.transform.localScale = new Vector3(width * resolution, height * resolution, 1);
         displayPlane.transform.position = origin + new Vector3(0, 2f, 0); // slightly above ground
         displayPlane.transform.rotation = Quaternion.Euler(90, 0, 0); // face upward
-        displayPlane.GetComponent<Renderer>().material = new Material(Shader.Find("Unlit/Texture"));
+        displayPlane.GetComponent<Renderer>().material = mapMaterial;
         displayPlane.GetComponent<Renderer>().material.mainTexture = mapTexture;
     }
 

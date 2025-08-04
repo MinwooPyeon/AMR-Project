@@ -8,13 +8,13 @@ using UnityEngine.Rendering;
 public class CameraCaptureManager : MonoBehaviour
 {
     [Header("카메라 매핑 (ID → Camera)")]
-    public Dictionary<int, Camera> cameras = new Dictionary<int, Camera>();
+    public Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
 
     [Header("출력 해상도")]
     public int resolution = 224;
 
     // ID → RenderTexture
-    private Dictionary<int, RenderTexture> renderTextures = new Dictionary<int, RenderTexture>();
+    private Dictionary<string, RenderTexture> renderTextures = new Dictionary<string, RenderTexture>();
 
     // WaitForEndOfFrame 인스턴스 풀링
     private static readonly YieldInstruction FrameEnd = new WaitForEndOfFrame();
@@ -36,7 +36,7 @@ public class CameraCaptureManager : MonoBehaviour
     /// <summary>
     /// 외부에서 카메라가 생성될 때 호출
     /// </summary>
-    public void RegistCamera(int id, Camera cam)
+    public void RegistCamera(string id, Camera cam)
     {
         cameras[id] = cam;
         AllocateRenderTexture(id);
@@ -45,7 +45,7 @@ public class CameraCaptureManager : MonoBehaviour
     /// <summary>
     /// 외부에서 카메라가 제거될 때 호출
     /// </summary>
-    public void UnregistCamera(int id)
+    public void UnregistCamera(string id)
     {
         cameras.Remove(id);
         if (renderTextures.TryGetValue(id, out var rt))
@@ -55,7 +55,7 @@ public class CameraCaptureManager : MonoBehaviour
         }
     }
 
-    private void AllocateRenderTexture(int id)
+    private void AllocateRenderTexture(string id)
     {
         if (renderTextures.ContainsKey(id)) return;
 
@@ -67,13 +67,13 @@ public class CameraCaptureManager : MonoBehaviour
     /// <summary>
     /// 외부에서 호출: 비동기 캡처 요청
     /// </summary>
-    public void RequestCapture(int id, long timestamp)
+    public void RequestCapture(string id, long timestamp)
     {
         if (!cameras.ContainsKey(id)) return;
         StartCoroutine(CaptureCameraAsync(id, cameras[id], timestamp));
     }
 
-    private IEnumerator CaptureCameraAsync(int id, Camera cam, long timestamp)
+    private IEnumerator CaptureCameraAsync(string id, Camera cam, long timestamp)
     {
         // GPU 렌더링이 끝난 뒤 실행
         yield return FrameEnd;
@@ -89,7 +89,7 @@ public class CameraCaptureManager : MonoBehaviour
         );
     }
 
-    private void OnCompleteReadback(AsyncGPUReadbackRequest request, int id, long timestamp)
+    private void OnCompleteReadback(AsyncGPUReadbackRequest request, string id, long timestamp)
     {
         if (request.hasError)
         {
