@@ -171,4 +171,6 @@ gradle-app.setting
 *.hprof
 
 *.prod.env
+
+firebase/*
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij+all,windows,kotlin
