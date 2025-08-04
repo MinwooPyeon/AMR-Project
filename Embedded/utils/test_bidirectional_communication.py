@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 단방향 MQTT 통신 테스트
-임베디드에서 백엔드로 데이터를 전송하는 단방향 통신을 테스트
 """
 
 import time
@@ -12,22 +11,16 @@ from mqtt.backend_mqtt_subscriber import BackendMQTTSubscriber
 from utils.logger import mqtt_logger
 
 def test_unidirectional_communication():
-    """단방향 MQTT 통신 테스트 (임베디드 → 백엔드)"""
     mqtt_logger.info("=== 단방향 MQTT 통신 테스트 ===")
     mqtt_logger.info("임베디드에서 백엔드로 데이터를 전송하는 단방향 통신을 테스트합니다.")
     mqtt_logger.info("임베디드: 데이터 전송")
     mqtt_logger.info("백엔드: 데이터 수신")
     mqtt_logger.info("=" * 60)
     
-    # AMR 시스템 생성 (임베디드)
-    mqtt_logger.info("임베디드 시스템 초기화 중...")
     amr_sync = AMRRealDataSync("AMR001", enable_mqtt=True)
     
-    # 백엔드 시스템 생성
-    mqtt_logger.info("백엔드 시스템 초기화 중...")
     backend = BackendMQTTSubscriber("192.168.100.141", 1883)
     
-    # AMR 데이터 콜백 설정 (백엔드에서 수신)
     def amr_data_callback(data):
         print(f"\r🤖 임베디드 데이터 수신: "
               f"시리얼={data.get('serial', 'N/A')} | "
@@ -35,10 +28,8 @@ def test_unidirectional_communication():
               f"위치=({data.get('x', 0):.1f}, {data.get('y', 0):.1f}) | "
               f"속도={data.get('speed', 0):.1f}", end="")
     
-    # 백엔드 콜백 설정
     backend.set_amr_data_callback(amr_data_callback)
     
-    # MQTT 연결
     print("MQTT 브로커에 연결 중...")
     if not backend.connect_mqtt():
         print("❌ 백엔드 MQTT 연결 실패")
@@ -46,7 +37,6 @@ def test_unidirectional_communication():
     
     print("✅ 백엔드 MQTT 연결 성공")
     
-    # AMR 데이터 구독 설정
     print("임베디드 데이터 구독 중...")
     if not backend.subscribe_to_amr_data("AMR001"):
         print("❌ AMR 데이터 구독 실패")
@@ -54,7 +44,6 @@ def test_unidirectional_communication():
     
     print("✅ AMR 데이터 구독 성공")
     
-    # AMR 동기화 시작 (임베디드에서 데이터 전송 시작)
     print("임베디드 동기화 시작...")
     amr_sync.start_sync()
     
@@ -65,42 +54,36 @@ def test_unidirectional_communication():
     print("Ctrl+C로 종료")
     
     try:
-        # 1. 전진 (5초)
         print("\n\n1. 전진 (5초)")
         print("   속도: 50% (좌측/우측 모터)")
         print("   임베디드 → 백엔드 데이터 전송 중...")
         amr_sync.move_forward(50.0)
         time.sleep(5)
         
-        # 2. 정지 (3초)
         print("\n2. 정지 (3초)")
         print("   모터 정지")
         print("   임베디드 → 백엔드 데이터 전송 중...")
         amr_sync.stop_motor()
         time.sleep(3)
         
-        # 3. 좌회전 (5초)
         print("\n3. 좌회전 (5초)")
         print("   속도: 좌측 35%, 우측 50%")
         print("   임베디드 → 백엔드 데이터 전송 중...")
         amr_sync.turn_left(50.0)
         time.sleep(5)
         
-        # 4. 정지 (3초)
         print("\n4. 정지 (3초)")
         print("   모터 정지")
         print("   임베디드 → 백엔드 데이터 전송 중...")
         amr_sync.stop_motor()
         time.sleep(3)
         
-        # 5. 우회전 (5초)
         print("\n5. 우회전 (5초)")
         print("   속도: 좌측 50%, 우측 35%")
         print("   임베디드 → 백엔드 데이터 전송 중...")
         amr_sync.turn_right(50.0)
         time.sleep(5)
         
-        # 6. 최종 정지 (3초)
         print("\n6. 최종 정지 (3초)")
         print("   모터 정지")
         print("   임베디드 → 백엔드 데이터 전송 중...")
@@ -115,12 +98,10 @@ def test_unidirectional_communication():
         print("\n\n⚠️  테스트 중단됨")
         amr_sync.stop_motor()
     
-    # 최종 통계 출력
     print("\n" + "=" * 60)
     print("=== 최종 통계 ===")
     print("=" * 60)
     
-    # 임베디드 통계
     amr_stats = amr_sync.get_sync_stats()
     print(f"\n🤖 임베디드 시스템 통계:")
     print(f"  - 등록된 센서 수: {amr_stats['registered_sensors']}")
@@ -130,21 +111,18 @@ def test_unidirectional_communication():
 
     print(f"  - 모터 상태: {amr_stats['motor_status']}")
     
-    # 백엔드 통계
     backend_stats = backend.get_reception_stats()
     print(f"\n📡 백엔드 시스템 통계:")
     print(f"  - 총 수신 메시지: {backend_stats['total_received']}")
     print(f"  - 마지막 수신 시간: {backend_stats['last_received_time']}")
     print(f"  - MQTT 연결 상태: {'연결됨' if backend_stats['mqtt_connected'] else '연결 안됨'}")
     
-    # 최신 데이터 출력
     latest_data = backend_stats.get("latest_data", {})
     if latest_data:
         print(f"\n📋 최신 임베디드 데이터:")
         import json
         print(json.dumps(latest_data, indent=2, ensure_ascii=False))
     
-    # 전송 데이터 구조 설명
     print(f"\n📤 임베디드에서 전송되는 데이터 구조:")
     sample_data = {
         "serial": "AMR001",
@@ -162,7 +140,6 @@ def test_unidirectional_communication():
     print(f"  - 데이터 형식: JSON")
     print(f"  - 전송 주기: 1Hz (1초마다)")
     
-    # 시스템 정리
     print("\n시스템 정리 중...")
     amr_sync.stop_sync()
     backend.disconnect_mqtt()
