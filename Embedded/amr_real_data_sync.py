@@ -310,7 +310,7 @@ class AMRRealDataSync:
         # AMR 센서 등록
         self.mqtt_transmitter.register_sensor(SensorType.SERIAL, "serial")
         self.mqtt_transmitter.register_sensor(SensorType.STATUS, "status")
-        self.mqtt_transmitter.register_sensor(SensorType.BATTERY, "battery")
+
         self.mqtt_transmitter.register_sensor(SensorType.POSITION, "position")
         self.mqtt_transmitter.register_sensor(SensorType.SPEED, "speed")
         
@@ -377,7 +377,7 @@ class AMRRealDataSync:
         """AMR 센서 등록"""
         self.sensor_sync.register_sensor(SensorType.SERIAL, "serial")
         self.sensor_sync.register_sensor(SensorType.STATUS, "status")
-        self.sensor_sync.register_sensor(SensorType.BATTERY, "battery")
+
         self.sensor_sync.register_sensor(SensorType.POSITION, "position")
         self.sensor_sync.register_sensor(SensorType.SPEED, "speed")
         
@@ -611,8 +611,7 @@ class AMRRealDataSync:
         
         self.sensor_sync.update_status_data(status="RUNNING")
         
-        battery_level = 90.0  # 고정 배터리 레벨
-        self.sensor_sync.update_battery_data(battery_level=battery_level)
+
         
         x, y = self.get_ai_position()
         self.sensor_sync.update_position_data(x=x, y=y)
@@ -739,23 +738,7 @@ class AMRRealDataSync:
     
     # 데이터 조회 메서드들
     
-    def get_battery_level(self) -> float:
-        """배터리 레벨 조회 (고정값)"""
-        return 90.0
-    
-    def get_battery_info(self) -> Dict:
-        """배터리 정보 조회 (고정값)"""
-        return {
-            "capacity": 90.0,
-            "voltage": 4.0,
-            "current": 0.0,
-            "power": 0.0,
-            "status": "Discharging",
-            "ac_connected": False,
-            "temperature": 25.0,
-            "is_jetson": False,
-            "timestamp": time.time()
-        }
+
     
     def get_motor_speeds(self) -> Dict:
         """모터 속도 조회"""
@@ -768,7 +751,7 @@ class AMRRealDataSync:
             "active_sensors": self.sensor_sync.get_active_sensor_count(),
             "sync_rate": self.sensor_sync.get_sync_rate(),
             "data_loss_rate": self.sensor_sync.get_data_loss_rate(),
-            "battery_level": self.get_battery_level(),
+
             "motor_status": self.get_motor_speeds()['motor_status']
         }
 
@@ -858,7 +841,7 @@ def test_amr_real_data_sync():
         average_speed = (left_speed + right_speed) / 2.0
         
         mqtt_status = "✅ MQTT" if amr_sync.enable_mqtt else "❌ MQTT"
-        print(f"\r실시간 센서 데이터: 배터리 {data['battery_level']:.1f}% | "
+        print(f"\r실시간 센서 데이터: "
               f"속도 {average_speed:.1f} | "
               f"위치 ({data['position'][0]:.1f}, {data['position'][1]:.1f}) | "
               f"모터 상태: L={motor_speeds['left_speed']:.1f}, R={motor_speeds['right_speed']:.1f} | "
@@ -943,7 +926,7 @@ def test_amr_real_data_sync():
         print(f"  - 활성 센서 수: {stats['active_sensors']}")
         print(f"  - 동기화 속도: {stats['sync_rate']:.2f} Hz (1초마다)")
         print(f"  - 데이터 손실률: {stats['data_loss_rate']:.2f}%")
-        print(f"  - 배터리 레벨: {stats['battery_level']:.1f}%")
+
         print(f"  - 모터 상태: {stats['motor_status']}")
         
         # MQTT 전송 통계
