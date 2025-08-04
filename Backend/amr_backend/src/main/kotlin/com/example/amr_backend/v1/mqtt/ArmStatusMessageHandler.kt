@@ -1,7 +1,7 @@
 package com.example.amr_backend.v1.mqtt
 
 import com.example.amr_backend.v1.dto.AmrStatusMessage
-import com.example.amr_backend.v1.dto.toEntity
+import com.example.amr_backend.v1.dto.toAmrStatus
 import com.example.amr_backend.v1.repository.AmrRepository
 import com.example.amr_backend.v1.repository.AmrStatusRepository
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -40,7 +40,7 @@ class ArmStatusMessageHandler(
         try {
             val amrStatusMessage = objectMapper.readValue(message?.payload, AmrStatusMessage::class.java)
             val amr = amrRepository.findBySerial(amrStatusMessage.serial)
-            amrStatusRepository.save(amrStatusMessage.toEntity(amr))
+            amrStatusRepository.save(amrStatusMessage.toAmrStatus(amr))
         } catch (e: Exception) {
             logger.warn("Failed to handle a message : {}", e.message)
         }

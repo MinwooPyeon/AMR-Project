@@ -13,7 +13,7 @@ data class AmrStatusMessage(
     val speed: Double
 )
 
-fun AmrStatusMessage.toEntity(amr: Amr) = AmrStatus(
+fun AmrStatusMessage.toAmrStatus(amr: Amr) = AmrStatus(
     amr = amr,
     status = status,
     batteryLevel = batteryLevel,
