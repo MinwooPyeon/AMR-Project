@@ -6,7 +6,6 @@ import androidx.compose.ui.graphics.Color
 data class DashboardAmrUiModel(
     val id: Long,
     val name: String,
-    val battery: Int,
     val status: DashboardAmrStatus,
     val location: String,
     val job: String

@@ -69,7 +69,6 @@ val sampleDashboardAmrs = listOf(
     DashboardAmrUiModel(
         id = 1L,
         name = "AMR-001",
-        battery = 85,
         status = DashboardAmrStatus.RUNNING,
         location = "A구역-라인1",
         job = "화물 운반 중"
@@ -77,7 +76,6 @@ val sampleDashboardAmrs = listOf(
     DashboardAmrUiModel(
         id = 2L,
         name = "AMR-002",
-        battery = 45,
         status = DashboardAmrStatus.CHARGING,
         location = "충전소-1번",
         job = "충전 중"
@@ -85,7 +83,6 @@ val sampleDashboardAmrs = listOf(
     DashboardAmrUiModel(
         id = 3L,
         name = "AMR-003",
-        battery = 92,
         status = DashboardAmrStatus.CHECK,
         location = "B구역-라인3",
         job = "점검 중"

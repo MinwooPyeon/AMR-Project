@@ -1,23 +1,11 @@
 package com.android.ssamr.feature.amrDetail
 
 import androidx.compose.ui.graphics.Color
-
-// core.domain 이동
-data class AmrDetailUiModel(
-    val name: String,
-    val status: String,
-    val battery: Int,
-    val location: String,
-    val speed: String,
-    val job: String,
-    val model: String,
-    val serial: String,
-    val firmware: String,
-)
+import com.android.ssamr.core.domain.model.AmrDetailStatus
 
 data class AmrDetailState(
     val amrId: Long? = null,
-    val amr: AmrDetailUiModel? = null,
+    val amr: AmrDetailStatus? = null,
     val showReturnDialog: Boolean = false,
     val showStartDialog: Boolean = false,
     val isLoading: Boolean = false,
@@ -26,14 +14,14 @@ data class AmrDetailState(
 
 sealed class AmrDetailIntent {
     data object LoadAmrDetail : AmrDetailIntent()
-    data object ClickWebcam : AmrDetailIntent()
+    data class ClickWebcam(val ipAddress: String) : AmrDetailIntent()
     data object ClickManualReturn : AmrDetailIntent()
     data object ClickManualStart : AmrDetailIntent()
 }
 
 sealed class AmrDetailEffect {
     data class ShowError(val message: String) : AmrDetailEffect()
-    data object NavigateToWebcam : AmrDetailEffect()
+    data class NavigateToWebcam(val ipAddress: String) : AmrDetailEffect()
     data object ShowReturnDialog : AmrDetailEffect()
     data object ShowStartDialog : AmrDetailEffect()
 }

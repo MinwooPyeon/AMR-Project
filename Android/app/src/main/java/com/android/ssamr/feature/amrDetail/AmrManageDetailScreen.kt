@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
+import com.android.ssamr.core.domain.model.AmrAction
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.core.ui.SSAMRDialog
 import com.android.ssamr.ui.theme.SSAMRTheme
 
@@ -66,7 +69,7 @@ fun AmrManageDetailScreen(
                     AmrDetailInfoCard(amr = state.amr)
                     Spacer(Modifier.height(32.dp))
                     AmrDetailButtonGroup(
-                        onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam) },
+                        onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam(state.amr.ipAddress)) },
                         onManualReturnClick = { sendIntent(AmrDetailIntent.ClickManualReturn) },
                         onManualStartClick = { sendIntent(AmrDetailIntent.ClickManualStart) }
                     )
@@ -90,14 +93,14 @@ fun AmrManageDetailScreenPreview() {
 }
 
 val sampleAmrDetail =
-    AmrDetailUiModel(
+    AmrDetailStatus(
         name = "AMR-001",
-        status = "작동중",
-        battery = 85,
+        status = AmrDetailAction.RUNNING,
         location = "A구역-라인1",
         speed = "1.2m/s",
         job = "화물 운반 중",
         model = "RB-100",
         serial = "RB100-2024-001",
         firmware = "v2.1.3",
+        ipAddress = "111.111.1111",
     )

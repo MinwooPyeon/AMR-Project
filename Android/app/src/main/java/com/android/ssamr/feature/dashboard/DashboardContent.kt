@@ -146,7 +146,7 @@ fun AmrStatusSection(
 
             Spacer(Modifier.height(8.dp))
 
-            amrs.take(3).forEach { amr ->
+            amrs.forEach { amr ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -163,7 +163,6 @@ fun AmrStatusSection(
                     }
                     Column(horizontalAlignment = Alignment.End) {
                         Text(amr.status.display, color = amr.status.color)
-                        Text("${amr.battery}%", fontSize = 12.sp, color = Color.Gray)
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp)) // 각 항목 간 간격
@@ -204,7 +203,6 @@ fun PreviewAmrStatusSection() {
             name = "AMR-001",
             location = "Zone A",
             status = DashboardAmrStatus.RUNNING,
-            battery = 87,
             job = "운반 중"
         ),
         DashboardAmrUiModel(
@@ -212,7 +210,6 @@ fun PreviewAmrStatusSection() {
             name = "AMR-002",
             location = "Zone B",
             status = DashboardAmrStatus.CHARGING,
-            battery = 65,
             job = "충전 중"
         ),
         DashboardAmrUiModel(
@@ -220,7 +217,6 @@ fun PreviewAmrStatusSection() {
             name = "AMR-003",
             location = "Zone C",
             status = DashboardAmrStatus.CHECK,
-            battery = 45,
             job = "점검 중"
         )
     )

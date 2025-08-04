@@ -12,12 +12,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun AmrDetailRoute(
     viewModel: AmrDetailViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
-    navigateToWebcam: () -> Unit = {}
+    navigateToWebcam: (String) -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
-//     상세 정보 불러오기 (최초 진입시 1회)
+    // 상세 정보 불러오기 (최초 진입시 1회)
 //    LaunchedEffect(Unit) {
 //        viewModel.sendIntent(AmrDetailIntent.LoadAmrDetail)
 //    }
@@ -26,7 +26,7 @@ fun AmrDetailRoute(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is AmrDetailEffect.NavigateToWebcam -> navigateToWebcam()
+                is AmrDetailEffect.NavigateToWebcam -> navigateToWebcam(effect.ipAddress)
                 is AmrDetailEffect.ShowError -> Toast.makeText(
                     context,
                     effect.message,
