@@ -19,7 +19,6 @@ public class Managers : MonoBehaviour
     #region Unity Methods
     private void Awake()
     {
-        Debug.Log("Managers Start");
         if (_instance == null)
         {
             GameObject go = GameObject.Find("@Managers");

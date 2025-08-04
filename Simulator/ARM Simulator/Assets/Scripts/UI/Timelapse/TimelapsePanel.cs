@@ -20,8 +20,19 @@ public class TimelapsePanel : MonoBehaviour
         _timeScale = slider.value;
     }
 
-    public void ChangeTImeScale()
+    public void OnSaveButtonClicked()
+    {
+        ChangeTImeScale();
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+    }
+    public void OnCancleButtonClicked()
+    {
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+    }
+    private void ChangeTImeScale()
     {
         Time.timeScale = _timeScale;
     }
+
+
 }

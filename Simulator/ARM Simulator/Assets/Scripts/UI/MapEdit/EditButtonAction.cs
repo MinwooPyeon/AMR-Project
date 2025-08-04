@@ -41,11 +41,11 @@ public class EditButtonAction : MonoBehaviour
     }
     public void OpenFileSetting()
     {
-        yamlPath.transform.parent.parent.gameObject.SetActive(true);
+        PanelList.Panels.EditorPathEditCanvas.SetActive(true);
     }
     public void OffFileSetting()
     {
-        yamlPath.transform.parent.parent.gameObject.SetActive(false);
+        PanelList.Panels.EditorPathEditCanvas.SetActive(false);
     }
     public void LoadFile()
     {

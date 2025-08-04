@@ -2,63 +2,57 @@ using UnityEngine;
 
 public class MainUIAction : MonoBehaviour
 {
-    public Canvas VirtualMapCanvas;
-    public Canvas PathEditCanvas;
-    public Canvas TimeLapseCanvas;
-    public Canvas DeviceInfoCanvas;
-    public Canvas DeviceSettingCanvas;
-    public Canvas MapEditCanvas;
-
     public MapSpawner mapSpawner;
 
     public void OnPathEditButtonClicked()
     {
-        VirtualMapCanvas.gameObject.SetActive(true);
-        PathEditCanvas.gameObject.SetActive(true);
-        TimeLapseCanvas.gameObject.SetActive(false);
-        DeviceInfoCanvas.gameObject.SetActive(false);
-        DeviceSettingCanvas.gameObject.SetActive(false);
-        MapEditCanvas.gameObject.SetActive(false);
+        PanelList.Panels.VirtualMapCanvas.SetActive(true);
+        
+        PanelList.Panels.PathEditCanvas.SetActive(true);
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
+        PanelList.Panels.MapEditCanvas.SetActive(false);
     }
 
     public void OnTimelapseButtonClicked()
     {
-        VirtualMapCanvas.gameObject.SetActive(true);
-        PathEditCanvas.gameObject.SetActive(false);
-        TimeLapseCanvas.gameObject.SetActive(true);
-        DeviceInfoCanvas.gameObject.SetActive(false);
-        DeviceSettingCanvas.gameObject.SetActive(false);
-        MapEditCanvas.gameObject.SetActive(false);
+        PanelList.Panels.VirtualMapCanvas.SetActive(true);
+        PanelList.Panels.PathEditCanvas.SetActive(false);
+        PanelList.Panels.TimeLapseCanvas.SetActive(true);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
+        PanelList.Panels.MapEditCanvas.SetActive(false);
     }
 
     public void OnDeviceInfoButtonClicked()
     {
-        VirtualMapCanvas.gameObject.SetActive(false);
-        PathEditCanvas.gameObject.SetActive(false);
-        TimeLapseCanvas.gameObject.SetActive(false);
-        DeviceInfoCanvas.gameObject.SetActive(true);
-        DeviceSettingCanvas.gameObject.SetActive(false);
-        MapEditCanvas.gameObject.SetActive(false);
+        PanelList.Panels.VirtualMapCanvas.SetActive(false);
+        PanelList.Panels.PathEditCanvas.SetActive(false);
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(true);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
+        PanelList.Panels.MapEditCanvas.SetActive(false);
     }
 
     public void OnDeviceSettingButtonClicked()
     {
-        VirtualMapCanvas.gameObject.SetActive(true);
-        PathEditCanvas.gameObject.SetActive(false);
-        TimeLapseCanvas.gameObject.SetActive(false);
-        DeviceInfoCanvas.gameObject.SetActive(false);
-        DeviceSettingCanvas.gameObject.SetActive(true);
-        MapEditCanvas.gameObject.SetActive(false);
+        PanelList.Panels.VirtualMapCanvas.SetActive(true);
+        PanelList.Panels.PathEditCanvas.SetActive(false);
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(true);
+        PanelList.Panels.MapEditCanvas.SetActive(false);
     }
 
     public void OnEditorButtonClicked()
     {
-        VirtualMapCanvas.gameObject.SetActive(false);
-        PathEditCanvas.gameObject.SetActive(false);
-        TimeLapseCanvas.gameObject.SetActive(false);
-        DeviceInfoCanvas.gameObject.SetActive(false);
-        DeviceSettingCanvas.gameObject.SetActive(false);
-        MapEditCanvas.gameObject.SetActive(true);
+        PanelList.Panels.VirtualMapCanvas.SetActive(false);
+        PanelList.Panels.PathEditCanvas.SetActive(false);
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
+        PanelList.Panels.MapEditCanvas.SetActive(true);
     }
 
     public void OnLoadButtonClicked()

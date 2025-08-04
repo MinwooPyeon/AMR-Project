@@ -25,4 +25,9 @@ public class DeviceInfoPanel : MonoBehaviour
         PositionText.text = $"x : {data.Position.x} / y: {data.Position.y}";
         StateText.text = data.AmrState.ToString();
     }
+
+    public void OnParticularButtonClicked()
+    {
+
+    }
 }
