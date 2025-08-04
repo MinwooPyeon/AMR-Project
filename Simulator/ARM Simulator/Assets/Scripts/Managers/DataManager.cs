@@ -56,7 +56,6 @@ public class DataManager
     public class CaptureSession
     {
         public float[] cameraData = null;
-        public Vector3[] lidarData = null;
         public StateData state = null;
         public long timestamp;
     }
@@ -79,7 +78,7 @@ public class DataManager
 
     private void TryFinalizeSession(string deviceIndex, CaptureSession session)
     {
-        if (session.cameraData != null && session.lidarData != null && session.state != null)
+        if (session.cameraData != null && session.state != null)
         {
             AddSensorFrame(deviceIndex, session.cameraData, session.state, session.timestamp);
             _pendingSessions.Remove((deviceIndex, session.timestamp));

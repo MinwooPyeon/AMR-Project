@@ -620,7 +620,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: AMR_Virtual_Device
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7654124493218394153, guid: 6cba0d1e6c18c2c4490f5889a7b3db2a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

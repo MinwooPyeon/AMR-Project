@@ -27,7 +27,6 @@ public class DeviceManager
         if (!_devices.ContainsKey(id)) _devices.Add(id, device);
         else _devices[id] = device;
 
-        Debug.Log(_syncManager);
         _syncManager.RegistModule(id, device.gameObject);
         
     }

@@ -24,7 +24,6 @@ public class ModuleSyncManager : MonoBehaviour
     {
         // 공통 ID만 뽑아서 정렬
         sortedDeviceIds = cameraManager.cameras.Keys
-            .Intersect(lidarManager.Sensors.Keys)
             .OrderBy(id => id)
             .ToList();
 
