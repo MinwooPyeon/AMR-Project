@@ -1,6 +1,6 @@
 package com.example.amr_backend.v1.dto
 
-data class AmrManualControlMessage(
+data class AmrManualControlRequest(
     val serial: String,
     val area: String,
 )
