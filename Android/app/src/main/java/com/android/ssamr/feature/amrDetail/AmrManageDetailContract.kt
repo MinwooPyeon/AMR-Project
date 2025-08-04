@@ -14,14 +14,14 @@ data class AmrDetailState(
 
 sealed class AmrDetailIntent {
     data object LoadAmrDetail : AmrDetailIntent()
-    data class ClickWebcam(val idAddress: String) : AmrDetailIntent()
+    data class ClickWebcam(val ipAddress: String) : AmrDetailIntent()
     data object ClickManualReturn : AmrDetailIntent()
     data object ClickManualStart : AmrDetailIntent()
 }
 
 sealed class AmrDetailEffect {
     data class ShowError(val message: String) : AmrDetailEffect()
-    data object NavigateToWebcam : AmrDetailEffect()
+    data class NavigateToWebcam(val ipAddress: String) : AmrDetailEffect()
     data object ShowReturnDialog : AmrDetailEffect()
     data object ShowStartDialog : AmrDetailEffect()
 }

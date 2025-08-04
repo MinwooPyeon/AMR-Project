@@ -26,7 +26,7 @@ fun AmrDetailRoute(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is AmrDetailEffect.NavigateToWebcam -> navigateToWebcam(effect.idAddress)
+                is AmrDetailEffect.NavigateToWebcam -> navigateToWebcam(effect.ipAddress)
                 is AmrDetailEffect.ShowError -> Toast.makeText(
                     context,
                     effect.message,
