@@ -5,19 +5,35 @@ import com.example.amr_backend.v1.dto.toEntity
 import com.example.amr_backend.v1.repository.AmrRepository
 import com.example.amr_backend.v1.repository.AmrStatusRepository
 import com.fasterxml.jackson.databind.ObjectMapper
+import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener
+import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttMessage
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
+private const val STATUS_TOPIC = "status"
+
 @Component
-class MqttMessageHandler(
+class ArmStatusMessageHandler(
     private val amrStatusRepository: AmrStatusRepository,
+    private val mqttClient: MqttClient,
     private val amrRepository: AmrRepository,
     private val objectMapper: ObjectMapper,
 ) : IMqttMessageListener {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    @PostConstruct
+    fun subscribeStatusTopic() {
+        mqttClient.subscribe(STATUS_TOPIC, this)
+    }
+
+    @PreDestroy
+    fun unsubscribeStatusTopic() {
+        mqttClient.unsubscribe(STATUS_TOPIC)
+    }
 
     @Transactional
     override fun messageArrived(topic: String?, message: MqttMessage?) {
