@@ -11,7 +11,7 @@ data class AmrStatusResponse(
     val battery: Int
 )
 
-fun AmrStatus.toResponse() = AmrStatusResponse(
+fun AmrStatus.toAmrStatusResponse() = AmrStatusResponse(
     id = id,
     name = amr.name,
     status = status,
