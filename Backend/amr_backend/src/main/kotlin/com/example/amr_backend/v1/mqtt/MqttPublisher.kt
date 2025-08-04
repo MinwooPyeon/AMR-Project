@@ -11,8 +11,8 @@ class MqttPublisher(
     private val mqttClient: MqttClient,
     private val objectMapper: ObjectMapper,
 ) {
-    fun sendCommand(message: AmrManualControlMessage) {
-        val topic = getManualControlTopic(message.serial)
+    fun sendCommand(serial: String, message: AmrManualControlMessage) {
+        val topic = getManualControlTopic(serial)
         val jsonString = objectMapper.writeValueAsString(message)
         mqttClient.publish(topic, MqttMessage(jsonString.toByteArray()))
     }

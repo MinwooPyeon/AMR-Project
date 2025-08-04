@@ -1,6 +1,7 @@
 package com.example.amr_backend.v1.controller
 
 import com.example.amr_backend.v1.dto.AmrManualControlMessage
+import com.example.amr_backend.v1.dto.AmrManualControlRequest
 import com.example.amr_backend.v1.dto.AmrStatusResponse
 import com.example.amr_backend.v1.dto.toAmrDetailResponse
 import com.example.amr_backend.v1.dto.toResponse
@@ -25,6 +26,6 @@ class AmrController(
     fun findAmrDetailById(@PathVariable id: Long) = amrService.findAmrDetail(id).toAmrDetailResponse()
 
     @PostMapping("/control")
-    fun sendManualControlMessage(@RequestBody message: AmrManualControlMessage) =
-        amrService.sendManualControlMessage(message)
+    fun sendManualControlMessage(@RequestBody request: AmrManualControlRequest) =
+        amrService.sendManualControlMessage(request.serial, AmrManualControlMessage(request.area))
 }

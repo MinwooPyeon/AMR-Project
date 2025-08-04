@@ -44,5 +44,6 @@ class AmrService(
 
     fun findAmrDetail(id: Long): AmrStatus = amrStatusRepository.findAmrStatusById(id)
 
-    fun sendManualControlMessage(message: AmrManualControlMessage) = mqttPublisher.sendCommand(message)
+    fun sendManualControlMessage(serial: String, message: AmrManualControlMessage) =
+        mqttPublisher.sendCommand(serial, message)
 }
