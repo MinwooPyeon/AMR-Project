@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DeviceCountPanelUI : MonoBehaviour
+public class DeviceCountPanel : MonoBehaviour
 {
     public Text totalText;
     public Text chargeText;
