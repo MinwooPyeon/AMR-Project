@@ -11,6 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.ssamr.core.domain.model.AmrCategory
+import com.android.ssamr.core.domain.model.AmrAction
+import com.android.ssamr.core.domain.model.AmrDetailAction
+import com.android.ssamr.core.domain.model.AmrStatus
 
 @Composable
 fun AmrManageScreen(
@@ -30,8 +34,8 @@ fun AmrManageScreen(
 
             // AMR 카드 리스트
             AmrCardList(
-//                amrs = state.amrList,
-                amrs = sampleAmrs,
+                amrs = state.amrList,
+//                amrs = sampleAmrs,
                 onAmrCardClick = { amrId ->
                     sendIntent(AmrIntent.ClickAmrManageCard(amrId))
                 }
@@ -46,14 +50,12 @@ fun AmrManageScreenPreview() {
     AmrManageScreen(
         state = AmrState(
             selectedCategory = AmrCategory.RUNNING,
-            amrList = listOf(
-                // 샘플 AmrUiModel들
-            ),
+            amrList = sampleAmrs,
             categoryCounts = mapOf(
                 AmrCategory.ALL to 6,
                 AmrCategory.RUNNING to 3,
                 AmrCategory.CHARGING to 1,
-                AmrCategory.CHECK to 2
+                AmrCategory.CHECKING to 2
             ),
             isLoading = false,
             error = null
@@ -64,31 +66,28 @@ fun AmrManageScreenPreview() {
 
 // 임시 데이터
 val sampleAmrs = listOf(
-    AmrUiModel(
+    AmrStatus(
         id = 1L,
         name = "AMR-001",
-        status = AmrStatus.RUNNING,
+        status = AmrAction.RUNNING,
         location = "A구역-라인1",
         speed = "1.2",
         job = "화물 운반 중",
-        battery = 85,
     ),
-    AmrUiModel(
+    AmrStatus(
         id = 2L,
         name = "AMR-002",
-        status = AmrStatus.CHARGING,
+        status = AmrAction.CHARGING,
         location = "충전소-1번",
-        speed = "0",
+        speed = "1.2",
         job = "충전 중",
-        battery = 45,
     ),
-    AmrUiModel(
+    AmrStatus(
         id = 3L,
         name = "AMR-003",
-        status = AmrStatus.CHECK,
+        status = AmrAction.CHECKING,
         location = "B구역-라인3",
-        speed = "0",
+        speed = "1.2",
         job = "점검 중",
-        battery = 92,
     )
 )

@@ -14,7 +14,7 @@ class DashboardViewModel @Inject constructor(
     private val repository: DashboardRepository
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = true // true: 더미 사용 / false: 실제 API 사용
+    private val USE_DUMMY_DATA = false // true: 더미 사용 / false: 실제 API 사용
 
     private val _state = MutableStateFlow(DashboardState())
     val state: StateFlow<DashboardState> = _state.asStateFlow()
