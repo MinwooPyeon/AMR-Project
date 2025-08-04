@@ -8,17 +8,17 @@ using System.Linq;
 public class LidarManager : MonoBehaviour
 {
     // ──────────────────────────────────────────────
-    private Dictionary<int, LidarSensor> _sensorMap = new();
-    public IReadOnlyDictionary<int, LidarSensor> Sensors => _sensorMap;
+    private Dictionary<string, LidarSensor> _sensorMap = new();
+    public IReadOnlyDictionary<string, LidarSensor> Sensors => _sensorMap;
 
     // 풀링용 NativeArray 사전
-    private Dictionary<int, NativeArray<RaycastCommand>> _commandPool = new();
-    private Dictionary<int, NativeArray<RaycastHit>> _hitPool = new();
+    private Dictionary<string, NativeArray<RaycastCommand>> _commandPool = new();
+    private Dictionary<string, NativeArray<RaycastHit>> _hitPool = new();
 
     // 비동기 스캔 완료 대기 리스트
     struct PendingScan
     {
-        public int deviceId;
+        public string deviceId;
         public long timestamp;
         public JobHandle handle;
     }
@@ -50,7 +50,7 @@ public class LidarManager : MonoBehaviour
     }
 
     // ──────────────────────────────────────────────
-    public void RegisterSensor(int deviceId, LidarSensor sensor)
+    public void RegisterSensor(string deviceId, LidarSensor sensor)
     {
         if (_sensorMap.ContainsKey(deviceId)) return;
         _sensorMap[deviceId] = sensor;
@@ -63,7 +63,7 @@ public class LidarManager : MonoBehaviour
         }
     }
 
-    public void UnregisterSensor(int deviceId)
+    public void UnregisterSensor(string deviceId)
     {
         if (!_sensorMap.Remove(deviceId)) return;
         if (_commandPool.TryGetValue(deviceId, out var cmdArr))
@@ -79,7 +79,7 @@ public class LidarManager : MonoBehaviour
     }
 
     // ──────────────────────────────────────────────
-    public void RequestScan(int deviceId, long timestamp)
+    public void RequestScan(string deviceId, long timestamp)
     {
         // 1) 이전에 같은 deviceId로 스케줄된 Job이 있으면 먼저 완료하고 처리
         for (int i = _pendingScans.Count - 1; i >= 0; --i)
@@ -129,7 +129,7 @@ public class LidarManager : MonoBehaviour
     }
 
     // ──────────────────────────────────────────────
-    private void ProcessScanResults(int deviceId, long timestamp)
+    private void ProcessScanResults(string deviceId, long timestamp)
     {
         var sensor = _sensorMap[deviceId];
         var commands = _commandPool[deviceId];

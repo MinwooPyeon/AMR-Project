@@ -16,8 +16,8 @@ public class ModuleSyncManager : MonoBehaviour
     public float updateInterval = 1f;  // 1초
 
     // 내부 스케줄링 데이터
-    private List<int> sortedDeviceIds = new List<int>();
-    private Dictionary<int, float> lastProcessTime = new Dictionary<int, float>();
+    private List<string> sortedDeviceIds = new List<string>();
+    private Dictionary<string, float> lastProcessTime = new Dictionary<string, float>();
     private static readonly YieldInstruction FrameEnd = new WaitForEndOfFrame();
 
     void Start()
@@ -87,7 +87,7 @@ public class ModuleSyncManager : MonoBehaviour
     }
 
     // 모듈 추가
-    public void RegistModule(int id, GameObject amr)
+    public void RegistModule(string id, GameObject amr)
     {
         lidarManager.RegisterSensor(
             id,
@@ -109,7 +109,7 @@ public class ModuleSyncManager : MonoBehaviour
     }
 
     // 모듈 제거
-    public void UnregistModule(int id)
+    public void UnregistModule(string id)
     {
         cameraManager.UnregistCamera(id);
         lidarManager.UnregisterSensor(id);

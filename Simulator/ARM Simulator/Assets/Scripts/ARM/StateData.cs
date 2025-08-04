@@ -4,6 +4,9 @@ public class StateData : MonoBehaviour
 {
     float _acceleration = 0;
     float _chargeAmount = 0;
+    Vector2 _position = Vector2.zero;
+    string _serialNumber;
+
     ARM_STATE _state = ARM_STATE.IDLE;
     ACTION_STATE _actionState = ACTION_STATE.STOP;
 

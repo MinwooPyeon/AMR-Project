@@ -32,12 +32,12 @@ public class DeviceController : MonoBehaviour
         };
 
         // DeviceManager¿¡ µî·Ï
-        Managers.Device.DeviceRegister(GetInstanceID(), this);
+        Managers.Device.DeviceRegister(GetInstanceID().ToString(), this);
     }
 
     private void OnDestroy()
     {
-        Managers.Device.DeviceUnregister(GetInstanceID());
+        Managers.Device.DeviceUnregister(GetInstanceID().ToString());
     }
     #endregion
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonAction : MonoBehaviour
+public class EditButtonAction : MonoBehaviour
 {
     public PaintCanvasWithPalette paintCanvas;
 
