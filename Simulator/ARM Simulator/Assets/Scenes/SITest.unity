@@ -2933,6 +2933,7 @@ GameObject:
   - component: {fileID: 543015124}
   - component: {fileID: 543015123}
   - component: {fileID: 543015122}
+  - component: {fileID: 543015125}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3007,13 +3008,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 543015121}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &543015125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543015121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaac9f962260c2b429327fa2881e67ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 10
+  rotateSpeed: 10
 --- !u!1 &556791189
 GameObject:
   m_ObjectHideFlags: 0
@@ -9979,8 +9994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f94f684c7f18067489b749e94de094d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yamlFileName: 
-  imageFileName: 
+  yamlFileName: C:\Users\SSAFY\Desktop\Map\test.yaml
+  imageFileName: C:\Users\SSAFY\Desktop\Map\map.png
+  MainCamera: {fileID: 543015125}
   obstaclePrefab: {fileID: 6367951854641072274, guid: bb522d3a4fa21f245b0c48cd8450659d, type: 3}
   chargerPrefab: {fileID: 6603727346776819930, guid: 7273a999af0bfc7428d4cf764b4e2ef1, type: 3}
   loadPrefab: {fileID: 8791553212763182605, guid: c51db1dc31b4c624187de0c7386b7158, type: 3}

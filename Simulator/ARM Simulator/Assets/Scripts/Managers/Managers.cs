@@ -15,6 +15,7 @@ public class Managers : MonoBehaviour
     public static DeviceManager Device { get { return _device; } }
     public static DataManager Data { get { return _data; } }
 
+
     #endregion
     #region Unity Methods
     private void Awake()

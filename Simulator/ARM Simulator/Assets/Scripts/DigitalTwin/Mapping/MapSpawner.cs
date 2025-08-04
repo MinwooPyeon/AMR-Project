@@ -6,6 +6,8 @@ public class MapSpawner : MonoBehaviour
     public string yamlFileName;
     public string imageFileName;
 
+    public CameraController MainCamera;
+
     [Header("ÇÁ¸®ÆÕ")]
     public GameObject obstaclePrefab;
     public GameObject chargerPrefab;
@@ -28,8 +30,9 @@ public class MapSpawner : MonoBehaviour
     {
         yamlParser.ParseYaml(yamlFileName, out yamlData);
         imgData = imageParser.LoadPNG(imageFileName);
-
+        Debug.Log($"IMAGE : {imgData.width}  {imgData.height}");
         SpawnByProbRanges();
+        MainCamera.OnMapLoaded(imgData);
     }
 
     void SpawnByProbRanges()
@@ -51,7 +54,7 @@ public class MapSpawner : MonoBehaviour
             for (int y = 0; y < imgData.height; y++)
             {
                 float p = imgData.probGrid[x, y];
-                Vector3 pos = PixelToWorld(x, y);
+                Vector3 pos = new Vector3(x, 0, y);
 
                 if (p > 0.9f)
                     Instantiate(freePrefab, pos, Quaternion.identity, freeGroup.transform);
