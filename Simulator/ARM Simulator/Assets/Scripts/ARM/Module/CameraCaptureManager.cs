@@ -116,8 +116,9 @@ public class CameraCaptureManager : MonoBehaviour
         input.Dispose();
         output.Dispose();
 
+        StateData state = Managers.Device.Devices[id].gameObject.GetComponent<StateData>();
         // 최종 콜백
-        Managers.Data.OnCameraCaptured(id, gray, timestamp);
+        Managers.Data.OnCameraCaptured(id, gray, timestamp, state);
     }
 
     // 그레이스케일 변환 Job

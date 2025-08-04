@@ -152,7 +152,6 @@ public class LidarManager : MonoBehaviour
         sensor.pointCloud = points;
         var go = sensor.transform.parent.gameObject;
         var state = go.GetComponent<StateData>();
-        Managers.Data.OnLidarScanned(deviceId, points, timestamp, state);
         Debug.Log("[Lidar Manager]Lidar Complete");
 
         //SLAM

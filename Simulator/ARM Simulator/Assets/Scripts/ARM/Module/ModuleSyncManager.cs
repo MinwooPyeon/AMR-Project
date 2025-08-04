@@ -71,7 +71,7 @@ public class ModuleSyncManager : MonoBehaviour
                 // 요청만 던짐
                 long timestamp = System.DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 cameraManager.RequestCapture(moduleId, timestamp);
-                lidarManager.RequestScan(moduleId, timestamp);
+                //lidarManager.RequestScan(moduleId, timestamp);
 
                 // 처리 시간 기록
                 lastProcessTime[moduleId] = now;
@@ -89,10 +89,7 @@ public class ModuleSyncManager : MonoBehaviour
     // 모듈 추가
     public void RegistModule(string id, GameObject amr)
     {
-        lidarManager.RegisterSensor(
-            id,
-            amr.transform.GetChild(4).GetComponent<LidarSensor>()
-        );
+        //lidarManager.RegisterSensor(id,amr.transform.GetChild(4).GetComponent<LidarSensor>());
         cameraManager.RegistCamera(
             id,
             amr.transform.GetChild(6).GetChild(0).GetComponent<Camera>()
@@ -112,7 +109,7 @@ public class ModuleSyncManager : MonoBehaviour
     public void UnregistModule(string id)
     {
         cameraManager.UnregistCamera(id);
-        lidarManager.UnregisterSensor(id);
+        //lidarManager.UnregisterSensor(id);
         lastProcessTime.Remove(id);
 
         sortedDeviceIds = cameraManager.cameras.Keys
