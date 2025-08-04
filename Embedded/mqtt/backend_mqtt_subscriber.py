@@ -79,7 +79,7 @@ class BackendMQTTSubscriber:
     
     def subscribe_to_amr_data(self, robot_id: str = "AMR001"):
         """AMR 데이터 구독"""
-        topic = f"status/{robot_id}"
+        topic = "status"
         result = self.mqtt_client.subscribe(topic, qos=1)
         
         if result[0] == mqtt.MQTT_ERR_SUCCESS:
@@ -193,7 +193,7 @@ class BackendMQTTSubscriber:
             mqtt_logger.mqtt_receive_success(topic, data)
             
             # 토픽에 따른 처리
-            if topic.startswith("status/"):
+            if topic == "status":
                 # AMR 상태 데이터
                 with self.data_lock:
                     self.latest_amr_data = data

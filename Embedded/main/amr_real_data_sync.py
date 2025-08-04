@@ -428,7 +428,7 @@ class AMRRealDataSync:
             return
         
         # 명령 토픽 구독
-        topic = f"command/{self.robot_id}"
+        topic = "command"
         result = self.mqtt_client.subscribe(topic, qos=1)
         
         if result[0] == 0:
@@ -691,7 +691,7 @@ class AMRRealDataSync:
             }
             
             # MQTT로 JSON 데이터 전송
-            self.mqtt_transmitter.publish_json_data(json_data)
+            self.mqtt_transmitter.send_sensor_data(json_data)
             
         except Exception as e:
             logger.error(f"MQTT 데이터 전송 오류: {e}")
@@ -915,7 +915,7 @@ def test_amr_real_data_sync():
     print("=== 실제 AMR 데이터 동기화 테스트 ===")
     print("전진 → 정지 → 좌회전 → 정지 → 우회전 → 정지 순서로 동작합니다.")
     print("센서 데이터가 JSON 형식으로 백엔드(192.168.100.141:1883)로 전송됩니다.")
-    print("MQTT 토픽: status/AMR001")
+    print("MQTT 토픽: status")
     print("전송 주기: 1초마다 (1Hz)")
     print("백업 기능: MQTT 연결 없을 때 또는 AI 상황 발생 시")
     print("상황 백업 기간: 180초")

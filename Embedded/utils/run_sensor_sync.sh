@@ -9,7 +9,7 @@ echo "4. 백업 시스템 테스트"
 echo ""
 echo "📡 데이터 구조:"
 echo "  Embedded -> Backend:"
-echo "    Topic: status/AMR001"
+echo "    Topic: status"
 echo "    {"
 echo '      "serial": "AMR001"'
 echo '      "state": "RUNNING"'

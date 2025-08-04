@@ -157,7 +157,7 @@ def test_unidirectional_communication():
     
     print(f"\n💡 단방향 통신 동작 방식:")
     print(f"  - 임베디드: 1초마다 센서 데이터 수집 및 MQTT 전송")
-    print(f"  - 백엔드: status/AMR001 토픽에서 데이터 수신")
+    print(f"  - 백엔드: status 토픽에서 데이터 수신")
     print(f"  - 전송 데이터: 시리얼, 상태, 위치(x,y), 속도")
     print(f"  - 데이터 형식: JSON")
     print(f"  - 전송 주기: 1Hz (1초마다)")

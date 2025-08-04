@@ -102,7 +102,7 @@ class SensorDataTransmitter:
         
         try:
             # 토픽 설정
-            topic = f"status/{self.robot_id}"
+            topic = "status"
             
             # JSON 데이터 준비
             json_data = json.dumps(data, ensure_ascii=False)
