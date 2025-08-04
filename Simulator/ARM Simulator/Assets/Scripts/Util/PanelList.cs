@@ -34,4 +34,5 @@ public class PanelList : MonoBehaviour
     public GameObject DeviceInfoCanvas;
     public GameObject MapEditCanvas;
     public GameObject EditorPathEditCanvas;
+    public GameObject DeviceDetailCanvas;
 }
