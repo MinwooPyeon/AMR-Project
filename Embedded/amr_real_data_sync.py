@@ -38,6 +38,12 @@ class AMRRealDataSync:
         self.last_backup_time = 0
         self.backup_count = 0
         
+        # AI 상황 기반 백업 설정
+        self.backup_triggered_by_situation = False
+        self.current_ai_situation = ""
+        self.situation_backup_duration = 180.0 
+        self.situation_backup_start_time = 0
+        
         # 백업 디렉토리 생성
         if self.enable_backup:
             self._create_backup_directory()
@@ -140,12 +146,33 @@ class AMRRealDataSync:
             return False
     
     def _backup_data(self, data: Dict):
-        """데이터 백업 - MQTT 연결이 안될 때만 백업"""
+        """데이터 백업 - MQTT 연결이 안될 때 또는 AI 상황 발생 시 백업"""
         if not self.enable_backup:
             return
         
-        # MQTT가 연결되어 있으면 백업하지 않음
-        if self._is_mqtt_connected():
+        # 백업 조건 확인
+        should_backup = False
+        backup_reason = ""
+        
+        # 1. MQTT 연결이 없을 때 백업
+        if not self._is_mqtt_connected():
+            should_backup = True
+            backup_reason = "MQTT 연결 없음"
+        
+        # 2. AI 상황이 발생했을 때 백업
+        elif self.backup_triggered_by_situation:
+            current_time = time.time()
+            # 상황 발생 후 지정된 시간 동안 백업
+            if current_time - self.situation_backup_start_time <= self.situation_backup_duration:
+                should_backup = True
+                backup_reason = f"AI 상황 발생: {self.current_ai_situation}"
+            else:
+                # 백업 시간이 지나면 상황 기반 백업 중지
+                self.backup_triggered_by_situation = False
+                self.current_ai_situation = ""
+                logger.info("AI 상황 기반 백업 기간 종료")
+        
+        if not should_backup:
             return
         
         try:
@@ -181,7 +208,7 @@ class AMRRealDataSync:
                 self.last_backup_time = current_time
                 self.backup_count += 1
                 
-                logger.info(f"MQTT 연결 없음 - 데이터 백업 완료: {filename} (백업 #{self.backup_count})")
+                logger.info(f"{backup_reason} - 데이터 백업 완료: {filename} (백업 #{self.backup_count})")
                 
         except Exception as e:
             logger.error(f"데이터 백업 실패: {e}")
@@ -199,6 +226,9 @@ class AMRRealDataSync:
             # MQTT 연결 상태 확인
             mqtt_connected = self._is_mqtt_connected()
             
+            # 상황 기반 백업 상태 조회
+            situation_backup_status = self.get_situation_backup_status()
+            
             return {
                 "enabled": True,
                 "backup_directory": self.backup_dir,
@@ -210,7 +240,8 @@ class AMRRealDataSync:
                 "backup_condition": "MQTT 연결 없음" if not mqtt_connected else "MQTT 연결됨 (백업 안함)",
                 "mqtt_reconnect_attempts": self.mqtt_reconnect_attempts,
                 "mqtt_reconnect_delay": self.mqtt_reconnect_delay,
-                "mqtt_connection_attempts": self.mqtt_connection_attempts
+                "mqtt_connection_attempts": self.mqtt_connection_attempts,
+                "situation_backup": situation_backup_status
             }
         except Exception as e:
             logger.error(f"백업 통계 조회 실패: {e}")
@@ -766,10 +797,11 @@ class AMRRealDataSync:
                 logger.info(f"AI 명령 수신: {command}")
                 self._execute_ai_command(command)
             
-            # 상황 정보 로깅
+            # 상황 정보 로깅 및 백업 트리거
             situation = ai_data.get("situation", "")
             if situation:
                 logger.info(f"AI 상황 감지: {situation}")
+                self._trigger_situation_backup(situation)
             
             # 이미지 정보 로깅
             img = ai_data.get("img", "")
@@ -819,6 +851,46 @@ class AMRRealDataSync:
         if self.ai_subscriber:
             return self.ai_subscriber.get_ai_image()
         return ""
+    
+    def _trigger_situation_backup(self, situation: str):
+        """AI 상황 발생 시 백업 트리거"""
+        if not self.enable_backup:
+            return
+        
+        # 새로운 상황이 발생했거나 기존 상황과 다른 경우
+        if situation != self.current_ai_situation:
+            self.current_ai_situation = situation
+            self.backup_triggered_by_situation = True
+            self.situation_backup_start_time = time.time()
+            
+            logger.info(f"AI 상황 기반 백업 트리거: {situation}")
+            logger.info(f"백업 기간: {self.situation_backup_duration}초")
+        
+        # 기존 상황이 계속되는 경우 백업 시간 갱신
+        else:
+            self.situation_backup_start_time = time.time()
+            logger.debug(f"AI 상황 백업 시간 갱신: {situation}")
+    
+    def get_situation_backup_status(self) -> Dict:
+        """상황 기반 백업 상태 조회"""
+        if not self.enable_backup:
+            return {"enabled": False}
+        
+        current_time = time.time()
+        remaining_time = 0
+        
+        if self.backup_triggered_by_situation:
+            elapsed_time = current_time - self.situation_backup_start_time
+            remaining_time = max(0, self.situation_backup_duration - elapsed_time)
+        
+        return {
+            "enabled": self.enable_backup,
+            "situation_backup_triggered": self.backup_triggered_by_situation,
+            "current_situation": self.current_ai_situation,
+            "backup_duration": self.situation_backup_duration,
+            "remaining_time": remaining_time,
+            "situation_backup_start_time": self.situation_backup_start_time
+        }
 
 def test_amr_real_data_sync():
     """실제 AMR 데이터 동기화 테스트"""
@@ -827,6 +899,8 @@ def test_amr_real_data_sync():
     print("센서 데이터가 JSON 형식으로 백엔드(192.168.100.141:1883)로 전송됩니다.")
     print("MQTT 토픽: status/AMR001")
     print("전송 주기: 1초마다 (1Hz)")
+    print("백업 기능: MQTT 연결 없을 때 또는 AI 상황 발생 시")
+    print("상황 백업 기간: 30초")
     print("=" * 80)
     
     # AMR 실제 데이터 동기화 시스템 생성 (MQTT 활성화)
