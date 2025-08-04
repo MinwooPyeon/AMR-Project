@@ -1,223 +1,161 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Unity.Collections;
 using Unity.Jobs;
+using UnityEngine.Rendering;
 using System.Collections.Generic;
+using System.Linq;
 
 public class LidarManager : MonoBehaviour
 {
-    [Header("��ϵ� LidarSensor��")]
-    private List<LidarSensor> _sensors = new List<LidarSensor>();
-    public IReadOnlyList<LidarSensor> Sensors => _sensors;
+    // ──────────────────────────────────────────────
+    private Dictionary<int, LidarSensor> _sensorMap = new();
+    public IReadOnlyDictionary<int, LidarSensor> Sensors => _sensorMap;
 
-    private NativeArray<int> _sensorOffsets;
-    private NativeArray<int> _sensorCounts;
-    private NativeArray<Vector3> _localDirections;
-    private NativeArray<Vector3> _sensorPositions;
-    private NativeArray<Quaternion> _sensorRotations;
-    private NativeArray<float> _sensorMaxDistances;
-    private NativeArray<int> _sensorLayerMasks;
-    private NativeArray<RaycastCommand> _commands;
-    private NativeArray<RaycastHit> _points;
-    private NativeArray<Vector3> _outPoints;
+    // 풀링용 NativeArray 사전
+    private Dictionary<int, NativeArray<RaycastCommand>> _commandPool = new();
+    private Dictionary<int, NativeArray<RaycastHit>> _hitPool = new();
 
-    private int _totalRays;
-
-    public int DeviceCount => _sensors.Count;
-
-    #region Singleton
-    private static LidarManager _instance;
-    public static LidarManager Instance
+    // 비동기 스캔 완료 대기 리스트
+    struct PendingScan
     {
-        get
+        public int deviceId;
+        public long timestamp;
+        public JobHandle handle;
+    }
+    private List<PendingScan> _pendingScans = new();
+
+    // ──────────────────────────────────────────────
+    private void Update()
+    {
+        // 완료된 스캔만 처리
+        for (int i = _pendingScans.Count - 1; i >= 0; --i)
         {
-            if (_instance == null)
+            var scan = _pendingScans[i];
+            if (scan.handle.IsCompleted)
             {
-                _instance = FindObjectOfType<LidarManager>() ?? new GameObject("LidarManager").AddComponent<LidarManager>();
-                _instance.Initialize();
+                scan.handle.Complete();
+                ProcessScanResults(scan.deviceId, scan.timestamp);
+                _pendingScans.RemoveAt(i);
             }
-            return _instance;
         }
     }
 
-    private void Awake()
+    private void OnDestroy()
     {
-        if (_instance == null)
+        // 모든 풀 해제
+        foreach (var arr in _commandPool.Values) arr.Dispose();
+        foreach (var arr in _hitPool.Values) arr.Dispose();
+        _commandPool.Clear();
+        _hitPool.Clear();
+    }
+
+    // ──────────────────────────────────────────────
+    public void RegisterSensor(int deviceId, LidarSensor sensor)
+    {
+        if (_sensorMap.ContainsKey(deviceId)) return;
+        _sensorMap[deviceId] = sensor;
+
+        int count = sensor.localDirections.Count;
+        if (count > 0)
         {
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-            Initialize();
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    private void Initialize()
-    {
-        if (!_commands.IsCreated && _sensors.Count > 0)
-            RebuildArrays();
-    }
-    #endregion
-
-    #region Public Registration
-    public void RegisterSensor(LidarSensor sensor)
-    {
-        if (sensor == null || _sensors.Contains(sensor)) return;
-        _sensors.Add(sensor);
-        RebuildArrays();
-    }
-
-    public void UnregisterSensor(LidarSensor sensor)
-    {
-        if (sensor == null || !_sensors.Contains(sensor)) return;
-        _sensors.Remove(sensor);
-        RebuildArrays();
-    }
-    #endregion
-
-    private void OnDestroy() => DisposeAll();
-
-    private void DisposeAll()
-    {
-        _commands.DisposeIfCreated();
-        _points.DisposeIfCreated();
-        _outPoints.DisposeIfCreated();
-        _sensorOffsets.DisposeIfCreated();
-        _sensorCounts.DisposeIfCreated();
-        _localDirections.DisposeIfCreated();
-        _sensorPositions.DisposeIfCreated();
-        _sensorRotations.DisposeIfCreated();
-        _sensorMaxDistances.DisposeIfCreated();
-        _sensorLayerMasks.DisposeIfCreated();
-    }
-
-    private void RebuildArrays()
-    {
-        DisposeAll();
-
-        int sensorCount = _sensors.Count;
-        AllocateSensorArrays(sensorCount);
-        BuildSensorOffsetsAndCounts(sensorCount);
-        BuildLocalDirections(sensorCount);
-        AllocateRaycastBuffers();
-    }
-
-    private void AllocateSensorArrays(int sensorCount)
-    {
-        _sensorOffsets = new NativeArray<int>(sensorCount, Allocator.Persistent);
-        _sensorCounts = new NativeArray<int>(sensorCount, Allocator.Persistent);
-        _sensorPositions = new NativeArray<Vector3>(sensorCount, Allocator.Persistent);
-        _sensorRotations = new NativeArray<Quaternion>(sensorCount, Allocator.Persistent);
-        _sensorMaxDistances = new NativeArray<float>(sensorCount, Allocator.Persistent);
-        _sensorLayerMasks = new NativeArray<int>(sensorCount, Allocator.Persistent);
-    }
-
-    private void BuildSensorOffsetsAndCounts(int sensorCount)
-    {
-        _totalRays = 0;
-        for (int i = 0; i < sensorCount; i++)
-        {
-            var sensor = _sensors[i];
-            int rayCount = sensor.localDirections.Count;
-
-            _sensorOffsets[i] = _totalRays;
-            _sensorCounts[i] = rayCount;
-            _sensorMaxDistances[i] = sensor.maxDistance;
-            _sensorLayerMasks[i] = sensor.layerMask;
-
-            _totalRays += rayCount;
+            _commandPool[deviceId] = new NativeArray<RaycastCommand>(count, Allocator.Persistent);
+            _hitPool[deviceId] = new NativeArray<RaycastHit>(count, Allocator.Persistent);
         }
     }
 
-    private void BuildLocalDirections(int sensorCount)
+    public void UnregisterSensor(int deviceId)
     {
-        _localDirections = new NativeArray<Vector3>(_totalRays, Allocator.Persistent);
-        int index = 0;
-        foreach (var sensor in _sensors)
+        if (!_sensorMap.Remove(deviceId)) return;
+        if (_commandPool.TryGetValue(deviceId, out var cmdArr))
         {
-            foreach (var dir in sensor.localDirections)
-                _localDirections[index++] = dir;
+            cmdArr.Dispose();
+            _commandPool.Remove(deviceId);
+        }
+        if (_hitPool.TryGetValue(deviceId, out var hitArr))
+        {
+            hitArr.Dispose();
+            _hitPool.Remove(deviceId);
         }
     }
 
-    private void AllocateRaycastBuffers()
+    // ──────────────────────────────────────────────
+    public void RequestScan(int deviceId, long timestamp)
     {
-        _commands = new NativeArray<RaycastCommand>(_totalRays, Allocator.Persistent);
-        _points = new NativeArray<RaycastHit>(_totalRays, Allocator.Persistent);
-        _outPoints = new NativeArray<Vector3>(_totalRays, Allocator.Persistent);
-    }
-
-    public void ScanDevice(int index, long timestamp)
-    {
-        if (index < 0 || index >= _sensors.Count) return;
-
-        var sensor = _sensors[index];
-        int offset = _sensorOffsets[index];
-        int count = _sensorCounts[index];
-
-        _sensorPositions[index] = sensor.transform.position;
-        _sensorRotations[index] = sensor.transform.rotation;
-
-        var tHandle = ScheduleTransformJob();
-        var rHandle = ScheduleRaycastJob(offset, count, tHandle);
-        var dHandle = ScheduleDistributeJob(offset, count, rHandle);
-
-        dHandle.Complete();
-        WriteBackSensorResults(sensor, offset, count, timestamp);
-    }
-
-    private JobHandle ScheduleTransformJob()
-    {
-        var tJob = new TransformJob
+        // 1) 이전에 같은 deviceId로 스케줄된 Job이 있으면 먼저 완료하고 처리
+        for (int i = _pendingScans.Count - 1; i >= 0; --i)
         {
-            sensorOffsets = _sensorOffsets,
-            sensorCounts = _sensorCounts,
-            localDirections = _localDirections,
-            sensorPositions = _sensorPositions,
-            sensorRotations = _sensorRotations,
-            sensorMaxDistances = _sensorMaxDistances,
-            sensorLayerMasks = _sensorLayerMasks,
-            commands = _commands
-        };
-        return tJob.Schedule(1, 1);
-    }
+            if (_pendingScans[i].deviceId == deviceId)
+            {
+                var prev = _pendingScans[i];
+                prev.handle.Complete();
+                ProcessScanResults(prev.deviceId, prev.timestamp);
+                _pendingScans.RemoveAt(i);
+            }
+        }
 
-    private JobHandle ScheduleRaycastJob(int offset, int count, JobHandle dependency)
-    {
-        int batchSize = Mathf.Max(1, count / (SystemInfo.processorCount * 4));
-        return RaycastCommand.ScheduleBatch(
-            _commands.GetSubArray(offset, count),
-            _points.GetSubArray(offset, count),
-            batchSize,
-            dependency);
-    }
+        // 2) 풀 준비 확인
+        if (!_sensorMap.TryGetValue(deviceId, out var sensor)) return;
+        if (!_commandPool.ContainsKey(deviceId)) return;
 
-    private JobHandle ScheduleDistributeJob(int count, int offset, JobHandle dependency)
-    {
-        var dJob = new DistributeJob
-        {
-            points = _points,
-            commands = _commands,
-            outPoints = _outPoints
-        };
-        return dJob.Schedule(count, 64, dependency);
-    }
+        var dirs = sensor.localDirections;
+        var commands = _commandPool[deviceId];
+        var hits = _hitPool[deviceId];
+        int count = dirs.Count;
+        if (count == 0) return;
 
-    private void WriteBackSensorResults(LidarSensor sensor, int offset, int count, long timestamp)
-    {
+        // 3) RaycastCommand 생성
+        Vector3 origin = sensor.transform.parent.position;
+        Quaternion rot = sensor.transform.parent.rotation;
+        float maxDist = sensor.maxDistance;
+        int layerMask = sensor.layerMask;
+
         for (int i = 0; i < count; i++)
-            sensor.pointCloud[i] = _outPoints[offset + i];
+        {
+            Vector3 dirWorld = rot * dirs[i];
+            commands[i] = new RaycastCommand(origin, dirWorld, maxDist, layerMask);
+        }
 
-        Debug.Log($"[Lidar:{sensor.name}] Scanned {count} points at {timestamp}");
-        // TODO: Tensor ��ȯ, ���� �� ��ó�� (timestamp ����)
+        // 4) 배치 스케줄
+        int batchSize = Mathf.Max(1, count / (SystemInfo.processorCount * 4));
+        JobHandle handle = RaycastCommand.ScheduleBatch(commands, hits, batchSize, default);
+
+        // 5) 완료 대기 큐에 추가
+        _pendingScans.Add(new PendingScan
+        {
+            deviceId = deviceId,
+            timestamp = timestamp,
+            handle = handle
+        });
     }
-}
 
-public static class NativeArrayExtensions
-{
-    public static void DisposeIfCreated<T>(this NativeArray<T> array) where T : struct
+    // ──────────────────────────────────────────────
+    private void ProcessScanResults(int deviceId, long timestamp)
     {
-        if (array.IsCreated) array.Dispose();
+        var sensor = _sensorMap[deviceId];
+        var commands = _commandPool[deviceId];
+        var hits = _hitPool[deviceId];
+        int count = commands.Length;
+
+        var points = new Vector3[count];
+        for (int i = 0; i < count; i++)
+        {
+            var hit = hits[i];
+            if (hit.collider != null)
+                points[i] = hit.point;
+            else
+            {
+                var cmd = commands[i];
+                points[i] = cmd.from + cmd.direction.normalized * cmd.distance;
+            }
+        }
+
+        sensor.pointCloud = points;
+        var go = sensor.transform.parent.gameObject;
+        var state = go.GetComponent<StateData>();
+        Managers.Data.OnLidarScanned(deviceId, points, timestamp, state);
+        Debug.Log("[Lidar Manager]Lidar Complete");
+
+        //SLAM
+        OccupancyGridManager.Instance.AddLidarPoints(points, sensor);
     }
 }

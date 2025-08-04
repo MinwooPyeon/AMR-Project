@@ -9,6 +9,7 @@ public class ActionOrder : MonoBehaviour
     #endregion
 
     #region Getter & Setter
+    public int Id { get { return _id; } set { _id = value; } }
     public ACTION_STATE Order { get { return _order; }set { _order = value; } }
     public float Param { get { return param; } set { param = value; } }
     #endregion

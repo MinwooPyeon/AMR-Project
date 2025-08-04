@@ -8,7 +8,7 @@ public class LidarSensor : MonoBehaviour
     public int horizontalResolution = 360;
     public int verticalResolution = 1;
     public float verticalFOV = 10f;
-    public float maxDistance = 50f;
+    public float maxDistance = 20f;
     public LayerMask layerMask = ~0;
 
     [HideInInspector]
@@ -21,8 +21,7 @@ public class LidarSensor : MonoBehaviour
     void OnEnable()
     {
         GenerateLocalDirections();
-        pointCloud = new Vector3[localDirections.Count];
-        LidarManager.Instance.RegisterSensor(this);
+        pointCloud = new Vector3[localDirections.Count];        
     }
 
 #if UNITY_EDITOR

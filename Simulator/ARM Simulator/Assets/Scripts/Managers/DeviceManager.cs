@@ -16,8 +16,8 @@ public class DeviceManager
         if (!_devices.ContainsKey(id)) _devices.Add(id, device);
         else _devices[id] = device;
 
-        Managers.Data.RegisterDevice(id, device.gameObject.GetComponent<StateData>());
-        _syncManager.RegistModule(device.gameObject);
+        Debug.Log(_syncManager);
+        _syncManager.RegistModule(id, device.gameObject);
         
     }
 
@@ -25,7 +25,7 @@ public class DeviceManager
     {
         if (_devices.ContainsKey(id))
         {
-            Managers.Data.UnregisterDevice(id);
+            _syncManager.UnregistModule(id);
             _devices.Remove(id);
         }
     }

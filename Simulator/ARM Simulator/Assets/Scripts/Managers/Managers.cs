@@ -16,10 +16,12 @@ public class Managers : MonoBehaviour
     public static ResourceManager Resource { get { return _resource; } }
     public static DeviceManager Device { get { return _device; } }
     public static DataManager Data { get { return _data; } }
+
     #endregion
     #region Unity Methods
     private void Awake()
-    { 
+    {
+        Debug.Log("Managers Start");
         if (_instance == null)
         {
             GameObject go = GameObject.Find("@Managers");
@@ -30,9 +32,8 @@ public class Managers : MonoBehaviour
             }
             DontDestroyOnLoad(go);
             _instance = go.GetComponent<Managers>();
-            _device.SyncManager = _instance.gameObject.GetComponentInChildren<ModuleSyncManager>();
-
         }
+        _device.SyncManager = this.gameObject.GetComponentInChildren<ModuleSyncManager>();
     }
     #endregion
 }
