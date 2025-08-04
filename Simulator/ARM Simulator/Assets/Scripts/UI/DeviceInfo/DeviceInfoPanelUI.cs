@@ -2,5 +2,10 @@ using UnityEngine;
 
 public class DeviceInfoPanelUI : MonoBehaviour
 {
-    GameObject arm;
+    private string serialNumber;
+
+    public void SetData()
+    {
+
+    }
 }

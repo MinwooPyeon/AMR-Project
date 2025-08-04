@@ -28,7 +28,7 @@ public class DataManager
             lidarPoints = lidarData,
             acceleration = state.Acceleration,
             chargeAmount = state.ChargeAmount,
-            armState = state.ArmState,
+            armState = state.AmrState,
             actionState = state.ActionState,
             timestamp = timestamp
         });

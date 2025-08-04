@@ -31,7 +31,7 @@ public class StateData : MonoBehaviour
         get { return _chargeAmount; }
         set { _chargeAmount = value; }
     }
-    public AMR_STATE ArmState
+    public AMR_STATE AmrState
     {
         get { return _state; }
         set { _state = value; }

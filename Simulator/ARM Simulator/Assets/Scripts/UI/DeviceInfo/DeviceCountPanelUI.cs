@@ -20,7 +20,7 @@ public class DeviceCountPanelUI : MonoBehaviour
         foreach (var key in dict.Keys)
         {
             StateData data = dict[key].gameObject.GetComponent<StateData>();
-            switch (data.ArmState) 
+            switch (data.AmrState) 
             {
                 case AMR_STATE.DROP:
                     _dropCnt++;
