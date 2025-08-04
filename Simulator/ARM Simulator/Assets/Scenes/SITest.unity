@@ -952,9 +952,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 383758269}
-        m_TargetAssemblyTypeName: ButtonAction, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 773208497}
+        m_TargetAssemblyTypeName: TimelapsePanel, Assembly-CSharp
+        m_MethodName: OnCancleButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2314,7 +2314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80bf4a52c0684694ca47c396334f950a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DeviceNumberCanvas: {fileID: 0}
+  DeviceNumberCanvas: {fileID: 2088755297}
   VirtualMapCanvas: {fileID: 1717191098}
   PathEditCanvas: {fileID: 1994920907}
   TimeLapseCanvas: {fileID: 773208492}
@@ -2641,7 +2641,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1717191103}
         m_TargetAssemblyTypeName: MainUIAction, Assembly-CSharp
         m_MethodName: OnTimelapseButtonClicked
         m_Mode: 1
@@ -3244,7 +3244,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1717191103}
         m_TargetAssemblyTypeName: MainUIAction, Assembly-CSharp
         m_MethodName: OnDeviceInfoButtonClicked
         m_Mode: 1
@@ -3510,7 +3510,7 @@ MonoBehaviour:
   imageFileName: map.png
   saveFileName: canvas.png
   loadAsPNG: 1
-  canvasImage: {fileID: 0}
+  canvasImage: {fileID: 1064469616}
   uiCamera: {fileID: 0}
   brushColor: {r: 0, g: 0, b: 0, a: 1}
   brushSize: 1
@@ -3547,7 +3547,7 @@ RectTransform:
   m_Father: {fileID: 799257769}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.36666667, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5090,9 +5090,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 383758269}
-        m_TargetAssemblyTypeName: ButtonAction, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 773208497}
+        m_TargetAssemblyTypeName: TimelapsePanel, Assembly-CSharp
+        m_MethodName: OnSaveButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6024,7 +6024,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1717191103}
         m_TargetAssemblyTypeName: MainUIAction, Assembly-CSharp
         m_MethodName: OnEditorButtonClicked
         m_Mode: 1
@@ -6920,7 +6920,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1717191103}
         m_TargetAssemblyTypeName: MainUIAction, Assembly-CSharp
         m_MethodName: OnDeviceSettingButtonClicked
         m_Mode: 1
@@ -7390,7 +7390,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1717191103}
         m_TargetAssemblyTypeName: MainUIAction, Assembly-CSharp
         m_MethodName: OnLoadButtonClicked
         m_Mode: 1
@@ -7771,7 +7771,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1717191103}
         m_TargetAssemblyTypeName: MainUIAction, Assembly-CSharp
         m_MethodName: OnPathEditButtonClicked
         m_Mode: 1
@@ -8293,7 +8293,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1403600799}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1571839631}
+        m_TargetAssemblyTypeName: DeviceInfoUI, Assembly-CSharp
+        m_MethodName: OnExitButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1403600799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8755,8 +8767,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1763165761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.36666667, y: 0}
+  m_AnchorMax: {x: 0.36666667, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11695,7 +11707,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2088755298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11879,6 +11891,6 @@ SceneRoots:
   - {fileID: 543015124}
   - {fileID: 310142267}
   - {fileID: 1796634510}
-  - {fileID: 383758271}
   - {fileID: 160098282}
+  - {fileID: 383758271}
   - {fileID: 1879431412}

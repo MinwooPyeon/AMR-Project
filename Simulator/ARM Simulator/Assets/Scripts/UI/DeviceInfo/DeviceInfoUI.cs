@@ -14,4 +14,10 @@ public class DeviceInfoUI : MonoBehaviour
     {
         _deviceCount.RefreshCount();
     }
+
+    public void OnExitButtonClicked()
+    {
+        PanelList.Panels.VirtualMapCanvas.SetActive(true);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(false);
+    }
 }

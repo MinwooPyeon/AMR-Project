@@ -22,11 +22,11 @@ public class DeviceNumberPanel : MonoBehaviour
     public void OnSaveButtonClicked()
     {
         Managers.Device.DeviceCount = _deviceNum;
-        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
     }
     public void OnCancleButtonClicked()
     {
-        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
     }
 
 
