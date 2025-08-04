@@ -6,12 +6,18 @@ public class DeviceManager
     #region Attribute
     Dictionary<string, DeviceController> _devices = new();
     ModuleSyncManager _syncManager;
+    int _deviceCount = 0;
     #endregion
 
     #region Methods
     public Dictionary<string, DeviceController> Devices
     {
         get { return _devices; }
+    }
+    public int DeviceCount
+    {
+        get { return _deviceCount; }
+        set { _deviceCount = value; }
     }
 
     public ModuleSyncManager SyncManager { get { return _syncManager; } set { _syncManager = value; } }

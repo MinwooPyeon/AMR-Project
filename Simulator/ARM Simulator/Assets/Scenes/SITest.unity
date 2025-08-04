@@ -3374,13 +3374,14 @@ GameObject:
   - component: {fileID: 580412609}
   - component: {fileID: 580412608}
   - component: {fileID: 580412612}
+  - component: {fileID: 580412613}
   m_Layer: 5
   m_Name: MapEditCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &580412608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3477,10 +3478,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431497157cbc8aa4fb2bdb1512ef51a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  paintCanvas: {fileID: 1796634512}
+  paintCanvas: {fileID: 580412613}
   yamlPath: {fileID: 62868721}
   pngPath: {fileID: 636279798}
   savePath: {fileID: 556791191}
+--- !u!114 &580412613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 580412607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a468277f6a16e8d44b7961e02b2b6b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yamlFileName: map.yaml
+  imageFileName: map.png
+  saveFileName: canvas.png
+  loadAsPNG: 1
+  canvasImage: {fileID: 0}
+  uiCamera: {fileID: 0}
+  brushColor: {r: 0, g: 0, b: 0, a: 1}
+  brushSize: 1
 --- !u!1 &604630771
 GameObject:
   m_ObjectHideFlags: 0
@@ -9599,7 +9620,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1717191099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9670,7 +9691,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1717191098}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
@@ -9680,7 +9701,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -1330.2805, y: -237.59256}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1717191103
@@ -9900,7 +9921,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1796634510}
   - component: {fileID: 1796634511}
-  - component: {fileID: 1796634512}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -9942,26 +9962,6 @@ MonoBehaviour:
   loadPrefab: {fileID: 8791553212763182605, guid: c51db1dc31b4c624187de0c7386b7158, type: 3}
   dropPrefab: {fileID: 6873474067821122631, guid: 2bd0a291eac43e74cb1fcc0efce0e6cf, type: 3}
   freePrefab: {fileID: 6367951854641072274, guid: e18df715f788eb4429d0f3bbeb90c5be, type: 3}
---- !u!114 &1796634512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1796634508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a468277f6a16e8d44b7961e02b2b6b9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  yamlFileName: map.yaml
-  imageFileName: map.png
-  saveFileName: canvas.png
-  loadAsPNG: 1
-  canvasImage: {fileID: 0}
-  uiCamera: {fileID: 0}
-  brushColor: {r: 0, g: 0, b: 0, a: 1}
-  brushSize: 1
 --- !u!1 &1805967095
 GameObject:
   m_ObjectHideFlags: 0
@@ -11665,7 +11665,7 @@ GameObject:
   - component: {fileID: 2088755299}
   - component: {fileID: 2088755298}
   m_Layer: 5
-  m_Name: DeviceSettingCanvas
+  m_Name: DeviceNumberCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
