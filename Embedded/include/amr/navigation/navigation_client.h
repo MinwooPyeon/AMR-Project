@@ -1,9 +1,9 @@
 #ifndef AMR_NAVIGATION_CLIENT_H
 #define AMR_NAVIGATION_CLIENT_H
 
-#include "rclcpp/rclcpp.h"
-#include "nav2_msgs/action/navigate_to_pose.h"
-#include "rclcpp_action/rclcpp_action.h"
+#include "rclcpp/rclcpp.hpp"
+#include "nav2_msgs/action/navigate_to_pose.hpp"
+#include "rclcpp_action/rclcpp_action.hpp"
 
 namespace amr {
 
