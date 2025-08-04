@@ -16,6 +16,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +37,15 @@ fun AmrWebcamInfoPanel (
     state: AmrWebcamState,
     modifier: Modifier = Modifier
 ) {
+    val currentTime = remember { mutableStateOf(getCurrentTimeString()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            currentTime.value = getCurrentTimeString()
+            kotlinx.coroutines.delay(1000) // 1초마다 갱신
+        }
+    }
+
     Surface(
         color = Color.Black.copy(alpha = 0.6f),
         shape = RoundedCornerShape(16.dp),
@@ -50,7 +61,8 @@ fun AmrWebcamInfoPanel (
                     Spacer(Modifier.width(8.dp))
                     Text("실시간", color = Color.White)
                 }
-                Text(state.lastUpdated, color = Color.White)
+//                Text(state.lastUpdated, color = Color.White)
+                Text(currentTime.value, color = Color.White)
 //                Text("오후 5:30:12", color = Color.White)
             }
             Spacer(Modifier.height(8.dp))
@@ -58,10 +70,10 @@ fun AmrWebcamInfoPanel (
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("위치\n${state.amr?.location}", color = Color.White)
-                Text("상태\n${state.amr?.status}", color = Color.White)
-//                Text("위치\nA구역-라인1", color = Color.White)
-//                Text("상태\n작동중", color = Color.White)
+//                Text("위치\n${state.amr?.location}", color = Color.White)
+//                Text("상태\n${state.amr?.status}", color = Color.White)
+                Text("위치\nA구역-라인1", color = Color.White)
+                Text("상태\n작동중", color = Color.White)
                 Spacer(Modifier.width(16.dp))
             }
         }
@@ -110,6 +122,11 @@ fun RtspPlayerView(
             exoPlayer.release()
         }
     }
+}
+
+fun getCurrentTimeString(): String {
+    val formatter = java.text.SimpleDateFormat("a hh:mm:ss", java.util.Locale.getDefault())
+    return formatter.format(java.util.Date())
 }
 
 @Preview(showBackground = true)
