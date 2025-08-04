@@ -7,17 +7,13 @@
 
 import time
 import threading
-import logging
 import json
 import os
 from datetime import datetime
 from typing import Dict, Optional, Callable
 from sensor_sync.sensor_data_sync import SensorDataSync, SensorType
 from motor_control.motor_speed_monitor import MotorSpeedMonitor, MotorController
-
-# 로깅 설정
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+from utils.logger import main_logger
 
 class AMRRealDataSync:
     """실제 AMR 데이터 동기화 클래스"""
@@ -75,11 +71,11 @@ class AMRRealDataSync:
             from display.lcd_display_controller import LCDDisplayController
             self.lcd_controller = LCDDisplayController(16, 2)
             self.lcd_controller.start_display()
-            logger.info("LCD 디스플레이 컨트롤러 초기화 완료")
+            main_logger.success("LCD 디스플레이 컨트롤러 초기화 완료")
         except ImportError as e:
-            logger.warning(f"LCD 디스플레이 컨트롤러 초기화 실패: {e}")
+            main_logger.warn(f"LCD 디스플레이 컨트롤러 초기화 실패: {e}")
         except Exception as e:
-            logger.warning(f"LCD 디스플레이 컨트롤러 오류: {e}")
+            main_logger.warn(f"LCD 디스플레이 컨트롤러 오류: {e}")
         
         # AI Position Subscriber (선택적)
         self.ai_subscriber = None
@@ -90,13 +86,13 @@ class AMRRealDataSync:
             self.ai_subscriber = AIPositionSubscriber()
             self.ai_subscriber.set_position_callback(self.update_ai_position)
             self.ai_subscriber.set_ai_data_callback(self.process_ai_command)
-            logger.info("AI Position Subscriber 초기화 완료")
+            main_logger.success("AI Position Subscriber 초기화 완료")
         except ImportError as e:
-            logger.warning(f"AI Position Subscriber 초기화 실패: {e}")
-            logger.info("AI 위치 데이터는 시뮬레이션으로 대체됩니다")
+            main_logger.warn(f"AI Position Subscriber 초기화 실패: {e}")
+            main_logger.info("AI 위치 데이터는 시뮬레이션으로 대체됩니다")
         except Exception as e:
-            logger.warning(f"ROS2 초기화 실패: {e}")
-            logger.info("AI 위치 데이터는 시뮬레이션으로 대체됩니다")
+            main_logger.warn(f"ROS2 초기화 실패: {e}")
+            main_logger.info("AI 위치 데이터는 시뮬레이션으로 대체됩니다")
         
         # MQTT 전송 관련
         self.mqtt_transmitter = None
@@ -116,17 +112,17 @@ class AMRRealDataSync:
                 self.mqtt_client.on_message = self._on_mqtt_message
                 self._setup_command_subscription()
                 
-                logger.info("MQTT 전송 및 수신 시스템 초기화 완료")
+                main_logger.success("MQTT 전송 및 수신 시스템 초기화 완료")
             except ImportError as e:
-                logger.warning(f"MQTT 시스템 초기화 실패: {e}")
+                main_logger.warn(f"MQTT 시스템 초기화 실패: {e}")
                 self.enable_mqtt = False
         
         # AMR 센서 등록
         self._register_amr_sensors()
         
-        logger.info(f"AMR 실제 데이터 동기화 시스템 초기화 완료 - Robot ID: {robot_id}")
+        main_logger.success(f"AMR 실제 데이터 동기화 시스템 초기화 완료 - Robot ID: {robot_id}")
         if self.enable_backup:
-            logger.info(f"데이터 백업 기능 활성화 - 백업 디렉토리: {self.backup_dir}")
+            main_logger.info(f"데이터 백업 기능 활성화 - 백업 디렉토리: {self.backup_dir}")
     
     def _create_backup_directory(self):
         """백업 디렉토리 생성"""
