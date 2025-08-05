@@ -23,6 +23,7 @@ public class DeviceManager
     public ModuleSyncManager SyncManager { get { return _syncManager; } set { _syncManager = value; } }
     public void DeviceRegister(string id, DeviceController device)
     {
+        //Debug.Log($"[MODULE] {id} Register Request");
         if (device == null) return;
         if (!_devices.ContainsKey(id)) _devices.Add(id, device);
         else _devices[id] = device;

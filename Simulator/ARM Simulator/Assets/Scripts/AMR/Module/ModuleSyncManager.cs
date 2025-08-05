@@ -20,18 +20,8 @@ public class ModuleSyncManager : MonoBehaviour
     private Dictionary<string, float> lastProcessTime = new Dictionary<string, float>();
     private static readonly YieldInstruction FrameEnd = new WaitForEndOfFrame();
 
-    void Start()
+    public void OnStart()
     {
-        // 공통 ID만 뽑아서 정렬
-        sortedDeviceIds = cameraManager.cameras.Keys
-            .OrderBy(id => id)
-            .ToList();
-
-        // 초기화: 모든 모듈을 즉시 처리 가능한 상태로
-        float now = Time.time;
-        foreach (var id in sortedDeviceIds)
-            lastProcessTime[id] = now - updateInterval;
-
         StartCoroutine(ProcessDevices());
     }
 
@@ -42,6 +32,9 @@ public class ModuleSyncManager : MonoBehaviour
             float now = Time.time;
             float startTime = Time.realtimeSinceStartup;
 
+            sortedDeviceIds = cameraManager.cameras.Keys
+            .OrderBy(id => id)
+            .ToList();
             // 1) 1초 경과한(또는 아직 한번도 처리되지 않은) 모듈 우선
             var dueModules = sortedDeviceIds
                 .Where(id => now - lastProcessTime[id] >= updateInterval)

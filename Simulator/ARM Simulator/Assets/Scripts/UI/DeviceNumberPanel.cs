@@ -5,7 +5,7 @@ public class DeviceNumberPanel : MonoBehaviour
 {
     public InputField inputField;
     public Slider slider;
-    private int _deviceNum;
+    private int _deviceNum = 10;
 
     public void SetSliderValue()
     {
@@ -29,5 +29,8 @@ public class DeviceNumberPanel : MonoBehaviour
         PanelList.Panels.DeviceNumberCanvas.SetActive(false);
     }
 
-
+    public int GetDeviceNumber()
+    {
+        return _deviceNum;
+    }
 }

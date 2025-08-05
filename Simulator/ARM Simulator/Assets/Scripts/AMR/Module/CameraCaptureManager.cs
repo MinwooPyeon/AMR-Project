@@ -40,6 +40,8 @@ public class CameraCaptureManager : MonoBehaviour
     {
         cameras[id] = cam;
         AllocateRenderTexture(id);
+
+        //Debug.Log($"[CAMERA] Regist Camera {id}");
     }
 
     /// <summary>
@@ -69,7 +71,7 @@ public class CameraCaptureManager : MonoBehaviour
     /// </summary>
     public void RequestCapture(string id, long timestamp)
     {
-        Debug.Log("Request Capture: " + id);
+        //Debug.Log("Request Capture: " + id);
         if (!cameras.ContainsKey(id)) return;
         StartCoroutine(CaptureCameraAsync(id, cameras[id], timestamp));
     }
@@ -118,7 +120,7 @@ public class CameraCaptureManager : MonoBehaviour
         output.Dispose();
 
         StateData state = Managers.Device.Devices[id].gameObject.GetComponent<StateData>();
-        Debug.Log("Camera Capture Complete");
+        //Debug.Log("Camera Capture Complete");
         // 최종 콜백
         Managers.Data.OnCameraCaptured(id, gray, timestamp, state);
     }

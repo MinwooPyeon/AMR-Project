@@ -3,7 +3,7 @@ using UnityEngine;
 public class MainUIAction : MonoBehaviour
 {
     public MapSpawner mapSpawner;
-
+    public AMRSpawner amrSpawner;
     public void OnPathEditButtonClicked()
     {
         PanelList.Panels.VirtualMapCanvas.SetActive(true);
@@ -58,5 +58,7 @@ public class MainUIAction : MonoBehaviour
     public void OnLoadButtonClicked()
     {
         mapSpawner.Load();
+        amrSpawner.OnLoad(PanelList.Panels.DeviceNumberCanvas.GetComponent<DeviceNumberPanel>().GetDeviceNumber());
+        Managers.OnStart();
     }
 }
