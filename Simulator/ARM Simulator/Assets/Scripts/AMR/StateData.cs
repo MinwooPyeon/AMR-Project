@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class StateData : MonoBehaviour
 {
-    float _acceleration = 0;
+    float _speed = 0;
     float _chargeAmount = 0;
     Vector2 _position = Vector2.zero;
     string _serialNumber;
@@ -23,8 +23,8 @@ public class StateData : MonoBehaviour
     }
     public float Acceleration
     {
-        get { return _acceleration; }
-        set { _acceleration = value; }
+        get { return _speed; }
+        set { _speed = value; }
     }
     public float ChargeAmount
     {
