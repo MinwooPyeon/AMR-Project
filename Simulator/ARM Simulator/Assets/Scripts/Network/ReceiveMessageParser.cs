@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class ReceiveMessageParser
 {
-    private readonly string[] topics = { "position", "status" };
     JsonParser parser = new();
     
     public PositionMsg ParsePositionMessage(string json)

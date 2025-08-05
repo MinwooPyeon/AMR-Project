@@ -7,6 +7,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 public class AMRSubscriber : MonoBehaviour
 {
     private MqttClient client;
+    private ReceiveMessageParser parser;
     // 브로커 정보
     private readonly string brokerAddress = "192.168.100.141";
     private int brokerPort = 1883;
@@ -57,38 +58,19 @@ public class AMRSubscriber : MonoBehaviour
 
     private void HandlePosition(string json)
     {
-        // 예: JSON으로 넘어온 x,y,z 좌표 파싱
-        // var pos = JsonUtility.FromJson<PositionData>(json);
         Debug.Log($"Position 데이터 수신: {json}");
+        PositionMsg msg = parser.ParsePositionMessage(json);
     }
 
     private void HandleStatus(string json)
     {
-        // 예: JSON으로 넘어온 vx,vy,vz 파싱
-        // var vel = JsonUtility.FromJson<VelocityData>(json);
         Debug.Log($"Velocity 데이터 수신: {json}");
+        StatusMsg msg = parser.ParseStatusMessage(json);
     }
 
     private void OnDestroy()
     {
         if (client != null && client.IsConnected)
             client.Disconnect();
-    }
-
-    // (예시) JSON 파싱용 클래스
-    [Serializable]
-    private class PositionData
-    {
-        public float x;
-        public float y;
-        public float z;
-    }
-
-    [Serializable]
-    private class VelocityData
-    {
-        public float vx;
-        public float vy;
-        public float vz;
     }
 }
