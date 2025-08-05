@@ -15,15 +15,15 @@ LedDriver::LedDriver(std::shared_ptr<GpioInterface> gpio,
             throw std::invalid_argument("GPIO interface is null for GPIO mode");
         }
         gpio_->exportPin(gpioPin_);
-        gpio_->setDirection(gpioPin_, GpioInterface::Direction::OUT);
+        gpio_->setDirection(gpioPin_, "out");
     } 
     else if (mode_ == Mode::PWM) {
         if (!pwm_) {
             throw std::invalid_argument("PWM interface is null for PWM mode");
         }
-        pwm_->exportPwm(pwmChip_, pwmChannel_);
+        pwm_->exportChannel(pwmChip_, pwmChannel_);
         pwm_->setPeriod(pwmChip_, pwmChannel_, 1000000); // 1ms 주기
-        pwm_->enable(pwmChip_, pwmChannel_);
+        pwm_->enable(pwmChip_, pwmChannel_, true);
     } 
     else {
         throw std::invalid_argument("Unknown LED mode specified");
@@ -34,7 +34,7 @@ LedDriver::LedDriver(std::shared_ptr<GpioInterface> gpio,
 void LedDriver::turnOn() {
     if (mode_ == Mode::GPIO) {
         if (!gpio_) throw std::runtime_error("GPIO interface not initialized");
-        gpio_->setValue(gpioPin_, 1);
+        gpio_->writeValue(gpioPin_, 1);
     } 
     else if (mode_ == Mode::PWM) {
         setBrightness(100);
@@ -45,7 +45,7 @@ void LedDriver::turnOn() {
 void LedDriver::turnOff() {
     if (mode_ == Mode::GPIO) {
         if (!gpio_) throw std::runtime_error("GPIO interface not initialized");
-        gpio_->setValue(gpioPin_, 0);
+        gpio_->writeValue(gpioPin_, 0);
     } 
     else if (mode_ == Mode::PWM) {
         setBrightness(0);
@@ -64,7 +64,8 @@ void LedDriver::setBrightness(int value) {
         throw std::out_of_range("Brightness must be in range [0 - 100]");
     }
 
-    unsigned int period = pwm_->getPeriod(pwmChip_, pwmChannel_);
+    // 고정된 주기값 사용 (1ms = 1000000ns)
+    unsigned int period = 1000000;
     unsigned int duty = static_cast<unsigned int>(std::round(period * value / 100.0));
     pwm_->setDutyCycle(pwmChip_, pwmChannel_, duty);
 }
