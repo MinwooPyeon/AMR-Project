@@ -17,8 +17,8 @@ private:
 	void timerCallback();
 
 	std::string topic_;
-	nlomann::json jsonTemplate_;
-	rclcpp::Publisher<std_msgs::msgs::String>::SharedPtr publisher_;
+	nlohmann::json jsonTemplate_;
+	rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
 	rclcpp::TimerBase::SharedPtr timer_;
 	size_t count_{ 0 };
 };

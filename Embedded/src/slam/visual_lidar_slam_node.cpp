@@ -1,10 +1,10 @@
 #include "amr/slam/visual_lidar_slam_node.h"
 
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/opencv.h>
-#include <opencv2/features2d.h>
-#include <sensor_msgs/msg/image.h>
-#include <sensor_msgs/msg/laser_scan.h>
+#include "cv_bridge/cv_bridge.h"
+#include "opencv2/opencv.hpp"
+#include "opencv2/features2d.hpp"
+#include "sensor_msgs/msg/image.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
 
 namespace amr {
 
