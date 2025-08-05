@@ -10,7 +10,7 @@ public class AMRSubscriber : MonoBehaviour
     private ReceiveMessageParser parser;
     // 브로커 정보
     private readonly string brokerAddress = "192.168.100.141";
-    private int brokerPort = 1883;
+    private readonly int brokerPort = 1883;
 
     // 구독할 토픽 목록
     private readonly string[] topics = { "position", "status" };

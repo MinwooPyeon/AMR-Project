@@ -23,7 +23,6 @@ public class DataManager
         {
             grayscaleCameraData = cameraData,
             acceleration = state.Acceleration,
-            chargeAmount = state.ChargeAmount,
             amrState = state.AmrState,
             actionState = state.ActionState,
             position = state.transform.position,

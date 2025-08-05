@@ -6,7 +6,8 @@ using System.Text;
 public class M2MqttTest : MonoBehaviour
 {
     private MqttClient client;
-    private readonly string brokerAddress = "test.mosquitto.org";
+    private readonly string brokerAddress = "192.168.100.141";
+    private readonly int brokerPort = 1883;
     private readonly string topic = "unity/test";
 
     void Start()
