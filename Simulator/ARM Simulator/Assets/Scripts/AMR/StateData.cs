@@ -3,11 +3,9 @@ using UnityEngine;
 public class StateData : MonoBehaviour
 {
     float _speed = 0;
-    float _chargeAmount = 0;
-    Vector2 _position = Vector2.zero;
     string _serialNumber;
 
-    AMR_STATE _state = AMR_STATE.IDLE;
+    AMR_STATE _state = AMR_STATE.RUNNING;
     ACTION_STATE _actionState = ACTION_STATE.STOP;
 
     public string SerialNumber
@@ -18,25 +16,18 @@ public class StateData : MonoBehaviour
     
     public Vector2 Position
     {
-        get { return _position; }
-        set { _position = value; }
+        get { return new Vector2(transform.position.x, transform.position.z); }
     }
     public float Acceleration
     {
         get { return _speed; }
         set { _speed = value; }
     }
-    public float ChargeAmount
-    {
-        get { return _chargeAmount; }
-        set { _chargeAmount = value; }
-    }
     public AMR_STATE AmrState
     {
         get { return _state; }
         set { _state = value; }
     }
-
     public ACTION_STATE ActionState
     {
         get { return _actionState; }

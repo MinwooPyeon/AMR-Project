@@ -1,7 +1,7 @@
 
 public enum AMR_STATE
 {
-    IDLE,
+    RUNNING,
     RECHARGE,
     DROP,
     LOAD,
@@ -11,7 +11,7 @@ public enum  ACTION_STATE
     MOVE_FORWARD,
     ROTATE_LEFT,
     ROTATE_RIGHT,
-    MOVING_BACKWARD,
+    MOVE_BACKWARD,
     LIFT,
     STOP
 }

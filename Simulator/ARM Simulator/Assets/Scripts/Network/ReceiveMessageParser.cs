@@ -13,6 +13,7 @@ public class ReceiveMessageParser
 
         Dictionary<string, string> pairs = parser.Parse(json);
 
+        msg.serialNumber = pairs["serial"];
         msg.actionState = (ACTION_STATE)Enum.Parse(typeof(ACTION_STATE) ,pairs["move"], true);
         msg.position.x = float.Parse(pairs["x"]);
         msg.position.y = float.Parse(pairs["y"]);
@@ -41,6 +42,7 @@ public class ReceiveMessageParser
 //Json Parsing Output Class
 public class PositionMsg
 {
+    public string serialNumber;
     public ACTION_STATE actionState;
     public Vector2 position;
     public string situation;

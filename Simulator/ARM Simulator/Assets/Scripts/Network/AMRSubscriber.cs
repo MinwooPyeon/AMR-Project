@@ -60,17 +60,29 @@ public class AMRSubscriber : MonoBehaviour
     {
         Debug.Log($"Position 데이터 수신: {json}");
         PositionMsg msg = parser.ParsePositionMessage(json);
+        
+        Managers.Device.DeviceActor(msg.serialNumber, MakeActionOrder(msg));
     }
 
     private void HandleStatus(string json)
     {
         Debug.Log($"Velocity 데이터 수신: {json}");
         StatusMsg msg = parser.ParseStatusMessage(json);
+
+        Managers.Device.RegistRealDevice(msg);
     }
 
     private void OnDestroy()
     {
         if (client != null && client.IsConnected)
             client.Disconnect();
+    }
+
+    private ActionOrder MakeActionOrder(PositionMsg msg)
+    {
+        ActionOrder order = new();
+        order.Order = msg.actionState;
+        order.Param = 10f;
+        return order;
     }
 }
