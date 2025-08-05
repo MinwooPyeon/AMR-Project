@@ -1,5 +1,6 @@
 package com.android.ssamr.feature.amrDetail
 
+import com.android.ssamr.core.ui.LocationSelectBottomSheet
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,13 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
-import com.android.ssamr.core.domain.model.AmrAction
 import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.core.ui.SSAMRDialog
@@ -26,6 +30,9 @@ fun AmrManageDetailScreen(
     state: AmrDetailState,
     sendIntent: (AmrDetailIntent) -> Unit
 ) {
+    var showWorksheetSheet by remember { mutableStateOf(false) }
+    var showChargeSheet by remember { mutableStateOf(false) }
+
     Box(Modifier.fillMaxSize()) {
         when {
             state.isLoading -> {
@@ -68,13 +75,37 @@ fun AmrManageDetailScreen(
                 ) {
                     AmrDetailInfoCard(amr = state.amr)
                     Spacer(Modifier.height(32.dp))
-                    AmrDetailButtonGroup(
+                    AmrDetailBtnGroup(
                         onWebcamClick = { sendIntent(AmrDetailIntent.ClickWebcam(state.amr.ipAddress)) },
-                        onManualReturnClick = { sendIntent(AmrDetailIntent.ClickManualReturn) },
-                        onManualStartClick = { sendIntent(AmrDetailIntent.ClickManualStart) }
+                        onManualWorksheetClick = { showWorksheetSheet = true },
+                        onManualChargeClick = { showChargeSheet = true }
                     )
                 }
             }
+        }
+
+        if (showWorksheetSheet) {
+            LocationSelectBottomSheet(
+                title = "작업지 선택",
+                locationList = worksheetList,
+                onSelect = {
+                    showWorksheetSheet = false
+                    sendIntent(AmrDetailIntent.SelectedWorksheet(it))
+                },
+                onDismiss = { showWorksheetSheet = false }
+            )
+        }
+
+        if (showChargeSheet) {
+            LocationSelectBottomSheet(
+                title = "충전소 선택",
+                locationList = chargeList,
+                onSelect = {
+                    showChargeSheet = false
+                    sendIntent(AmrDetailIntent.SelectedChargeStation(it))
+                },
+                onDismiss = { showChargeSheet = false }
+            )
         }
     }
 }
