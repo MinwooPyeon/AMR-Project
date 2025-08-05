@@ -32,7 +32,8 @@ sudo apt install -y \
 # 5. GPIO / PWM 제어용 
 sudo apt install -y libgpiod-dev
 
-# 6. Python WebSocket 클라이언트 
-pip3 install -U websocket-client
+# 6. C++ 전용 프로젝트로 변경됨
+# Python 의존성 제거됨
 
-echo "의존성 설치 완료"
+echo "C++ 의존성 설치 완료"
+echo "이제 C++ 전용 프로젝트입니다."
