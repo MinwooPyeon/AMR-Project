@@ -1,23 +1,22 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class MapSpawner : MonoBehaviour
 {
     [Header("파일 경로 (StreamingAssets)")]
-    public string yamlFileName;      // ex) "map.yaml"
-    public string imageFileName;     // ex) "map.pgm" or "map.png"
-    public bool loadAsPNG = false;   // true→PNG, false→PGM
+    public string yamlFileName;
+    public string imageFileName;
+
+    public CameraController MainCamera;
 
     [Header("프리팹")]
     public GameObject obstaclePrefab;
     public GameObject chargerPrefab;
     public GameObject loadPrefab;
     public GameObject dropPrefab;
+    public GameObject freePrefab;
 
-    // 내부 파서 인스턴스
     private YAMLParser yamlParser;
     private ImageParser imageParser;
-
     private YamlFile yamlData;
     private ImageFile imgData;
 
@@ -27,76 +26,62 @@ public class MapSpawner : MonoBehaviour
         imageParser = new ImageParser();
     }
 
-    void Start()
-    {
-        LoadYaml();
-        LoadImage();
-        SpawnOccupancyObjects();
-        SpawnZoneObjects();
-    }
-
-    /// <summary>
-    /// 1) YAML 파일에서 resolution, origin, thresholds, zone 좌표 파싱
-    /// </summary>
-    void LoadYaml()
+    public void Load()
     {
         yamlParser.ParseYaml(yamlFileName, out yamlData);
-        Debug.Log($"[MapSpawner] YAML loaded: resolution={yamlData.resolution}, origin={yamlData.origin}");
-    }
-
-    /// <summary>
-    /// 2) PNG/PGM 이미지 로드 → width, height, probGrid 생성
-    /// </summary>
-    void LoadImage()
-    {
         imgData = imageParser.LoadPNG(imageFileName);
-
-        Debug.Log($"[MapSpawner] Image loaded: size={imgData.width}×{imgData.height}");
+        Debug.Log($"IMAGE : {imgData.width}  {imgData.height}");
+        SpawnByProbRanges();
+        MainCamera.OnMapLoaded(imgData);
     }
 
-    /// <summary>
-    /// 3) 확률 ≥ occupied_thresh 인 픽셀에 장애물(큐브 등) 생성
-    /// </summary>
-    void SpawnOccupancyObjects()
+    void SpawnByProbRanges()
     {
+        GameObject obstacleGroup = new GameObject("Obstacles");
+        GameObject freeGroup = new GameObject("FreeSpaces");
+        GameObject loadGroup = new GameObject("LoadZones");
+        GameObject dropGroup = new GameObject("DropZones");
+        GameObject chargerGroup = new GameObject("ChargerZones");
+
+        obstacleGroup.transform.parent = transform;
+        freeGroup.transform.parent = transform;
+        loadGroup.transform.parent = transform;
+        dropGroup.transform.parent = transform;
+        chargerGroup.transform.parent = transform;
+
         for (int x = 0; x < imgData.width; x++)
         {
             for (int y = 0; y < imgData.height; y++)
             {
-                if (imgData.probGrid[x, y] >= yamlData.occThresh)
+                float p = imgData.probGrid[x, y];
+                Vector3 pos = new Vector3(x, 0, y);
+
+                if (p > 0.9f)
+                    Instantiate(freePrefab, pos, Quaternion.identity, freeGroup.transform);
+                else if (p < 0.1f)
+                    Instantiate(obstaclePrefab, pos, Quaternion.identity, obstacleGroup.transform);
+                else if (p >= 0.55f && p < 0.7f)
                 {
-                    Vector3 worldPos = PixelToWorld(x, y);
-                    Instantiate(obstaclePrefab, worldPos, Quaternion.identity, transform);
+                    Instantiate(loadPrefab, pos, Quaternion.identity, loadGroup.transform);
+                    Managers.Map.AddLoaderPos(pos);
                 }
+                    
+                else if (p >= 0.48f && p < 0.52f)
+                {
+                    Instantiate(chargerPrefab, pos, Quaternion.identity, chargerGroup.transform);
+                    Managers.Map.AddChargerPos(pos);
+                }
+                    
+                else if (p >= 0.3f && p < 0.37f)
+                {
+                    Instantiate(dropPrefab, pos, Quaternion.identity, dropGroup.transform);
+                    Managers.Map.AddChargerPos(pos);
+                }
+                    
             }
         }
     }
 
-    /// <summary>
-    /// 4) charger/load/drop 존 좌표에 전용 프리팹 생성
-    /// </summary>
-    void SpawnZoneObjects()
-    {
-        SpawnZoneList(yamlData.chargerCells, chargerPrefab);
-        SpawnZoneList(yamlData.loadCells, loadPrefab);
-        SpawnZoneList(yamlData.dropCells, dropPrefab);
-    }
-
-    void SpawnZoneList(Vector2Int[] cells, GameObject prefab)
-    {
-        foreach (var cell in cells)
-        {
-            Vector3 worldPos = PixelToWorld(cell.x, cell.y);
-            Instantiate(prefab, worldPos, Quaternion.identity, transform);
-        }
-    }
-
-    /// <summary>
-    /// 이미지 픽셀(x,y) → 월드 좌표 변환
-    /// world.x = origin.x + x*resolution  
-    /// world.z = origin.z + y*resolution  
-    /// (y축은 지면 높이 0)
-    /// </summary>
     Vector3 PixelToWorld(int x, int y)
     {
         float wx = yamlData.origin.x + x * yamlData.resolution;
