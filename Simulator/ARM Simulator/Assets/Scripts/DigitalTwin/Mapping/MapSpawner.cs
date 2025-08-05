@@ -61,11 +61,23 @@ public class MapSpawner : MonoBehaviour
                 else if (p < 0.1f)
                     Instantiate(obstaclePrefab, pos, Quaternion.identity, obstacleGroup.transform);
                 else if (p >= 0.55f && p < 0.7f)
+                {
                     Instantiate(loadPrefab, pos, Quaternion.identity, loadGroup.transform);
+                    Managers.Map.AddLoaderPos(pos);
+                }
+                    
                 else if (p >= 0.48f && p < 0.52f)
+                {
                     Instantiate(chargerPrefab, pos, Quaternion.identity, chargerGroup.transform);
+                    Managers.Map.AddChargerPos(pos);
+                }
+                    
                 else if (p >= 0.3f && p < 0.37f)
+                {
                     Instantiate(dropPrefab, pos, Quaternion.identity, dropGroup.transform);
+                    Managers.Map.AddChargerPos(pos);
+                }
+                    
             }
         }
     }
