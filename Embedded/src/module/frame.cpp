@@ -1,7 +1,10 @@
 #include "amr/module/frame.h"
+#include <cstring>
 
-Frame::Frame(uint8_t* data, size_t length)
-	: buffer_(data), length_(length){
+Frame::Frame(const uint8_t* data, size_t length)
+	: length_(length) {
+	buffer_ = new uint8_t[length];
+	std::memcpy(buffer_, data, length);
 }
 
 Frame::~Frame(){
