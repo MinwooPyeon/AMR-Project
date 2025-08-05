@@ -3,8 +3,8 @@
 
 #include <string>
 #include <mutex>
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/laser_scan.h>
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
 
 namespace amr {
 

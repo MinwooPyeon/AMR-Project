@@ -1,8 +1,8 @@
 #ifndef AMR_BATTERY_PUBLISHER_H
 #define AMR_BATTERY_PUBLISHER_H
 
-#include "rclcpp/rclcpp.h"
-#include "sensor_msgs/msg/battery_state.h"
+#include "rclcpp/rclcpp.hpp"
+#include "sensor_msgs/msg/battery_state.hpp"
 
 namespace amr {
 
