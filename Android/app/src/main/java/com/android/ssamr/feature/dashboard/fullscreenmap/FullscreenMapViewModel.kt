@@ -18,7 +18,7 @@ class FullscreenMapViewModel @Inject constructor(
     private val repository: DashboardRepository
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = true
+    private val USE_DUMMY_DATA = false
     private var isMapImageLoaded = false
 
     private val _state = MutableStateFlow(FullscreenMapState())

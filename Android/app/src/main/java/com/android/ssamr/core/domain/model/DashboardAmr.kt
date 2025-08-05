@@ -7,7 +7,7 @@ data class DashboardAmr(
     val name: String,
     val status: DashboardAmrStatus,
     val location: String,
-    val job: String
+//    val job: String
 )
 
 // 상태 정보 Enum

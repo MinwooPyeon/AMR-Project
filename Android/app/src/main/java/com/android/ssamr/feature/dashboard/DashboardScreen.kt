@@ -75,20 +75,17 @@ val sampleDashboardAmrs = listOf(
         name = "AMR-001",
         status = DashboardAmrStatus.RUNNING,
         location = "A구역-라인1",
-        job = "화물 운반 중"
     ),
     DashboardAmr(
         id = 2L,
         name = "AMR-002",
         status = DashboardAmrStatus.CHARGING,
         location = "충전소-1번",
-        job = "충전 중"
     ),
     DashboardAmr(
         id = 3L,
         name = "AMR-003",
         status = DashboardAmrStatus.CHECK,
         location = "B구역-라인3",
-        job = "점검 중"
     )
 )

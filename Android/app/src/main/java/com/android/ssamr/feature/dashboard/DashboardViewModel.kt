@@ -15,7 +15,7 @@ class DashboardViewModel @Inject constructor(
     private val getDashboardAmrsUseCase: GetDashboardAmrsUseCase
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = true // true: 더미 사용 / false: 실제 API 사용
+    private val USE_DUMMY_DATA = false // true: 더미 사용 / false: 실제 API 사용
 
     private val _state = MutableStateFlow(DashboardState())
     val state: StateFlow<DashboardState> = _state.asStateFlow()
@@ -55,10 +55,10 @@ class DashboardViewModel @Inject constructor(
             runCatching {
                 val amrs: List<DashboardAmr> = if (USE_DUMMY_DATA) {
                     listOf(
-                        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "A구역", "화물 운반"),
-                        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "충전소", "충전 중"),
-                        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECK, "B구역", "점검 중"),
-                        DashboardAmr(4L, "AMR-004", DashboardAmrStatus.RUNNING, "C구역", "운반")
+                        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "A구역"),
+                        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "충전소"),
+                        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECK, "B구역"),
+                        DashboardAmr(4L, "AMR-004", DashboardAmrStatus.RUNNING, "C구역")
                     )
                 } else {
                     getDashboardAmrsUseCase().getOrThrow()

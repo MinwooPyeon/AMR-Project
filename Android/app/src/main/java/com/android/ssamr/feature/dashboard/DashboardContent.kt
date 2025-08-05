@@ -202,9 +202,9 @@ fun PreviewFactoryMapSection() {
 @Composable
 fun PreviewAmrStatusSection() {
     val dummyList = listOf(
-        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "Zone A", "운반 중"),
-        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "Zone B", "충전 중"),
-        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECK, "Zone C", "점검 중")
+        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "Zone A"),
+        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "Zone B"),
+        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECK, "Zone C")
     )
     SSAMRTheme {
         AmrStatusSection(

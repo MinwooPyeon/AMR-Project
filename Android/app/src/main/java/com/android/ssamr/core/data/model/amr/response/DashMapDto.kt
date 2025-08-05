@@ -8,7 +8,7 @@ data class DashMapDto(
     val name: String,
     val x: Float,
     val y: Float,
-    val status: DashboardAmrStatus
+    val status: String
 )
 
 fun DashMapDto.toAmrMapPositionModel():  AmrMapPosition = AmrMapPosition(
@@ -16,5 +16,5 @@ fun DashMapDto.toAmrMapPositionModel():  AmrMapPosition = AmrMapPosition(
     name = this.name,
     x = this.x,
     y = this.y,
-    status = this.status
+    status = DashboardAmrStatus.valueOf(status)
 )

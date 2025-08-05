@@ -7,15 +7,15 @@ import com.android.ssamr.core.domain.model.DashboardAmrStatus
 data class DashboardDto(
     val id: Long,
     val name: String,
-    val status: DashboardAmrStatus,
-    val location: String,
-    val job: String
+    val status: String,
+    val location: String
+//    val job: String
 )
 
 fun DashboardDto.toDashboardModel() : DashboardAmr = DashboardAmr(
     id = this.id,
     name = this.name,
-    status = this.status,
-    location = this.location,
-    job = this.job
+    status = DashboardAmrStatus.valueOf(status),
+    location = this.location
+//    job = this.job
 )
