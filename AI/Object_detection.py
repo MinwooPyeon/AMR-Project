@@ -3,13 +3,18 @@ import time
 import json
 import base64
 import paho.mqtt.client as mqtt
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import PoseWithCovarianceStamped
 from ultralytics import YOLO
+import threading
+from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
 
 # 알림을 보낼 특정 클래스 이름 정의
 ALERT_CLASSES = [
-    "MATERIAL_COLLAPSE",    # 적재 물류 붕괴
-    "SMOKING_VIOLATION",    # 작업장 내 흡연
-    "NOT_WEAR_WORKER"       # 안전장비 미착용
+    "MATERIAL_COLLAPSE",     # 적재 물류 붕괴
+    "SMOKING_VIOLATION",     # 작업장 내 흡연
+    "NOT_WEAR_WORKER"        # 안전장비 미착용
 ]
 
 detection_states = {
@@ -23,8 +28,8 @@ RESET_ALERT_AFTER = 60
 # MQTT 설정
 BROKER = "192.168.100.141"
 PORT = 1883
-AMR_SERIAL = "AMR001"  
-TOPIC = f"alert/{AMR_SERIAL}"
+AMR_SERIAL = "AMR001"   
+TOPIC = f"alert"
 
 client = mqtt.Client()
 client.connect(BROKER, PORT, 60)
@@ -35,7 +40,44 @@ SITUATION_MAPPING = {
     "NOT_WEAR_WORKER": "EQUIPMENT"
 }
 
-def send_alert_to_backend(situation, image_base64="", x="", y="", detail=""):
+# robot_pose를 전역 변수로 선언하고 초기화
+robot_pose = {'x': None, 'y': None}
+
+class PoseSubscriber(Node):
+    def __init__(self):
+        super().__init__('pose_subscriber')
+        
+        # /amcl_pose 토픽 발행자의 QoS 프로필과 일치하도록 설정
+        qos_profile = QoSProfile(depth=10)
+        qos_profile.reliability = ReliabilityPolicy.RELIABLE
+        qos_profile.history = HistoryPolicy.KEEP_LAST
+        qos_profile.durability = DurabilityPolicy.TRANSIENT_LOCAL
+
+        self.subscription = self.create_subscription(
+            PoseWithCovarianceStamped,
+            '/amcl_pose',  # Localization에서 퍼블리시하는 토픽
+            self.listener_callback,
+            qos_profile) # QoS 프로필 적용
+
+    def listener_callback(self, msg):
+        global robot_pose
+        robot_pose['x'] = msg.pose.pose.position.x
+        robot_pose['y'] = msg.pose.pose.position.y
+        self.get_logger().info(f"Received pose: x={robot_pose['x']}, y={robot_pose['y']}")
+
+
+def start_ros2_node():
+    rclpy.init()
+    node = PoseSubscriber()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+# 스레드로 실행
+ros_thread = threading.Thread(target=start_ros2_node, daemon=True)
+ros_thread.start()
+
+def send_alert_to_backend(situation, image_base64="", x=None, y=None, detail=""):
     """
     AI에서 Backend로 알림 전송
     
@@ -46,17 +88,26 @@ def send_alert_to_backend(situation, image_base64="", x="", y="", detail=""):
         y (str): Y 좌표 또는 구역명
         detail (str): 상세 정보
     """
+    global robot_pose
+    if x is None or y is None:
+        x_val = robot_pose['x'] if robot_pose['x'] is not None else 0.0
+        y_val = robot_pose['y'] if robot_pose['y'] is not None else 0.0
+    else:
+        x_val = x
+        y_val = y
+
     message = {
-        "situation": situation,
+        "serial" : "AMR001",
+        "case": situation,
         "image": image_base64,
-        "x": x,
-        "y": y,
-        "detail": detail
+        "x": x_val,
+        "y": y_val,
+        "timeStamp": "12:30"
     }
 
     try:
         client.publish(TOPIC, json.dumps(message))
-        print(f"[AI -> Backend] 상황: {situation}, 상세: {detail}")
+        print(f"[AI -> Backend] 상황: {situation}, 상세: {detail}, 로봇 위치: x={x_val}, y={y_val}")
         return True
     except Exception as e:
         print(f"[ERROR] 알림 전송 실패: {e}")
@@ -83,7 +134,8 @@ def get_situation_detail(situation):
 
 def main():
     # 웹캠 초기화
-    cap = cv2.VideoCapture(0)
+    #cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture("/dev/video0")
 
     if not cap.isOpened():
         print("웹캠을 열 수 없습니다.")
@@ -102,6 +154,7 @@ def main():
     print("감지 대상:", ALERT_CLASSES)
 
     while True:
+        # ros_thread가 백그라운드에서 실행되므로, main 루프는 이미지 처리에 집중
         ret, frame = cap.read()
         if not ret:
             print("프레임을 읽을 수 없습니다.")
@@ -139,7 +192,7 @@ def main():
                         # 레이블 표시
                         label = f"{class_name} {confidence:.2f}"
                         cv2.putText(frame, label, (x1, y1 - 10), 
-                                  cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         except Exception as e:
             print(f"YOLO 감지 오류: {e}")
@@ -168,7 +221,7 @@ def main():
                     image_base64 = encode_frame_to_base64(frame)
                     
                     # 알림 전송
-                    if send_alert_to_backend(situation, image_base64, "", "", detail):
+                    if send_alert_to_backend(situation, image_base64, None, None, detail):
                         detection_states[cls_name]['alert_sent'] = True
                         detection_states[cls_name]['alert_sent_time'] = current_time
                         print(f"✅ 알림 전송 완료: {situation}")
@@ -197,4 +250,4 @@ def main():
     print("AI 알림 시스템 종료")
 
 if __name__ == "__main__":
-    main() 
+    main()
