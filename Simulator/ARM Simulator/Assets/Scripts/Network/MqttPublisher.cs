@@ -10,7 +10,7 @@ public class MqttPublisher : MonoBehaviour
     private MqttClient client;
     private readonly string brokerAddress = "192.168.100.141";
     private readonly int brokerPort = 1883;
-    private readonly string[] topic = {"EditMap", "VirtualDeviceStatus" };
+    private readonly string[] topic = {"editmap", "virtualdevicestatus" };
 
     private JsonBuilder jb = new JsonBuilder();
     void Start()
