@@ -2,8 +2,11 @@
 모터 제어 모듈
 """
 
-from .servo_motor_controller import ServoMotorController
+from .real_motor_controller import RealMotorController
+from .motor_speed_monitor import MotorController, MotorSpeedMonitor
 
 __all__ = [
-    'ServoMotorController'
+    'RealMotorController',
+    'MotorController',
+    'MotorSpeedMonitor'
 ] 

@@ -135,25 +135,4 @@ class SensorDataTransmitter:
     def _on_mqtt_publish(self, client, userdata, mid):
         mqtt_logger.debug(f"MQTT 메시지 발행 완료: {mid}")
 
-def test_sensor_data_transmitter():
-    transmitter = SensorDataTransmitter("AMR001")
-    
-    if transmitter.connect_mqtt():
-        test_data = {
-            "serial": "AMR001",
-            "state": "RUNNING",
-            "x": "10.5",
-            "y": "20.3",
-            "speed": "25.0"
-        }
-        
-        success = transmitter.send_sensor_data(test_data)
-        if success:
-            print("센서 데이터 전송 테스트 성공")
-        else:
-            print("센서 데이터 전송 테스트 실패")
-        
-        transmitter.disconnect_mqtt()
-
-if __name__ == "__main__":
-    test_sensor_data_transmitter() 
+ 
