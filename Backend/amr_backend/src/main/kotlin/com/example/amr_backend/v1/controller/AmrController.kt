@@ -2,9 +2,9 @@ package com.example.amr_backend.v1.controller
 
 import com.example.amr_backend.v1.dto.AmrManualControlRequest
 import com.example.amr_backend.v1.dto.AmrStatusResponse
+import com.example.amr_backend.v1.dto.TopicMessage
 import com.example.amr_backend.v1.dto.toAmrDetailResponse
 import com.example.amr_backend.v1.dto.toAmrStatusResponse
-import com.example.amr_backend.v1.entity.TopicMessage
 import com.example.amr_backend.v1.service.AmrService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
