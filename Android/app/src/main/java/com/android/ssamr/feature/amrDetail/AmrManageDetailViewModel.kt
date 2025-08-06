@@ -32,7 +32,7 @@ class AmrDetailViewModel @Inject constructor(
     )
 
     val amrId = requireNotNull(savedStateHandle.get<Long>("amrId")) {
-        "amd id is null in AmrDetailViewModel"
+        "amr id is null in AmrDetailViewModel"
     }
 
     private val _effect = MutableSharedFlow<AmrDetailEffect>()
@@ -65,15 +65,14 @@ class AmrDetailViewModel @Inject constructor(
                 viewModelScope.launch { _effect.emit(AmrDetailEffect.NavigateToWebcam(intent.ipAddress)) }
             }
 
-            is AmrDetailIntent.ClickManualReturn -> {
+            is AmrDetailIntent.SelectedChargeStation -> {
                 _state.value = _state.value.copy(showReturnDialog = true)
                 viewModelScope.launch {
                     delay(2000)
                     _state.value = _state.value.copy(showReturnDialog = false)
                 }
             }
-
-            is AmrDetailIntent.ClickManualStart -> {
+            is AmrDetailIntent.SelectedWorksheet -> {
                 _state.value = _state.value.copy(showStartDialog = true)
                 viewModelScope.launch {
                     delay(2000)

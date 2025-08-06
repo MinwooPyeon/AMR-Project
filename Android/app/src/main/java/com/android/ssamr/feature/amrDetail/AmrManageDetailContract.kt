@@ -15,8 +15,8 @@ data class AmrDetailState(
 sealed class AmrDetailIntent {
     data object LoadAmrDetail : AmrDetailIntent()
     data class ClickWebcam(val ipAddress: String) : AmrDetailIntent()
-    data object ClickManualReturn : AmrDetailIntent()
-    data object ClickManualStart : AmrDetailIntent()
+    data class SelectedWorksheet(val worksheet: String) : AmrDetailIntent()
+    data class SelectedChargeStation(val worksheet: String) : AmrDetailIntent()
 }
 
 sealed class AmrDetailEffect {
@@ -26,18 +26,8 @@ sealed class AmrDetailEffect {
     data object ShowStartDialog : AmrDetailEffect()
 }
 
-enum class AmrStatus(val display: String, val color: Color) {
-    RUNNING("작동중", Color(0xFF23C06C)),    // 초록
-    CHARGING("충전중", Color(0xFFFFC700)),   // 노랑
-    CHECK("점검중", Color(0xFFFF5050));      // 빨강
+val worksheetList = listOf("A구역-1", "A구역-2", "A구역-3", "B구역-1", "B구역-2", "B구역-3",
+    "C구역-1", "C구역-2", "C구역-3", "D구역-1", "D구역-2", "D구역-3")
 
-    companion object {
-        fun fromStatus(status: String): AmrStatus = when (status) {
-            "작동중" -> RUNNING
-            "충전중" -> CHARGING
-            "점검중" -> CHECK
-            else -> RUNNING // 기본값
-        }
-    }
-}
+val chargeList = listOf("충전소 1", "충전소 2", "충전소 3", "충전소 4")
 
