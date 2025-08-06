@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS amr_status
 (
     id            BIGSERIAL PRIMARY KEY,
     amr_serial    VARCHAR(255)                        NOT NULL,
-    status        VARCHAR(255)                        NOT NULL,
+    state         VARCHAR(255)                        NOT NULL,
     battery_level INTEGER                             NOT NULL,
     x             DOUBLE PRECISION                    NOT NULL,
     y             DOUBLE PRECISION                    NOT NULL,

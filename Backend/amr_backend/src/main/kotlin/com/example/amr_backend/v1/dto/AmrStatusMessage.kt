@@ -2,11 +2,11 @@ package com.example.amr_backend.v1.dto
 
 import com.example.amr_backend.v1.entity.Amr
 import com.example.amr_backend.v1.entity.AmrStatus
-import com.example.amr_backend.v1.entity.Status
+import com.example.amr_backend.v1.entity.State
 
 data class AmrStatusMessage(
     val serial: String,
-    val status: Status,
+    val state: State,
     val batteryLevel: Int,
     val x: Double,
     val y: Double,
@@ -15,7 +15,7 @@ data class AmrStatusMessage(
 
 fun AmrStatusMessage.toAmrStatus(amr: Amr) = AmrStatus(
     amr = amr,
-    status = status,
+    state = state,
     batteryLevel = batteryLevel,
     x = x,
     y = y,
