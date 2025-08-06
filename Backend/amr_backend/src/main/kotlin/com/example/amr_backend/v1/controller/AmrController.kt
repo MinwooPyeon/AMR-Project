@@ -2,8 +2,8 @@ package com.example.amr_backend.v1.controller
 
 import com.example.amr_backend.v1.dto.AmrManualControlRequest
 import com.example.amr_backend.v1.dto.AmrStatusResponse
-import com.example.amr_backend.v1.dto.TopicMessage
 import com.example.amr_backend.v1.dto.toAmrDetailResponse
+import com.example.amr_backend.v1.dto.toAmrManualControlMessage
 import com.example.amr_backend.v1.dto.toAmrStatusResponse
 import com.example.amr_backend.v1.service.AmrService
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,5 +27,5 @@ class AmrController(
 
     @PostMapping("/control")
     fun sendManualControlMessage(@RequestBody request: AmrManualControlRequest) =
-        amrService.sendManualControlMessage(request.serial, TopicMessage.AmrManualControlMessage(request.area))
+        amrService.sendManualControlMessage(request.serial, request.toAmrManualControlMessage())
 }
