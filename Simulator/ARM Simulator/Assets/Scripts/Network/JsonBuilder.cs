@@ -2,7 +2,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class JsonBuilder : MonoBehaviour
+public class JsonBuilder
 {
     public string EditMapMsgBuild(Texture2D texture)
     {
@@ -18,7 +18,7 @@ public class JsonBuilder : MonoBehaviour
         return payload;
     }
 
-    public static string BuildStatusJson(StateData data)
+    public string BuildStatusJson(StateData data)
     {
         var sb = new StringBuilder();
         sb.Append("{");

@@ -4,7 +4,7 @@ using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 
-public class AMRSubscriber : MonoBehaviour
+public class MqttSubscriber : MonoBehaviour
 {
     private MqttClient client;
     private ReceiveMessageParser parser;
