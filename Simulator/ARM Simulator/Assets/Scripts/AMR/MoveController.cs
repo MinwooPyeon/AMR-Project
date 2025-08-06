@@ -13,7 +13,7 @@ public class MoveController : MonoBehaviour
     public void MoveForward(float acceleration)
     {
         // 다른 행동 중이면 이동 명령 무시
-        if (_stateData.AmrState != AMR_STATE.IDLE)
+        if (_stateData.ActionState == ACTION_STATE.ROTATE_LEFT && _stateData.ActionState == ACTION_STATE.ROTATE_RIGHT)
         {
             Debug.LogWarning($"MoveForward ignored: current state is {_stateData.AmrState}");
             return;
@@ -21,15 +21,31 @@ public class MoveController : MonoBehaviour
 
         StopActiveCoroutine();
 
-        _stateData.Acceleration = acceleration;
+        _stateData.Speed = acceleration;
         _stateData.ActionState = ACTION_STATE.MOVE_FORWARD;
         activeCoroutine = StartCoroutine(MoveForwardCoroutine());
+    }
+
+    public void MoveBackward(float acceleration)
+    {
+        // 다른 행동 중이면 이동 명령 무시
+        if (_stateData.ActionState == ACTION_STATE.ROTATE_LEFT && _stateData.ActionState == ACTION_STATE.ROTATE_RIGHT)
+        {
+            Debug.LogWarning($"MoveForward ignored: current state is {_stateData.AmrState}");
+            return;
+        }
+
+        StopActiveCoroutine();
+
+        _stateData.Speed = acceleration;
+        _stateData.ActionState = ACTION_STATE.MOVE_BACKWARD;
+        activeCoroutine = StartCoroutine(MoveBackwardCoroutine());
     }
 
     public void Stop(float value = 0)
     {
         StopActiveCoroutine();
-        _stateData.AmrState = AMR_STATE.IDLE;
+        _stateData.AmrState = AMR_STATE.RUNNING;
     }
 
     public void RotateLeft()
@@ -58,13 +74,22 @@ public class MoveController : MonoBehaviour
     {
         while (_stateData.ActionState == ACTION_STATE.MOVE_FORWARD)
         {
-            transform.Translate(Vector3.forward * _stateData.Acceleration * Time.deltaTime);
+            transform.Translate(Vector3.forward * _stateData.Speed * Time.deltaTime);
             yield return null;
         }
 
         activeCoroutine = null;
     }
+    private IEnumerator MoveBackwardCoroutine()
+    {
+        while (_stateData.ActionState == ACTION_STATE.MOVE_BACKWARD)
+        {
+            transform.Translate(Vector3.back * _stateData.Speed * Time.deltaTime);
+            yield return null;
+        }
 
+        activeCoroutine = null;
+    }
     private IEnumerator RotateCoroutine(float deltaAngle)
     {
         Quaternion startRot = transform.rotation;

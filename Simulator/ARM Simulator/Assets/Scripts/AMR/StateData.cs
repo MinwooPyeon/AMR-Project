@@ -2,41 +2,34 @@ using UnityEngine;
 
 public class StateData : MonoBehaviour
 {
-    float _acceleration = 0;
-    float _chargeAmount = 0;
-    Vector2 _position = Vector2.zero;
-    string _serialNumber;
+    float _speed = 0;
 
-    AMR_STATE _state = AMR_STATE.IDLE;
+    AMR_STATE _state = AMR_STATE.RUNNING;
     ACTION_STATE _actionState = ACTION_STATE.STOP;
-
     public string SerialNumber
     {
-        get { return _serialNumber; }
-        set { _serialNumber = value; }
+        get { return this.gameObject.GetInstanceID().ToString(); }
     }
     
     public Vector2 Position
     {
-        get { return _position; }
-        set { _position = value; }
+        get { return new Vector2(transform.position.x, transform.position.z); }
     }
-    public float Acceleration
+
+    public float Angle
     {
-        get { return _acceleration; }
-        set { _acceleration = value; }
+        get { return transform.rotation.y; }
     }
-    public float ChargeAmount
+    public float Speed
     {
-        get { return _chargeAmount; }
-        set { _chargeAmount = value; }
+        get { return _speed; }
+        set { _speed = value; }
     }
     public AMR_STATE AmrState
     {
         get { return _state; }
         set { _state = value; }
     }
-
     public ACTION_STATE ActionState
     {
         get { return _actionState; }

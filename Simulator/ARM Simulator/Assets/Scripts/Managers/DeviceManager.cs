@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,7 +6,9 @@ public class DeviceManager
 {
     #region Attribute
     Dictionary<string, DeviceController> _devices = new();
+    Dictionary<string, StateData> _deviceState = new();
     ModuleSyncManager _syncManager;
+    MqttPublisher _mqttPublisher;
     int _deviceCount = 0;
     #endregion
 
@@ -13,6 +16,10 @@ public class DeviceManager
     public Dictionary<string, DeviceController> Devices
     {
         get { return _devices; }
+    }
+    public Dictionary<string, StateData> DeviceStates
+    {
+        get { return _deviceState; }
     }
     public int DeviceCount
     {
@@ -28,8 +35,10 @@ public class DeviceManager
         if (!_devices.ContainsKey(id)) _devices.Add(id, device);
         else _devices[id] = device;
 
+        if (!_deviceState.ContainsKey(id)) _deviceState.Add(id, device.gameObject.GetComponent<StateData>());
+        else _deviceState[id] = device.gameObject.GetComponent<StateData>();
+
         _syncManager.RegistModule(id, device.gameObject);
-        
     }
 
     public void DeviceUnregister(string id)
@@ -38,8 +47,10 @@ public class DeviceManager
         {
             _syncManager.UnregistModule(id);
             _devices.Remove(id);
+            _deviceState.Remove(id);
         }
     }
+
 
     public void DeviceActor(string id, ActionOrder order)
     {
@@ -49,5 +60,15 @@ public class DeviceManager
         device.ExcuteOrder(order);
     }
 
+    public void RegistRealDevice(StatusMsg msg)
+    {
+        if (_devices[msg.serialNumber] != null) return;
+
+        GameObject obj = Managers.Resource.Instantiate("Prefab/Device/AMR_Real_Device");
+        obj.transform.position = new Vector3(msg.position.x, 0, msg.position.y);
+        _devices.Add(msg.serialNumber, obj.GetComponent<DeviceController>());
+        _deviceState.Add(msg.serialNumber, obj.GetComponent<StateData>());
+    }
+    
     #endregion
 }

@@ -26,18 +26,19 @@ public class DeviceController : MonoBehaviour
         _commands = new Dictionary<ACTION_STATE, Action<float>>
         {
             { ACTION_STATE.MOVE_FORWARD, _moveController.MoveForward },
+            { ACTION_STATE.MOVE_BACKWARD, _moveController.MoveBackward },
             { ACTION_STATE.STOP, _moveController.Stop },
             { ACTION_STATE.ROTATE_LEFT, _ => _moveController.RotateLeft() },
             { ACTION_STATE.ROTATE_RIGHT, _ => _moveController.RotateRight() }
         };
 
         // DeviceManager¿¡ µî·Ï
-        Managers.Device.DeviceRegister(GetInstanceID().ToString(), this);
+        Managers.Device.DeviceRegister(this.gameObject.GetInstanceID().ToString(), this);
     }
 
     private void OnDestroy()
     {
-        Managers.Device.DeviceUnregister(GetInstanceID().ToString());
+        Managers.Device.DeviceUnregister(this.gameObject.GetInstanceID().ToString());
     }
     #endregion
 }
