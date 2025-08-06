@@ -19,6 +19,7 @@ public class DeviceListPanel : MonoBehaviour
 
     public void RefreshPanel()
     {
+        Debug.Log("Refresh");
         foreach (var devicePanel in _devicePanels)
         {
             devicePanel.SetData();

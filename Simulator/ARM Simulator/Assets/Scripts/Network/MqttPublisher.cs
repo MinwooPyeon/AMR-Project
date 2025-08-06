@@ -2,6 +2,8 @@ using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 using System.Text;
+using System.Collections;
+using System.Collections.Generic;
 
 public class MqttPublisher : MonoBehaviour
 {
@@ -16,6 +18,8 @@ public class MqttPublisher : MonoBehaviour
         client = new MqttClient(brokerAddress);
         string clientId = System.Guid.NewGuid().ToString();
         client.Connect(clientId);
+
+        StartCoroutine(PublishStatus());
     }
 
     public void PublishEditMap(Texture2D texture)
@@ -32,6 +36,19 @@ public class MqttPublisher : MonoBehaviour
         Debug.Log($"Published Status Json {message.Length}");
     }
 
+    IEnumerator PublishStatus()
+    {
+        var time = new WaitForSeconds(1.0f);
+        while (true)
+        {
+            Dictionary<string, StateData> datas = Managers.Device.DeviceStates;
+            foreach (var pair in datas)
+            {
+                PublishStatus(pair.Value);
+            }
+            yield return time;
+        }
+    }
     void OnDestroy()
     {
         if (client != null && client.IsConnected)
