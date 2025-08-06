@@ -7,7 +7,6 @@ public class StateData : MonoBehaviour
 
     AMR_STATE _state = AMR_STATE.RUNNING;
     ACTION_STATE _actionState = ACTION_STATE.STOP;
-
     public string SerialNumber
     {
         get { return _serialNumber; }
@@ -18,7 +17,12 @@ public class StateData : MonoBehaviour
     {
         get { return new Vector2(transform.position.x, transform.position.z); }
     }
-    public float Acceleration
+
+    public float Angle
+    {
+        get { return transform.rotation.y; }
+    }
+    public float Speed
     {
         get { return _speed; }
         set { _speed = value; }

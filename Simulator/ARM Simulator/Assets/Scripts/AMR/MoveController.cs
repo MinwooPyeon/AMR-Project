@@ -21,7 +21,7 @@ public class MoveController : MonoBehaviour
 
         StopActiveCoroutine();
 
-        _stateData.Acceleration = acceleration;
+        _stateData.Speed = acceleration;
         _stateData.ActionState = ACTION_STATE.MOVE_FORWARD;
         activeCoroutine = StartCoroutine(MoveForwardCoroutine());
     }
@@ -37,7 +37,7 @@ public class MoveController : MonoBehaviour
 
         StopActiveCoroutine();
 
-        _stateData.Acceleration = acceleration;
+        _stateData.Speed = acceleration;
         _stateData.ActionState = ACTION_STATE.MOVE_BACKWARD;
         activeCoroutine = StartCoroutine(MoveBackwardCoroutine());
     }
@@ -74,7 +74,7 @@ public class MoveController : MonoBehaviour
     {
         while (_stateData.ActionState == ACTION_STATE.MOVE_FORWARD)
         {
-            transform.Translate(Vector3.forward * _stateData.Acceleration * Time.deltaTime);
+            transform.Translate(Vector3.forward * _stateData.Speed * Time.deltaTime);
             yield return null;
         }
 
@@ -84,7 +84,7 @@ public class MoveController : MonoBehaviour
     {
         while (_stateData.ActionState == ACTION_STATE.MOVE_BACKWARD)
         {
-            transform.Translate(Vector3.back * _stateData.Acceleration * Time.deltaTime);
+            transform.Translate(Vector3.back * _stateData.Speed * Time.deltaTime);
             yield return null;
         }
 
