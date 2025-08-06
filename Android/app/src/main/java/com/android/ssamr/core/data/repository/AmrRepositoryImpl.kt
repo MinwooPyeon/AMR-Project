@@ -23,28 +23,29 @@ class AmrRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
-        return remoteDataSource.getAmrDetail(amrId)
-//        return AmrDetailStatus (
-//            name = "AMR-${String.format("%03d", amrId)}",
-//            status = AmrDetailAction.RUNNING,
-//            location = "A구역-라인${amrId}",
-//            speed = "1.2m/s",
-//            job = "화물 운반 중",
-//            model = "RB-100",
-//            serial = "RB100-2024-${String.format("%03d", amrId)}",
-//            firmware = "v2.1.3",
-//            ipAddress = "192.168.x.x"
-//        )
+//        return remoteDataSource.getAmrDetail(amrId)
+        return AmrDetailStatus (
+            name = "AMR-${String.format("%03d", amrId)}",
+            status = AmrDetailAction.RUNNING,
+            location = "A구역-라인${amrId}",
+            speed = "1.2m/s",
+            job = "화물 운반 중",
+            model = "RB-100",
+            serial = "RB100-2024-${String.format("%03d", amrId)}",
+            firmware = "v2.1.3",
+            ipAddress = "192.168.x.x"
+        )
     }
 
-    override suspend fun manualStart(id: Long): Result<Unit> = runCatching {
-        val response = remoteDataSource.manualStart(id)
-        if (response.isSuccessful) Unit else throw HttpException(response)
-    }
-
-    override suspend fun manualReturn(id: Long): Result<Unit> = runCatching {
-        val response = remoteDataSource.manualReturn(id)
-        if (response.isSuccessful) Unit else throw HttpException(response)
-    }
+    override suspend fun manualControl(amrId: Long, destination: String): Result<Unit> =
+        runCatching {
+            val response = remoteDataSource.manualControl(amrId, destination)
+            if (response.isSuccessful) {
+                Unit
+            }
+            else {
+                throw Exception("서버 오류: ${response.code()}")
+            }
+        }
 }
 

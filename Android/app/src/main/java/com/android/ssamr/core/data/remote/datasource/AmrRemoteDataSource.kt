@@ -1,5 +1,6 @@
 package com.android.ssamr.core.data.remote.datasource
 
+import com.android.ssamr.core.data.model.amr.request.ManualControlRequest
 import com.android.ssamr.core.data.model.amr.response.toDetailModel
 import com.android.ssamr.core.data.model.amr.response.toUiModel
 import com.android.ssamr.core.data.remote.service.AmrService
@@ -24,11 +25,7 @@ class AmrRemoteDataSource @Inject constructor(
         return response.toDetailModel()
     }
 
-    suspend fun manualStart(amrId: Long): Response<Unit> {
-        return service.requestManualStart(amrId)
-    }
-
-    suspend fun manualReturn(amrId: Long): Response<Unit> {
-        return service.requestManualReturn(amrId)
+    suspend fun manualControl(amrId: Long, destination: String): Response<Unit> {
+        return service.requestControl(amrId, ManualControlRequest(destination))
     }
 }

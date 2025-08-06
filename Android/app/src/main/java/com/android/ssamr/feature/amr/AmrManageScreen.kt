@@ -34,8 +34,8 @@ fun AmrManageScreen(
 
             // AMR 카드 리스트
             AmrCardList(
-                amrs = state.amrList,
-//                amrs = sampleAmrs,
+//                amrs = state.amrList,
+                amrs = sampleAmrs,
                 onAmrCardClick = { amrId ->
                     sendIntent(AmrIntent.ClickAmrManageCard(amrId))
                 }

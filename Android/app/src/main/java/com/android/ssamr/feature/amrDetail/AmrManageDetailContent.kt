@@ -16,21 +16,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
-import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.ui.theme.SSAMRTheme
 
@@ -103,21 +100,17 @@ private fun InfoRow(title: String, value: String) {
 }
 
 @Composable
-fun AmrDetailButtonGroup(
+fun AmrDetailBtnGroup(
     onWebcamClick: () -> Unit,
-    onManualReturnClick: () -> Unit,
-    onManualStartClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onManualWorksheetClick: () -> Unit,
+    onManualChargeClick: () -> Unit,
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Button(
             onClick = onWebcamClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+            modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB)),
             contentPadding = PaddingValues(horizontal = 20.dp)
@@ -130,39 +123,33 @@ fun AmrDetailButtonGroup(
             Spacer(Modifier.width(8.dp))
             Text("실시간 웹캠 보기", color = Color.White, style = MaterialTheme.typography.bodyLarge)
         }
-
         Button(
-            onClick = onManualReturnClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+            onClick = onManualWorksheetClick,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEA580C))
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_home),
-                contentDescription = "복귀",
+                painter = painterResource(R.drawable.current_location),
+                contentDescription = "작업지로 이동",
                 modifier = Modifier.size(24.dp)
             )
             Spacer(Modifier.width(8.dp))
-            Text("수동 복귀", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+            Text("작업지로 이동", color = Color.White, style = MaterialTheme.typography.bodyLarge)
         }
-
         Button(
-            onClick = onManualStartClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
+            onClick = onManualChargeClick,
+            modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_play),
-                contentDescription = "출발",
+                painter = painterResource(R.drawable.ic_battery_charge),
+                contentDescription = "충전소로 이동",
                 modifier = Modifier.size(24.dp)
             )
             Spacer(Modifier.width(8.dp))
-            Text("수동 출발", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+            Text("충전소로 이동", color = Color.White, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }
@@ -179,10 +166,10 @@ fun AmrDetailInfoCardPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun AmrDetailButtonPreview() {
+fun AmrDetailButtonGroupWithSheetPreview() {
     SSAMRTheme {
-        AmrDetailButtonGroup(
-            {}, {}, {}
-        )
+        AmrDetailBtnGroup(
+            {}, {}
+        ) {}
     }
 }
