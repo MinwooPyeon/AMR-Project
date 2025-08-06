@@ -32,7 +32,7 @@ class AmrDetailViewModel @Inject constructor(
     )
 
     val amrId = requireNotNull(savedStateHandle.get<Long>("amrId")) {
-        "amd id is null in AmrDetailViewModel"
+        "amr id is null in AmrDetailViewModel"
     }
 
     private val _effect = MutableSharedFlow<AmrDetailEffect>()

@@ -100,71 +100,6 @@ private fun InfoRow(title: String, value: String) {
 }
 
 @Composable
-fun AmrDetailButtonGroup(
-    onWebcamClick: () -> Unit,
-    onManualWorksheetClick: () -> Unit,
-    onManualChargeClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Button(
-            onClick = onWebcamClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB)),
-            contentPadding = PaddingValues(horizontal = 20.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_webcam),
-                contentDescription = "웹캠",
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("실시간 웹캠 보기", color = Color.White, style = MaterialTheme.typography.bodyLarge)
-        }
-
-        Button(
-            onClick = onManualWorksheetClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEA580C))
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.current_location),
-                contentDescription = "복귀",
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("작업지로 이동", color = Color.White, style = MaterialTheme.typography.bodyLarge)
-        }
-
-        Button(
-            onClick = onManualChargeClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_battery_charge),
-                contentDescription = "출발",
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text("충천소로 이동", color = Color.White, style = MaterialTheme.typography.bodyLarge)
-        }
-    }
-}
-
-@Composable
 fun AmrDetailBtnGroup(
     onWebcamClick: () -> Unit,
     onManualWorksheetClick: () -> Unit,
@@ -219,24 +154,12 @@ fun AmrDetailBtnGroup(
     }
 }
 
-
-
 @Preview(showBackground = true)
 @Composable
 fun AmrDetailInfoCardPreview() {
     SSAMRTheme {
         AmrDetailInfoCard(
             amr = sampleAmrDetail
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AmrDetailButtonPreview() {
-    SSAMRTheme {
-        AmrDetailButtonGroup(
-            {}, {}, {}
         )
     }
 }
