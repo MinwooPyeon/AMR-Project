@@ -11,3 +11,6 @@ spring:
 firebase:
   key:
     location: ${FIREBASE_KEY_LOCATION}
+logging:
+  level:
+    com.example.amr_backend: DEBUG
