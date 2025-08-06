@@ -26,7 +26,11 @@ public class PaintCanvasWithPalette : MonoBehaviour
 
     private YAMLParser yamlParser = new YAMLParser();
     private ImageParser imageParser = new ImageParser();
+<<<<<<< HEAD
+
+=======
     public MqttPublisher mqttPublisher;
+>>>>>>> origin/develop
     public void Load()
     {
         rt = canvasImage.rectTransform;
@@ -114,7 +118,11 @@ public class PaintCanvasWithPalette : MonoBehaviour
             }
         }
         saveTex.Apply();
+<<<<<<< HEAD
+
+=======
         mqttPublisher.PublishEditMap(canvasTex);
+>>>>>>> origin/develop
         // 2. PNG로 저장
         byte[] pngBytes = saveTex.EncodeToPNG();
         File.WriteAllBytes(saveFileName, pngBytes);

@@ -33,12 +33,20 @@ public class DeviceController : MonoBehaviour
         };
 
         // DeviceManager¿¡ µî·Ï
+<<<<<<< HEAD
+        Managers.Device.DeviceRegister(GetInstanceID().ToString(), this);
+=======
         Managers.Device.DeviceRegister(this.gameObject.GetInstanceID().ToString(), this);
+>>>>>>> origin/develop
     }
 
     private void OnDestroy()
     {
+<<<<<<< HEAD
+        Managers.Device.DeviceUnregister(GetInstanceID().ToString());
+=======
         Managers.Device.DeviceUnregister(this.gameObject.GetInstanceID().ToString());
+>>>>>>> origin/develop
     }
     #endregion
 }

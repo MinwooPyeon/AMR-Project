@@ -72,7 +72,10 @@ dependencies {
     // media3
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.ui)
+<<<<<<< HEAD
+=======
     implementation(libs.media3.exoplayer.rstp)
+>>>>>>> origin/develop
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

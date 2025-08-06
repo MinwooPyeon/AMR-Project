@@ -13,7 +13,11 @@ public class MoveController : MonoBehaviour
     public void MoveForward(float acceleration)
     {
         // 다른 행동 중이면 이동 명령 무시
+<<<<<<< HEAD
+        if (_stateData.AmrState != AMR_STATE.IDLE)
+=======
         if (_stateData.ActionState == ACTION_STATE.ROTATE_LEFT && _stateData.ActionState == ACTION_STATE.ROTATE_RIGHT)
+>>>>>>> origin/develop
         {
             Debug.LogWarning($"MoveForward ignored: current state is {_stateData.AmrState}");
             return;
@@ -21,7 +25,11 @@ public class MoveController : MonoBehaviour
 
         StopActiveCoroutine();
 
+<<<<<<< HEAD
+        _stateData.Acceleration = acceleration;
+=======
         _stateData.Speed = acceleration;
+>>>>>>> origin/develop
         _stateData.ActionState = ACTION_STATE.MOVE_FORWARD;
         activeCoroutine = StartCoroutine(MoveForwardCoroutine());
     }
@@ -45,7 +53,11 @@ public class MoveController : MonoBehaviour
     public void Stop(float value = 0)
     {
         StopActiveCoroutine();
+<<<<<<< HEAD
+        _stateData.AmrState = AMR_STATE.IDLE;
+=======
         _stateData.AmrState = AMR_STATE.RUNNING;
+>>>>>>> origin/develop
     }
 
     public void RotateLeft()
