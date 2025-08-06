@@ -126,11 +126,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-<<<<<<< HEAD
   m_IsActive: 0
-=======
-  m_IsActive: 1
->>>>>>> origin/develop
 --- !u!4 &2067727028263951347
 Transform:
   m_ObjectHideFlags: 0
@@ -345,15 +341,11 @@ GameObject:
   - component: {fileID: 2660719473102243833}
   - component: {fileID: 4276410245015343638}
   m_Layer: 3
-<<<<<<< HEAD
 <<<<<<<< HEAD:Simulator/ARM Simulator/Assets/Resources/Prefab/Device/AMR_Virtual_Device.prefab
   m_Name: AMR_Virtual_Device
 ========
   m_Name: AMR_Real_Device
 >>>>>>>> origin/develop:Simulator/ARM Simulator/Assets/Resources/Prefab/Device/AMR_Real_Device.prefab
-=======
-  m_Name: AMR_Virtual_Device
->>>>>>> origin/develop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -439,10 +431,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
 <<<<<<<< HEAD:Simulator/ARM Simulator/Assets/Resources/Prefab/Device/AMR_Virtual_Device.prefab
-=======
->>>>>>> origin/develop
 --- !u!1 &5057221870365734717
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,11 +448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-<<<<<<< HEAD
   m_IsActive: 1
-=======
-  m_IsActive: 0
->>>>>>> origin/develop
 --- !u!4 &1402732156598486900
 Transform:
   m_ObjectHideFlags: 0
@@ -530,11 +515,8 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
-<<<<<<< HEAD
 ========
 >>>>>>>> origin/develop:Simulator/ARM Simulator/Assets/Resources/Prefab/Device/AMR_Real_Device.prefab
-=======
->>>>>>> origin/develop
 --- !u!1 &6118161336788038109
 GameObject:
   m_ObjectHideFlags: 0

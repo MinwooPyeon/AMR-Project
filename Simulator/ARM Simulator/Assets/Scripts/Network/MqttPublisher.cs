@@ -2,43 +2,53 @@ using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
 using System.Text;
+using System.Collections;
+using System.Collections.Generic;
 
-public class M2MqttTest : MonoBehaviour
+public class MqttPublisher : MonoBehaviour
 {
     private MqttClient client;
-    private readonly string brokerAddress = "test.mosquitto.org";
-    private readonly string topic = "unity/test";
+    private readonly string brokerAddress = "192.168.100.141";
+    private readonly int brokerPort = 1883;
+    private readonly string[] topic = {"EditMap", "VirtualDeviceStatus" };
 
+    private JsonBuilder jb = new JsonBuilder();
     void Start()
     {
         client = new MqttClient(brokerAddress);
-        client.MqttMsgPublishReceived += OnMessageReceived;
         string clientId = System.Guid.NewGuid().ToString();
         client.Connect(clientId);
 
-        // 备刀
-        client.Subscribe(
-            new string[] { topic },
-            new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE }
-        );
-
-        // 林扁利 惯青
-        InvokeRepeating(nameof(PublishTestMessage), 1f, 5f);
+        StartCoroutine(PublishStatus());
     }
 
-    void PublishTestMessage()
+    public void PublishEditMap(Texture2D texture)
     {
-        var message = $"Hello M2Mqtt @ {System.DateTime.Now:HH:mm:ss}";
-        client.Publish(topic, Encoding.UTF8.GetBytes(message));
-        Debug.Log($"[M2Mqtt] Published: {message}");
+        string message  = jb.EditMapMsgBuild(texture);
+        client.Publish(topic[0], Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE,false);
+        Debug.Log($"Published Edit Map Json {message.Length}");
     }
 
-    void OnMessageReceived(object sender, MqttMsgPublishEventArgs e)
+    public void PublishStatus(StateData data)
     {
-        var msg = Encoding.UTF8.GetString(e.Message);
-        Debug.Log($"[M2Mqtt] Received: {msg}");
+        string message = jb.BuildStatusJson(data);
+        client.Publish(topic[1], Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
+        Debug.Log($"Published Status Json {message.Length}");
     }
 
+    IEnumerator PublishStatus()
+    {
+        var time = new WaitForSeconds(1.0f);
+        while (true)
+        {
+            Dictionary<string, StateData> datas = Managers.Device.DeviceStates;
+            foreach (var pair in datas)
+            {
+                PublishStatus(pair.Value);
+            }
+            yield return time;
+        }
+    }
     void OnDestroy()
     {
         if (client != null && client.IsConnected)

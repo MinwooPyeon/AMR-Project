@@ -9,7 +9,8 @@ import com.android.ssamr.core.ui.TopBarConfig
 
 fun getTopBarConfig(
     route: String,
-    navController: NavHostController
+    navController: NavHostController,
+    onCallback: (() -> Unit)? = null
 ): TopBarConfig? {
     return when {
         route == DashboardScreen.route -> TopBarConfig(
@@ -29,8 +30,8 @@ fun getTopBarConfig(
         route == AmrScreen.route -> TopBarConfig(
             title = "AMR 관리",
             actions = {
-                IconButton(onClick = {}) {
-                    Icon(painterResource(R.drawable.ic_more), null)
+                IconButton(onClick = { onCallback?.invoke() }) {
+                    Icon(painterResource(R.drawable.ic_refresh), null)
                 }
             },
             showBack = true,
@@ -68,6 +69,12 @@ fun getTopBarConfig(
 
         route.startsWith("amr_detail") -> TopBarConfig(
             title = "AMR 상세",
+            showBack = true,
+            onBackClick = { navController.popBackStack() }
+        )
+
+        route.startsWith("amr_webcam") -> TopBarConfig(
+            title = "AMR 웹캠",
             showBack = true,
             onBackClick = { navController.popBackStack() }
         )

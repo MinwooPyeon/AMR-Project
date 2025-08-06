@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,7 +6,13 @@ public class DeviceManager
 {
     #region Attribute
     Dictionary<string, DeviceController> _devices = new();
+<<<<<<< HEAD
     ModuleSyncManager _syncManager;
+=======
+    Dictionary<string, StateData> _deviceState = new();
+    ModuleSyncManager _syncManager;
+    MqttPublisher _mqttPublisher;
+>>>>>>> origin/develop
     int _deviceCount = 0;
     #endregion
 
@@ -14,6 +21,13 @@ public class DeviceManager
     {
         get { return _devices; }
     }
+<<<<<<< HEAD
+=======
+    public Dictionary<string, StateData> DeviceStates
+    {
+        get { return _deviceState; }
+    }
+>>>>>>> origin/develop
     public int DeviceCount
     {
         get { return _deviceCount; }
@@ -28,8 +42,15 @@ public class DeviceManager
         if (!_devices.ContainsKey(id)) _devices.Add(id, device);
         else _devices[id] = device;
 
+<<<<<<< HEAD
         _syncManager.RegistModule(id, device.gameObject);
         
+=======
+        if (!_deviceState.ContainsKey(id)) _deviceState.Add(id, device.gameObject.GetComponent<StateData>());
+        else _deviceState[id] = device.gameObject.GetComponent<StateData>();
+
+        _syncManager.RegistModule(id, device.gameObject);
+>>>>>>> origin/develop
     }
 
     public void DeviceUnregister(string id)
@@ -38,9 +59,14 @@ public class DeviceManager
         {
             _syncManager.UnregistModule(id);
             _devices.Remove(id);
+            _deviceState.Remove(id);
         }
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
     public void DeviceActor(string id, ActionOrder order)
     {
         DeviceController device = _devices[id];
@@ -49,5 +75,18 @@ public class DeviceManager
         device.ExcuteOrder(order);
     }
 
+<<<<<<< HEAD
+=======
+    public void RegistRealDevice(StatusMsg msg)
+    {
+        if (_devices[msg.serialNumber] != null) return;
+
+        GameObject obj = Managers.Resource.Instantiate("Prefab/Device/AMR_Real_Device");
+        obj.transform.position = new Vector3(msg.position.x, 0, msg.position.y);
+        _devices.Add(msg.serialNumber, obj.GetComponent<DeviceController>());
+        _deviceState.Add(msg.serialNumber, obj.GetComponent<StateData>());
+    }
+    
+>>>>>>> origin/develop
     #endregion
 }

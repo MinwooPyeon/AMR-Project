@@ -22,8 +22,12 @@ public class DataManager
         _deviceFrameHistory[deviceIndex].Add(new SensorFrame
         {
             grayscaleCameraData = cameraData,
+<<<<<<< HEAD
             acceleration = state.Acceleration,
             chargeAmount = state.ChargeAmount,
+=======
+            acceleration = state.Speed,
+>>>>>>> origin/develop
             amrState = state.AmrState,
             actionState = state.ActionState,
             position = state.transform.position,

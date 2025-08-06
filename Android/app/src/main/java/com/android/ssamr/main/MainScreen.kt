@@ -5,7 +5,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,15 +20,20 @@ import com.android.ssamr.core.ui.SSAMRCustomTopAppBar
 import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
+<<<<<<< HEAD
 import com.android.ssamr.feature.dashboard.DashboardRoute
 import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
 import com.android.ssamr.feature.more.MorescreenRoute
+=======
+import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
+>>>>>>> origin/develop
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.FullmapRoute
 import com.android.ssamr.main.navigation.MoreScreen
+import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
 
@@ -44,7 +51,15 @@ fun MainScreen() {
             bottomNavScreens.any { it.route == currentRoute } || currentRoute == "full_map"
         }
     }
+<<<<<<< HEAD
     val topBarConfig = currentRoute?.let { getTopBarConfig(it, navController) }
+=======
+
+    var onCallbackAction: (() -> Unit)? by remember { mutableStateOf(null) }
+
+    val topBarConfig =
+        currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction) }
+>>>>>>> origin/develop
 
     Scaffold(
         topBar = {
@@ -106,7 +121,8 @@ fun MainScreen() {
                 AmrManageRoute(
                     navigateToAmrDetail = { amrId ->
                         navController.navigate("amr_detail/$amrId")
-                    }
+                    },
+                    onRefresh = { onCallbackAction = it }
                 )
             }
             composable(AlarmScreen.route) { /* AlarmScreen() */ }
@@ -134,8 +150,20 @@ fun MainScreen() {
             ) { backStackEntry ->
                 val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
                 AmrDetailRoute(
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    navigateToWebcam = { ipAddress ->
+                        navController.navigate("amr_webcam/$amrId/$ipAddress")
+                    }
                 )
+            }
+            composable(
+                route = "${WebcamScreen.route}/{amrId}/{ipAddress}",
+                arguments = listOf(
+                    navArgument("amrId") { type = NavType.LongType },
+                    navArgument("ipAddress") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                AmrWebcamRoute()
             }
         }
     }

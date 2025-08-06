@@ -9,9 +9,13 @@ interface AmrRepository {
     suspend fun getAmrList(): List<AmrStatus>
 
     suspend fun getAmrDetail(amrId: Long): AmrDetailStatus
+<<<<<<< HEAD
 
     suspend fun manualControl(amrId: Long, destination: String): Result<Unit>
 }
 
 
 
+=======
+}
+>>>>>>> origin/develop

@@ -33,6 +33,11 @@ public class MainUIAction : MonoBehaviour
         PanelList.Panels.DeviceInfoCanvas.SetActive(true);
         PanelList.Panels.DeviceNumberCanvas.SetActive(false);
         PanelList.Panels.MapEditCanvas.SetActive(false);
+<<<<<<< HEAD
+=======
+
+        PanelList.Panels.DeviceInfoCanvas.GetComponent<DeviceInfoUI>().RefreshInfo();
+>>>>>>> origin/develop
     }
 
     public void OnDeviceSettingButtonClicked()
