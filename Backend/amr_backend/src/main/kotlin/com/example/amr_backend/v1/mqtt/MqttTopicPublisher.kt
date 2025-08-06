@@ -1,6 +1,6 @@
 package com.example.amr_backend.v1.mqtt
 
-import com.example.amr_backend.v1.entity.TopicMessage
+import com.example.amr_backend.v1.dto.TopicMessage
 import com.example.amr_backend.v1.service.TopicPublisher
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.eclipse.paho.client.mqttv3.MqttClient

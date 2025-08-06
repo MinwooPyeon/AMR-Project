@@ -29,9 +29,9 @@ data class AmrStatus(
     @JoinColumn(name = "amr_serial", referencedColumnName = "serial", nullable = false)
     val amr: Amr,
 
-    @Column(name = "status")
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
-    val status: Status,
+    val state: State,
 
     @Column(name = "battery_level")
     val batteryLevel: Int,
@@ -67,7 +67,7 @@ data class AmrStatus(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , amr = $amr , status = $status , batteryLevel = $batteryLevel , x = $x , y = $y , speed = $speed , createdAt = $createdAt )"
+        return this::class.simpleName + "(id = $id , amr = $amr , status = $state , batteryLevel = $batteryLevel , x = $x , y = $y , speed = $speed , createdAt = $createdAt )"
     }
 
 }

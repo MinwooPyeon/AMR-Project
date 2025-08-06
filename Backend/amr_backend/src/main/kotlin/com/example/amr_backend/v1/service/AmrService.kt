@@ -1,7 +1,7 @@
 package com.example.amr_backend.v1.service
 
+import com.example.amr_backend.v1.dto.TopicMessage
 import com.example.amr_backend.v1.entity.AmrStatus
-import com.example.amr_backend.v1.entity.TopicMessage
 import com.example.amr_backend.v1.repository.AmrStatusRepository
 import com.example.amr_backend.v1.repository.findAmrStatusById
 import org.springframework.stereotype.Service
