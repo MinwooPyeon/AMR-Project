@@ -32,6 +32,8 @@ services:
     user: spring
     env_file:
       - "./env/spring.prod.env"
+    volumes:
+      - "./firebase:/firebase"
     networks:
       - amr-backend-network
 
@@ -44,6 +46,8 @@ services:
       - "./mosquitto/config:/mosquitto/config"
       - "./mosquitto/data:/mosquitto/data"
       - "./mosquitto/log:/mosquitto/log"
+    networks:
+      - amr-backend-network
 
 volumes:
   postgres-data:
