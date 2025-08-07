@@ -8,6 +8,8 @@ data class AmrDto(
     val id: Long,
     val name: String,
     val status: String,
+    val locationX: Double,
+    val locationY: Double,
     val location: String,
     val speed: String,
 )
@@ -16,7 +18,8 @@ fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
     id = id,
     name = name,
     status = AmrAction.valueOf(status),
-    location = "A구역-1",
+    locationX = this.locationX,
+    locationY = this.locationY,
     speed = speed,
     job = status,
 )
