@@ -33,9 +33,6 @@ data class AmrStatus(
     @Enumerated(EnumType.STRING)
     val state: State,
 
-    @Column(name = "battery_level")
-    val batteryLevel: Int,
-
     @Column(name = "x")
     val x: Double,
 
@@ -44,6 +41,9 @@ data class AmrStatus(
 
     @Column(name = "speed")
     val speed: Double,
+
+    @Column(name = "angle")
+    val angle: Double,
 ) {
     @CreatedDate
     @Column(name = "created_at")
@@ -67,7 +67,6 @@ data class AmrStatus(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , amr = $amr , status = $state , batteryLevel = $batteryLevel , x = $x , y = $y , speed = $speed , createdAt = $createdAt )"
+        return this::class.simpleName + "(id = $id , amr = $amr , state = $state , x = $x , y = $y , speed = $speed , createdAt = $createdAt )"
     }
-
 }
