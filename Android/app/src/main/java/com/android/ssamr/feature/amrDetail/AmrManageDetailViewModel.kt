@@ -29,16 +29,16 @@ class AmrDetailViewModel @Inject constructor(
         sendIntent(AmrDetailIntent.LoadAmrDetail)
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = AmrDetailState()
     )
-
-    private val _effect = MutableSharedFlow<AmrDetailEffect>()
-    val effect: SharedFlow<AmrDetailEffect> = _effect
 
     val amrId = requireNotNull(savedStateHandle.get<Long>("amrId")) {
         "amr id is null in AmrDetailViewModel"
     }
+
+    private val _effect = MutableSharedFlow<AmrDetailEffect>()
+    val effect: SharedFlow<AmrDetailEffect> = _effect
 
     fun sendIntent(intent: AmrDetailIntent) {
         when (intent) {
@@ -93,13 +93,6 @@ class AmrDetailViewModel @Inject constructor(
                     }
                     delay(2000)
                     _state.value = _state.value.copy(showReturnDialog = false)
-                }
-            }
-            is AmrDetailIntent.SelectedWorksheet -> {
-                _state.value = _state.value.copy(showStartDialog = true)
-                viewModelScope.launch {
-                    delay(2000)
-                    _state.value = _state.value.copy(showStartDialog = false)
                 }
             }
         }

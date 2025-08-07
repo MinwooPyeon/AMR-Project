@@ -64,7 +64,6 @@ fun AmrWebcamInfoPanel (
 //                Text(state.lastUpdated, color = Color.White)
                 Text(currentTime.value, color = Color.White)
 //                Text("오후 5:30:12", color = Color.White)
-                Spacer(Modifier.width(0.dp))
             }
             Spacer(Modifier.height(8.dp))
             Row(
@@ -72,7 +71,7 @@ fun AmrWebcamInfoPanel (
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
 //                Text("위치\n${state.amr?.location}", color = Color.White)
-//                Text("상태\n${state.am  r?.status}", color = Color.White)
+//                Text("상태\n${state.amr?.status}", color = Color.White)
                 Text("위치\nA구역-라인1", color = Color.White)
                 Text("상태\n작동중", color = Color.White)
                 Spacer(Modifier.width(16.dp))
@@ -88,45 +87,42 @@ fun RtspPlayerView(
 ) {
     Log.d("RTSP", "RtspPlayerView 실행, url=$url")
 
-    if (url.isBlank()) {
+    if (url.isNullOrBlank()) {
+        // url이 비어있으면 ExoPlayer 생성하지 않음
         Log.d("RTSP", "RtspPlayerView: 빈 url로 인해 생성하지 않음")
         return
     }
 
     val context = LocalContext.current
 
-    // url이 바뀔 때만 ExoPlayer 새로 생성!
-    val exoPlayer = remember(url) {
+    // ExoPlayer 인스턴스 생성 및 세팅
+    val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
             setMediaItem(MediaItem.fromUri(url))
-            prepare() // 여기에서 바로 prepare!
+            prepare()
             playWhenReady = true
         }
     }
 
+    // PlayerView를 Compose에 임베딩
     AndroidView(
         modifier = modifier,
-        factory = { ctx ->
+        factory = { ctx: Context ->
             PlayerView(ctx).apply {
                 player = exoPlayer
-                useController = true
+                useController = true // 재생/일시정지 등 컨트롤러 표시 여부
             }
         }
     )
+    Log.d("RTSP", "RtspPlayerView: $url")
 
-    DisposableEffect(url) {
+    // 컴포저블이 dispose될 때 플레이어도 정리
+    DisposableEffect(Unit) {
         onDispose {
-            Log.d("RTSP", "RtspPlayerView: ExoPlayer 해제")
-            try {
-                exoPlayer.stop()
-                exoPlayer.release()
-            } catch (e: Exception) {
-                Log.e("RTSP", "release error: ${e.message}")
-            }
+            exoPlayer.release()
         }
     }
 }
-
 
 fun getCurrentTimeString(): String {
     val formatter = java.text.SimpleDateFormat("a hh:mm:ss", java.util.Locale.getDefault())

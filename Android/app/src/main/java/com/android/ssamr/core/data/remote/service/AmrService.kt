@@ -17,7 +17,9 @@ interface AmrService {
     @GET("api/v1/amrs/{id}/detail")
     suspend fun getAmrDetail(@Path("id") amrId: Long): AmrDetailDto
 
+
     @POST("api/v1/amrs/{id}/control")
     suspend fun requestControl( @Path("id") id: Long,
         @Body request: ManualControlRequest): Response<Unit>
+
 }

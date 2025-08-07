@@ -20,9 +20,12 @@ class AmrRemoteDataSource @Inject constructor(
     }
 
     suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
+
         val response = service.getAmrDetail(amrId)
+
         return response.toDetailModel()
     }
+
 
     suspend fun manualControl(amrId: Long, destination: String): Response<Unit> {
         return service.requestControl(amrId, ManualControlRequest(destination))

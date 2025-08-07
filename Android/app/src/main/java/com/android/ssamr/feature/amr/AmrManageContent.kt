@@ -173,7 +173,7 @@ fun AmrCard(
                         tint = Color(0xFFD1D5DC)
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text("위치: ${amr.locationX} ${amr.locationY}", style = MaterialTheme.typography.bodyMedium)
+                    Text("위치: ${amr.location}", style = MaterialTheme.typography.bodyMedium)
 
                 }
                 Row {
@@ -239,8 +239,7 @@ fun AmrCardListPreview() {
             id = 1L,
             name = "AMR-001",
             status = AmrAction.RUNNING,
-            locationX = 0.0,
-            locationY = 1.0,
+            location = "A구역-라인1",
             speed = "1.2",
             job = "화물 운반 중",
         ),
@@ -248,8 +247,7 @@ fun AmrCardListPreview() {
             id = 2L,
             name = "AMR-002",
             status = AmrAction.CHARGING,
-            locationX = 2.0,
-            locationY = 3.0,
+            location = "충전소-1번",
             speed = "0",
             job = "충전 중",
         ),
@@ -257,8 +255,7 @@ fun AmrCardListPreview() {
             id = 3L,
             name = "AMR-003",
             status = AmrAction.CHECKING,
-            locationX = 4.0,
-            locationY = 5.0,
+            location = "B구역-라인3",
             speed = "0",
             job = "점검 중",
         )

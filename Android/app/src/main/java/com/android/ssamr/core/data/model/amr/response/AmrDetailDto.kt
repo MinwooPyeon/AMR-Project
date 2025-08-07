@@ -4,11 +4,8 @@ import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrDetailStatus
 
 data class AmrDetailDto(
-    val id: Long,
     val name: String,
     val status: String,
-    val locationX: Double,
-    val locationY: Double,
     val speed: Double,
     val model: String,
     val serial: String,
@@ -17,11 +14,11 @@ data class AmrDetailDto(
 )
 
 fun AmrDetailDto.toDetailModel(): AmrDetailStatus = AmrDetailStatus(
-    id = this.id,
     name = this.name,
     status = AmrDetailAction.valueOf(status),
-    locationX = this.locationX,
-    locationY = this.locationY,
+//    status = status,
+//    location = this.location,
+    location = "A구역-1",
     speed = this.speed.toString(),
     job = this.status,
     model = this.model,

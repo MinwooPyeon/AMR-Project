@@ -3,11 +3,9 @@ package com.android.ssamr.core.domain.model
 import androidx.compose.ui.graphics.Color
 
 data class AmrDetailStatus (
-    val id: Long,
     val name: String,
     val status: AmrDetailAction,
-    val locationX: Double,
-    val locationY: Double,
+    val location: String,
     val speed: String,
     val job: String,
     val model: String,

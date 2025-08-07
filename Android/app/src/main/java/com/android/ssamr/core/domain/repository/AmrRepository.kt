@@ -12,3 +12,5 @@ interface AmrRepository {
 
     suspend fun manualControl(amrId: Long, destination: String): Result<Unit>
 }
+
+

@@ -24,4 +24,5 @@ object ServiceModule {
     fun provideDashboardService(retrofit: Retrofit): DashboardService {
         return retrofit.create(DashboardService::class.java)
     }
+
 }
