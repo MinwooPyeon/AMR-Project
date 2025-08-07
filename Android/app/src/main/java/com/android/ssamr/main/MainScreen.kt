@@ -28,7 +28,9 @@ import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
+import com.android.ssamr.main.navigation.getBaseRoute
 import com.android.ssamr.main.navigation.getTopBarConfig
+import com.android.ssamr.main.navigation.topBarPolicies
 
 @Composable
 fun MainScreen() {
@@ -36,9 +38,16 @@ fun MainScreen() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    val showTopBar by remember(currentRoute) {
-        derivedStateOf { currentRoute != "login" }
+    var isWebcamFullScreen by remember { mutableStateOf(false) }
+
+    val showTopBar by remember(currentRoute, isWebcamFullScreen) {
+        derivedStateOf {
+//            currentRoute != "login" && !(currentRoute?.startsWith("amr_webcam") == true && isWebcamFullScreen)
+            val baseRoute = getBaseRoute(currentRoute)
+            topBarPolicies[baseRoute]?.invoke(isWebcamFullScreen) ?: true
+        }
     }
+
     val shouldShowBottomBar by remember(currentRoute) {
         derivedStateOf {
             bottomNavScreens.any { it.route == currentRoute }
@@ -122,8 +131,12 @@ fun MainScreen() {
                     navArgument("amrId") { type = NavType.LongType },
                     navArgument("ipAddress") { type = NavType.StringType }
                 )
-            ) { backStackEntry ->
-                AmrWebcamRoute()
+            ) {
+                AmrWebcamRoute(
+                    onFullScreenChanged = { isFullScreen ->
+                        isWebcamFullScreen = isFullScreen
+                    }
+                )
             }
         }
     }

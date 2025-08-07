@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.collect
 
 @Composable
 fun AmrWebcamRoute(
-    viewModel: AmrWebcamViewModel = hiltViewModel()
+    viewModel: AmrWebcamViewModel = hiltViewModel(),
+    onFullScreenChanged: (Boolean) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
@@ -31,6 +32,7 @@ fun AmrWebcamRoute(
 
     AmrWebcamScreen(
         state = state,
-        sendIntent = viewModel::sendIntent
+        sendIntent = viewModel::sendIntent,
+        onFullScreenChanged = onFullScreenChanged
     )
 }

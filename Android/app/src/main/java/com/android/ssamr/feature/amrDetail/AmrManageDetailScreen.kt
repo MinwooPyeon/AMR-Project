@@ -125,9 +125,11 @@ fun AmrManageDetailScreenPreview() {
 
 val sampleAmrDetail =
     AmrDetailStatus(
+        id = 1,
         name = "AMR-001",
         status = AmrDetailAction.RUNNING,
-        location = "A구역-라인1",
+        locationX = 0.0,
+        locationY = 1.0,
         speed = "1.2m/s",
         job = "화물 운반 중",
         model = "RB-100",
