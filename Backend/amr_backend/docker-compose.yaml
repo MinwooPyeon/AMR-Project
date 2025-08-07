@@ -41,6 +41,7 @@ services:
   mosquitto:
     image: eclipse-mosquitto:2
     restart: always
+    container_name: mosquitto
     ports:
       - "1883:1883"
     volumes:
