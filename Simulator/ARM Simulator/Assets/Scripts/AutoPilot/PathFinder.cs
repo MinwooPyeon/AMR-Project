@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
-public class PathFinder : MonoBehaviour
+public class PathFinder
 {
     private bool _isFinish;
 
@@ -71,7 +70,7 @@ public class PathFinder : MonoBehaviour
         {
             if (CheckEnd(nodes[i])) return;
             CalcCost(nodes[i]);
-            if (!_complete.Contains(nodes[i]) && !_candidate.Contains(nodes[i]){
+            if (!_complete.Contains(nodes[i]) && !_candidate.Contains(nodes[i])){
                 _candidate.Add(nodes[i]);
             }
         }
