@@ -6,7 +6,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - "./env/postgres.env"
+      - "/env/postgres.prod.env"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
@@ -31,19 +31,9 @@ services:
       - "8080:8080"
     user: spring
     env_file:
-      - "./env/spring.prod.env"
+      - "/env/spring.prod.env"
     networks:
       - amr-backend-network
-
-  mosquitto:
-    image: eclipse-mosquitto:2
-    restart: always
-    ports:
-      - "1883:1883"
-    volumes:
-      - "./mosquitto/config:/mosquitto/config"
-      - "./mosquitto/data:/mosquitto/data"
-      - "./mosquitto/log:/mosquitto/log"
 
 volumes:
   postgres-data:

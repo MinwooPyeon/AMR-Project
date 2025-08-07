@@ -2,14 +2,21 @@ package com.example.amr_backend.v1.mqtt
 
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class MqttConfig {
+class MqttConfig(
+    @Value("\${mqtt.url}") private val mqttUrl: String
+) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @Bean
     fun mqttClient(): MqttClient {
-        val client = MqttClient("tcp://localhost:1883", "spring-server-mqtt", null)
+        logger.debug("mqtt connecting to {}", mqttUrl)
+        val client = MqttClient(mqttUrl, "spring-server-mqtt", null)
         val connectionOptions = MqttConnectOptions().apply {
             isAutomaticReconnect = true
             isCleanSession = true
