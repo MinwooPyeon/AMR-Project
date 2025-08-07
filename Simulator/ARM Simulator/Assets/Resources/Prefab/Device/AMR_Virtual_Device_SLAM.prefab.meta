@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Simulator/ARM Simulator/Assets/Resources/Prefab/Device/AMR_Virtual_Device_SLAM.prefab.meta
 guid: 914b1e37af28d8249bb93ada349937b4
-========
-guid: df433fede2d00ce49b3dbcf7e9774d21
->>>>>>>> origin/develop:Simulator/ARM Simulator/Assets/Resources/Prefab/Device/AMR_Real_Device.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

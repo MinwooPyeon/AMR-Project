@@ -19,10 +19,7 @@ public class DeviceListPanel : MonoBehaviour
 
     public void RefreshPanel()
     {
-<<<<<<< HEAD
-=======
         Debug.Log("Refresh");
->>>>>>> origin/develop
         foreach (var devicePanel in _devicePanels)
         {
             devicePanel.SetData();

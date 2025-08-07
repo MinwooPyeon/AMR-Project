@@ -80,11 +80,6 @@ fun getTopBarConfig(
         )
 
         // ... 기타 화면
-        route.startsWith("full_map") -> TopBarConfig(
-            title = "공장 지도",
-            showBack = true,
-            onBackClick = { navController.popBackStack() }
-        )
         else -> null
     }
 }
