@@ -20,17 +20,21 @@ import com.android.ssamr.core.ui.SSAMRCustomTopAppBar
 import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
+import com.android.ssamr.feature.dashboard.DashboardRoute
+import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
+import com.android.ssamr.feature.more.MorescreenRoute
 import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
+import com.android.ssamr.main.navigation.getBaseRoute
+import com.android.ssamr.main.navigation.FullmapRoute
+import com.android.ssamr.main.navigation.topBarPolicies
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
-import com.android.ssamr.main.navigation.getBaseRoute
 import com.android.ssamr.main.navigation.getTopBarConfig
-import com.android.ssamr.main.navigation.topBarPolicies
 
 @Composable
 fun MainScreen() {
@@ -47,13 +51,11 @@ fun MainScreen() {
             topBarPolicies[baseRoute]?.invoke(isWebcamFullScreen) ?: true
         }
     }
-
     val shouldShowBottomBar by remember(currentRoute) {
         derivedStateOf {
-            bottomNavScreens.any { it.route == currentRoute }
+            bottomNavScreens.any { it.route == currentRoute } || currentRoute == "full_map"
         }
     }
-
     var onCallbackAction: (() -> Unit)? by remember { mutableStateOf(null) }
 
     val topBarConfig =
@@ -102,7 +104,19 @@ fun MainScreen() {
             startDestination = DashboardScreen.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(DashboardScreen.route) { /* DashboardScreen() */ }
+            composable(DashboardScreen.route) {
+                DashboardRoute(
+                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
+                    navigateToMapFullScreen = { navController.navigate("full_map") },
+                    navigateToAmrList = {
+                        navController.navigate("amr") {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
+            }
             composable(AmrScreen.route) {
                 AmrManageRoute(
                     navigateToAmrDetail = { amrId ->
@@ -112,7 +126,24 @@ fun MainScreen() {
                 )
             }
             composable(AlarmScreen.route) { /* AlarmScreen() */ }
-            composable(MoreScreen.route) { /* MoreScreen() */ }
+            composable(MoreScreen.route) {
+                MorescreenRoute(
+                    navController = navController, // 상위 NavController
+                    navigateToEditProfile = { navController.navigate("editProfile") },
+                    navigateToSetting = { navController.navigate("setting") },
+                    navigateToHelp = { navController.navigate("help") },
+                    navigateToNotice = { navController.navigate("notice") },
+                    navigateToVersionInfo = { navController.navigate("versionInfo") }
+                )
+            }
+            composable(FullmapRoute.route) {
+                FullscreenMapRoute(
+                    navigateToAmrDetail = { amrId ->
+                        navController.navigate(AmrDetailScreen.routeWithArgs(amrId))
+                    },
+                    onBack = { navController.popBackStack() }
+                )
+            }
             composable(
                 route = "${AmrDetailScreen.route}/{amrId}",
                 arguments = listOf(navArgument("amrId") { type = NavType.LongType })

@@ -131,25 +131,3 @@ fun RtspPlayerView(
 fun getCurrentTimeString(): String {
     val formatter = java.text.SimpleDateFormat("a hh:mm:ss", java.util.Locale.getDefault())
     return formatter.format(java.util.Date())
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AmrWebcamInfoPanelPreview() {
-    SSAMRTheme {
-        AmrWebcamInfoPanel(
-            state = AmrWebcamState()
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RtspPlayerViewPreview() {
-    SSAMRTheme {
-        RtspPlayerView(
-            url = "rtsp://192.168.0.123:554/live.sdp",
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}

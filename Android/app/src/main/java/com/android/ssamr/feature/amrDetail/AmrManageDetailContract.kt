@@ -16,11 +16,12 @@ sealed class AmrDetailIntent {
     data object LoadAmrDetail : AmrDetailIntent()
     data class ClickWebcam(val ipAddress: String) : AmrDetailIntent()
     data class SelectedWorksheet(val worksheet: String) : AmrDetailIntent()
-    data class SelectedChargeStation(val worksheet: String) : AmrDetailIntent()
+    data class SelectedChargeStation(val station: String) : AmrDetailIntent()
 }
 
 sealed class AmrDetailEffect {
     data class ShowError(val message: String) : AmrDetailEffect()
+    data class ShowMessage(val message: String) : AmrDetailEffect() // toast 메세지용
     data class NavigateToWebcam(val ipAddress: String) : AmrDetailEffect()
     data object ShowReturnDialog : AmrDetailEffect()
     data object ShowStartDialog : AmrDetailEffect()
