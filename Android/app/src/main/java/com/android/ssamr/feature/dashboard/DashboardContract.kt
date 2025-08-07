@@ -1,6 +1,7 @@
 package com.android.ssamr.feature.dashboard
 
 import androidx.compose.ui.graphics.Color
+import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.core.domain.model.DashboardAmr
 
 // 화면 전체에 사용될 데이터 목록 및 상태
