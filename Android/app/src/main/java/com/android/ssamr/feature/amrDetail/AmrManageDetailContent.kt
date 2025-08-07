@@ -75,7 +75,7 @@ fun AmrDetailInfoCard(
             }
             Spacer(Modifier.height(40.dp))
 
-            InfoRow("현재 위치", amr.location)
+            InfoRow("현재 위치", "${amr.locationX} ${amr.locationY}")
             InfoRow("이동 속도", amr.speed)
             InfoRow("현재 작업", amr.job)
             InfoRow("모델명", amr.model)
@@ -110,7 +110,9 @@ fun AmrDetailBtnGroup(
     ) {
         Button(
             onClick = onWebcamClick,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB)),
             contentPadding = PaddingValues(horizontal = 20.dp)
@@ -125,7 +127,9 @@ fun AmrDetailBtnGroup(
         }
         Button(
             onClick = onManualWorksheetClick,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEA580C))
         ) {
@@ -139,7 +143,9 @@ fun AmrDetailBtnGroup(
         }
         Button(
             onClick = onManualChargeClick,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF16A34A))
         ) {

@@ -25,9 +25,9 @@ class AmrWebcamViewModel @Inject constructor(
     private val amrId: Long = requireNotNull(savedStateHandle["amrId"]) { "amrId가 없습니다. "}
     private val ipAddress: String = requireNotNull(savedStateHandle["ipAddress"]) { "ip주소가 없습니다. " }
 
-    private val testRtspUrl = "192.168.184.185"
+    private val testRtspUrl = "192.168.100.217"
 
-    private fun makeRtspUrl(ip: String, port: Int = 8554, path: String = "live.sdp") =
+    private fun makeRtspUrl(ip: String, port: Int = 8554, path: String = "mystream") =
         "rtsp://$ip:$port/$path"
 
     private val _state = MutableStateFlow(
@@ -43,7 +43,10 @@ class AmrWebcamViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-        initialValue = AmrWebcamState()
+        initialValue = AmrWebcamState(
+            rtspUrl = makeRtspUrl(testRtspUrl),
+            lastUpdated = "2025-08-01 12:34:56",
+        )
     )
 
     private val _effect = MutableSharedFlow<AmrWebcamEffect>()
