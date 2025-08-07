@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 private const val STATUS_TOPIC = "status"
+private const val VIRTUAL_DEVICE_STATUS = "virtualdevicestatus"
 
 @Component
 class ArmStatusMessageHandler(
@@ -27,12 +28,12 @@ class ArmStatusMessageHandler(
 
     @PostConstruct
     fun subscribeStatusTopic() {
-        mqttClient.subscribe(STATUS_TOPIC, this)
+        mqttClient.subscribe(arrayOf(STATUS_TOPIC, VIRTUAL_DEVICE_STATUS), arrayOf(this, this))
     }
 
     @PreDestroy
     fun unsubscribeStatusTopic() {
-        mqttClient.unsubscribe(STATUS_TOPIC)
+        mqttClient.unsubscribe(arrayOf(STATUS_TOPIC, VIRTUAL_DEVICE_STATUS))
     }
 
     @Transactional
@@ -44,6 +45,7 @@ class ArmStatusMessageHandler(
             amrStatusRepository.save(amrStatusMessage.toAmrStatus(amr))
         } catch (e: Exception) {
             logger.warn("Failed to handle a message : {}", e.message)
+            logger.warn(e.stackTraceToString())
         }
     }
 }

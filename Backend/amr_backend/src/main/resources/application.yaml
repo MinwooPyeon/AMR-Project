@@ -14,3 +14,5 @@ firebase:
 logging:
   level:
     com.example.amr_backend: DEBUG
+mqtt:
+  url: ${MQTT_URL}
