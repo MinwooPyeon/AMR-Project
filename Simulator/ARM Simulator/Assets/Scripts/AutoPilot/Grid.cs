@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Grid
 {
+    private readonly int[] _dirX = { -1, 0, 0, 1 };
+    private readonly int[] _dirY = { 0, -1, 1, 0 };
 
-    readonly Dictionary<NODE_TYPE, Func<Node>> dict = new()
+    private readonly Dictionary<NODE_TYPE, Func<Node>> dict = new()
     {
         {NODE_TYPE.FREE, ()=>new FreeNode() },
         {NODE_TYPE.OBSTACLE, ()=>new ObstacleNode() },
@@ -36,4 +38,30 @@ public class Grid
         grid[(int)worldPos.x, (int)worldPos.z] = node;
 
     }
+
+    public List<Node> GetNeighborNode(Node node)
+    {
+        List<Node> neighbor = new();
+
+        Vector2 pos = node.Pos;
+
+        for(int i = 0; i < 4; i++)
+        {
+            int dx = (int)pos.x + _dirX[i];
+            int dy = (int)pos.y + _dirY[i];
+
+            if (CheckBound(dx, dy) && grid[dx, dy].Walkable)
+            {
+                neighbor.Add(grid[dx, dy]);
+            }
+        }
+        return neighbor;
+    }
+
+    private bool CheckBound(int x,  int y)
+    {
+        if (x < 0 || x >= _width || y < 0 || y >= _height) return false;
+        return true;
+    }
 }
+

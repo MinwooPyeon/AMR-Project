@@ -32,6 +32,7 @@ public class MapSpawner : MonoBehaviour
         imgData = imageParser.LoadPNG(imageFileName);
         Debug.Log($"IMAGE : {imgData.width}  {imgData.height}");
         SpawnByProbRanges();
+        Managers.Map.ClearPoses();
         MainCamera.OnMapLoaded(imgData);
     }
 
@@ -48,6 +49,8 @@ public class MapSpawner : MonoBehaviour
         loadGroup.transform.parent = transform;
         dropGroup.transform.parent = transform;
         chargerGroup.transform.parent = transform;
+        
+        
 
         for (int x = 0; x < imgData.width; x++)
         {

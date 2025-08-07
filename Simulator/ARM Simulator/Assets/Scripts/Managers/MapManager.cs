@@ -10,7 +10,6 @@ public class MapManager
     public List<Vector3> Chargers {  get { return _chargers; } }
     public List<Vector3> Loaders { get {return _loaders; } }
     public List<Vector3> Dropers { get {return _dropers; } }
-
     public Grid Grid { get { return grid; } }
     public void AddChargerPos(Vector3 pos)
     {

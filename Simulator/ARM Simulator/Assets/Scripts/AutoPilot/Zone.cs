@@ -1,16 +1,20 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Zone : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    string _zoneName;
+    List<Node> _nodes = new();
+
+    public List<Node> Nodes { get { return _nodes; } }
+    public string ZoneName { get { return _zoneName; } set { _zoneName = value; } }
+    public void AddNode(Node node)
     {
-        
+        _nodes.Add(node);
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool IsLocate(Node node)
     {
-        
+        return _nodes.Contains(node);
     }
 }
