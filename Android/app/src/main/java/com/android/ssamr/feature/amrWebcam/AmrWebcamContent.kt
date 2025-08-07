@@ -1,12 +1,10 @@
 package com.android.ssamr.feature.amrWebcam
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,14 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.android.ssamr.core.ui.LiveRedDot
-import com.android.ssamr.ui.theme.SSAMRTheme
 
 @Composable
 fun AmrWebcamInfoPanel (
@@ -72,7 +68,7 @@ fun AmrWebcamInfoPanel (
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text("위치\n${state.amr?.locationX} ${state.amr?.locationY}", color = Color.White)
-                Text("상태\n${state.amr?.status}", color = Color.White)
+                Text("상태\n${state.amr?.state}", color = Color.White)
 //                Text("위치\nA구역-라인1", color = Color.White)
 //                Text("상태\n작동중", color = Color.White)
                 Spacer(Modifier.width(16.dp))

@@ -1,6 +1,8 @@
 package com.android.ssamr.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -9,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,6 +38,7 @@ import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
+import com.android.ssamr.ui.theme.BackgroundColor
 
 @Composable
 fun MainScreen() {
@@ -62,6 +66,7 @@ fun MainScreen() {
         currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction) }
 
     Scaffold(
+        containerColor = BackgroundColor,
         topBar = {
             if (showTopBar && topBarConfig != null) {
                 if (topBarConfig.isCustom) {
@@ -102,7 +107,8 @@ fun MainScreen() {
         NavHost(
             navController = navController,
             startDestination = DashboardScreen.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
         ) {
             composable(DashboardScreen.route) {
                 DashboardRoute(

@@ -19,7 +19,7 @@ data class AmrDetailDto(
 fun AmrDetailDto.toDetailModel(): AmrDetailStatus = AmrDetailStatus(
     id = this.id,
     name = this.name,
-    status = AmrDetailAction.valueOf(state),
+    state = AmrDetailAction.valueOf(state),
     locationX = this.locationX,
     locationY = this.locationY,
     speed = this.speed.toString(),

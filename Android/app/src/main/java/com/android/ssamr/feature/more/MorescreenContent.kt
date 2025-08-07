@@ -33,7 +33,6 @@ fun MorescreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color(0xFFF6F9FF)) // 연한 회색 배경
             .padding(vertical = 16.dp)
     ) {
         ProfileCardSection(profile = state.userProfile) {

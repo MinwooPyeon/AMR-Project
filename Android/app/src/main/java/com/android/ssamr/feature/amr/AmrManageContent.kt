@@ -20,12 +20,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,10 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
 import com.android.ssamr.core.domain.model.AmrCategory
 import com.android.ssamr.core.domain.model.AmrAction
-import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.ui.theme.SSAMRTheme
 
@@ -73,7 +67,6 @@ fun AmrCategoryTabRow(
     Box(
         Modifier
             .fillMaxWidth()
-            .background(Color(0xFFF4F6FA))
             .padding(vertical = 8.dp)
     ) {
         LazyRow(
@@ -113,7 +106,7 @@ fun AmrCard(
     amr: AmrStatus,
     onAmrCardClick: (Long) -> Unit
 ) {
-    val statusColor = when (amr.status) {
+    val statusColor = when (amr.state) {
         AmrAction.RUNNING -> Color(0xFF4CAF50)
         AmrAction.CHARGING -> Color(0xFFF7B500)
         AmrAction.CHECKING -> Color(0xFFF7575C)
@@ -157,7 +150,7 @@ fun AmrCard(
                         }
                         Row {
                             Text(
-                                amr.status.display,
+                                amr.state.display,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = statusColor
                             )
@@ -238,7 +231,7 @@ fun AmrCardListPreview() {
         AmrStatus(
             id = 1L,
             name = "AMR-001",
-            status = AmrAction.RUNNING,
+            state = AmrAction.RUNNING,
             locationX = 0.0,
             locationY = 1.0,
             speed = "1.2",
@@ -247,7 +240,7 @@ fun AmrCardListPreview() {
         AmrStatus(
             id = 2L,
             name = "AMR-002",
-            status = AmrAction.CHARGING,
+            state = AmrAction.CHARGING,
             locationX = 2.0,
             locationY = 3.0,
             speed = "0",
@@ -256,7 +249,7 @@ fun AmrCardListPreview() {
         AmrStatus(
             id = 3L,
             name = "AMR-003",
-            status = AmrAction.CHECKING,
+            state = AmrAction.CHECKING,
             locationX = 4.0,
             locationY = 5.0,
             speed = "0",
