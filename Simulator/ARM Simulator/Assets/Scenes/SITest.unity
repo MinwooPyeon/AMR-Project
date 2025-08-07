@@ -1397,8 +1397,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-<<<<<<< HEAD
-=======
 --- !u!1 &165907516
 GameObject:
   m_ObjectHideFlags: 0
@@ -1456,7 +1454,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c80bede8676b2c42bf64c8cdac2b706, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
->>>>>>> origin/develop
 --- !u!1 &167010170
 GameObject:
   m_ObjectHideFlags: 0
@@ -4363,10 +4360,7 @@ MonoBehaviour:
   uiCamera: {fileID: 0}
   brushColor: {r: 0, g: 0, b: 0, a: 1}
   brushSize: 1
-<<<<<<< HEAD
-=======
   mqttPublisher: {fileID: 165907519}
->>>>>>> origin/develop
 --- !u!1 &604630771
 GameObject:
   m_ObjectHideFlags: 0
@@ -13359,10 +13353,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 532932569}
-<<<<<<< HEAD
-=======
   - {fileID: 165907517}
->>>>>>> origin/develop
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1892561626

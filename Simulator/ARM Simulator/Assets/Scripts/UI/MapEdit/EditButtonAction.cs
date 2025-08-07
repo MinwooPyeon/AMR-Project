@@ -4,11 +4,7 @@ using UnityEngine.UI;
 public class EditButtonAction : MonoBehaviour
 {
     public PaintCanvasWithPalette paintCanvas;
-<<<<<<< HEAD
-
-=======
     
->>>>>>> origin/develop
     public InputField yamlPath;
     public InputField pngPath;
     public InputField savePath;

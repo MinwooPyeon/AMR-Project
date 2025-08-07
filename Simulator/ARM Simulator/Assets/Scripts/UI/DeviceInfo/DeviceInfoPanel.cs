@@ -20,11 +20,7 @@ public class DeviceInfoPanel : MonoBehaviour
     {
         SerialNumText.text = _serialNumber;
 
-<<<<<<< HEAD
-        StateData data = Managers.Device.Devices[_serialNumber].GetComponent<StateData>();
-=======
         StateData data = Managers.Device.DeviceStates[_serialNumber];
->>>>>>> origin/develop
 
         PositionText.text = $"x : {data.Position.x} / y: {data.Position.y}";
         StateText.text = data.AmrState.ToString();
