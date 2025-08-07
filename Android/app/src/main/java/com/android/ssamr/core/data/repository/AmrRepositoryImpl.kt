@@ -27,4 +27,13 @@ class AmrRepositoryImpl @Inject constructor(
         return remoteDataSource.getAmrDetail(amrId)
     }
 
+    override suspend fun manualControl(amrId: Long, destination: String): Result<Unit> =
+        runCatching {
+            val response = remoteDataSource.manualControl(amrId, destination)
+            if (response.isSuccessful) {
+                Unit
+            } else {
+                throw Exception("서버 오류: ${response.code()}")
+            }
+        }
 }

@@ -32,13 +32,13 @@ fun AmrDetailRoute(
                     effect.message,
                     Toast.LENGTH_SHORT
                 ).show()
-
-                is AmrDetailEffect.ShowReturnDialog -> {
-
-                }
-
-                is AmrDetailEffect.ShowStartDialog -> {/* TODO: 다이얼로그 띄우기 */
-                }
+                is AmrDetailEffect.ShowMessage -> Toast.makeText(
+                    context,
+                    effect.message,
+                    Toast.LENGTH_SHORT
+                ).show()
+                is AmrDetailEffect.ShowReturnDialog -> { /* ... */ }
+                is AmrDetailEffect.ShowStartDialog -> { /* ... */ }
             }
         }
     }

@@ -85,7 +85,7 @@ fun AmrWebcamScreen(
             onClick = {
 //                onToggleFullScreen?.invoke()
                 isFullScreen = !isFullScreen
-                      },
+            },
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(20.dp)

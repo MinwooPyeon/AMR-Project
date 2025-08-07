@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.usecase.amr.GetAmrDetailUseCase
+import com.android.ssamr.core.domain.usecase.amr.ManualControlUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AmrDetailViewModel @Inject constructor(
     private val getAmrDetailUseCase: GetAmrDetailUseCase,
+    private val manualControlUseCase: ManualControlUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -58,25 +60,39 @@ class AmrDetailViewModel @Inject constructor(
                         _effect.emit(AmrDetailEffect.ShowError(e.message ?: "상세정보 로드 실패"))
                     }
                 }
-
             }
 
             is AmrDetailIntent.ClickWebcam -> {
-                viewModelScope.launch { _effect.emit(AmrDetailEffect.NavigateToWebcam(intent.ipAddress)) }
+                viewModelScope.launch {
+                    _effect.emit(AmrDetailEffect.NavigateToWebcam(intent.ipAddress))
+                }
+            }
+
+            is AmrDetailIntent.SelectedWorksheet -> {
+                _state.value = _state.value.copy(showStartDialog = true)
+                viewModelScope.launch {
+                    val result = manualControlUseCase(amrId, intent.worksheet)
+                    if (result.isFailure) {
+                        _effect.emit(AmrDetailEffect.ShowError("작업지 이동 실패"))
+                    } else {
+                        _effect.emit(AmrDetailEffect.ShowMessage("${intent.worksheet}로 이동 요청을 보냈습니다."))
+                    }
+                    delay(2000)
+                    _state.value = _state.value.copy(showStartDialog = false)
+                }
             }
 
             is AmrDetailIntent.SelectedChargeStation -> {
                 _state.value = _state.value.copy(showReturnDialog = true)
                 viewModelScope.launch {
+                    val result = manualControlUseCase(amrId, intent.station)
+                    if (result.isFailure) {
+                        _effect.emit(AmrDetailEffect.ShowError("충전소 이동 실패"))
+                    } else {
+                        _effect.emit(AmrDetailEffect.ShowMessage("${intent.station}로 이동 요청을 보냈습니다."))
+                    }
                     delay(2000)
                     _state.value = _state.value.copy(showReturnDialog = false)
-                }
-            }
-            is AmrDetailIntent.SelectedWorksheet -> {
-                _state.value = _state.value.copy(showStartDialog = true)
-                viewModelScope.launch {
-                    delay(2000)
-                    _state.value = _state.value.copy(showStartDialog = false)
                 }
             }
         }
