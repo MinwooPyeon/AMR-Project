@@ -4,10 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.usecase.amr.GetAmrDetailUseCase
-<<<<<<< HEAD
 import com.android.ssamr.core.domain.usecase.amr.ManualControlUseCase
-=======
->>>>>>> origin/develop
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,10 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AmrDetailViewModel @Inject constructor(
     private val getAmrDetailUseCase: GetAmrDetailUseCase,
-<<<<<<< HEAD
     private val manualControlUseCase: ManualControlUseCase,
-=======
->>>>>>> origin/develop
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -35,16 +29,16 @@ class AmrDetailViewModel @Inject constructor(
         sendIntent(AmrDetailIntent.LoadAmrDetail)
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+        started = SharingStarted.WhileSubscribed(5000),
         initialValue = AmrDetailState()
     )
+
+    private val _effect = MutableSharedFlow<AmrDetailEffect>()
+    val effect: SharedFlow<AmrDetailEffect> = _effect
 
     val amrId = requireNotNull(savedStateHandle.get<Long>("amrId")) {
         "amr id is null in AmrDetailViewModel"
     }
-
-    private val _effect = MutableSharedFlow<AmrDetailEffect>()
-    val effect: SharedFlow<AmrDetailEffect> = _effect
 
     fun sendIntent(intent: AmrDetailIntent) {
         when (intent) {
@@ -66,20 +60,16 @@ class AmrDetailViewModel @Inject constructor(
                         _effect.emit(AmrDetailEffect.ShowError(e.message ?: "상세정보 로드 실패"))
                     }
                 }
-
             }
 
             is AmrDetailIntent.ClickWebcam -> {
-                viewModelScope.launch { _effect.emit(AmrDetailEffect.NavigateToWebcam(intent.ipAddress)) }
+                viewModelScope.launch {
+                    _effect.emit(AmrDetailEffect.NavigateToWebcam(intent.ipAddress))
+                }
             }
 
-<<<<<<< HEAD
             is AmrDetailIntent.SelectedWorksheet -> {
                 _state.value = _state.value.copy(showStartDialog = true)
-=======
-            is AmrDetailIntent.SelectedChargeStation -> {
-                _state.value = _state.value.copy(showReturnDialog = true)
->>>>>>> origin/develop
                 viewModelScope.launch {
                     val result = manualControlUseCase(amrId, intent.worksheet)
                     if (result.isFailure) {
@@ -91,14 +81,9 @@ class AmrDetailViewModel @Inject constructor(
                     _state.value = _state.value.copy(showStartDialog = false)
                 }
             }
-<<<<<<< HEAD
 
             is AmrDetailIntent.SelectedChargeStation -> {
                 _state.value = _state.value.copy(showReturnDialog = true)
-=======
-            is AmrDetailIntent.SelectedWorksheet -> {
-                _state.value = _state.value.copy(showStartDialog = true)
->>>>>>> origin/develop
                 viewModelScope.launch {
                     val result = manualControlUseCase(amrId, intent.station)
                     if (result.isFailure) {

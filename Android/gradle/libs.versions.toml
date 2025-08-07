@@ -47,10 +47,8 @@ coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gsonConverter" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3"}
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3"}
-<<<<<<< HEAD
-=======
 media3-exoplayer-rstp = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3"}
->>>>>>> origin/develop
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

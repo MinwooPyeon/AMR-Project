@@ -20,13 +20,10 @@ import com.android.ssamr.core.ui.SSAMRCustomTopAppBar
 import com.android.ssamr.core.ui.SSAMRTopAppBar
 import com.android.ssamr.feature.amr.AmrManageRoute
 import com.android.ssamr.feature.amrDetail.AmrDetailRoute
-<<<<<<< HEAD
 import com.android.ssamr.feature.dashboard.DashboardRoute
 import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
 import com.android.ssamr.feature.more.MorescreenRoute
-=======
 import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
->>>>>>> origin/develop
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -51,15 +48,12 @@ fun MainScreen() {
             bottomNavScreens.any { it.route == currentRoute } || currentRoute == "full_map"
         }
     }
-<<<<<<< HEAD
-    val topBarConfig = currentRoute?.let { getTopBarConfig(it, navController) }
-=======
+
 
     var onCallbackAction: (() -> Unit)? by remember { mutableStateOf(null) }
 
     val topBarConfig =
         currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction) }
->>>>>>> origin/develop
 
     Scaffold(
         topBar = {
