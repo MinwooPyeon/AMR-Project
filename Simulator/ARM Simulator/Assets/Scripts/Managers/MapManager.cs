@@ -6,11 +6,12 @@ public class MapManager
     List<Vector3> _chargers = new();
     List<Vector3> _loaders = new();
     List<Vector3> _dropers = new();
-    
+    Grid grid = new();
     public List<Vector3> Chargers {  get { return _chargers; } }
     public List<Vector3> Loaders { get {return _loaders; } }
     public List<Vector3> Dropers { get {return _dropers; } }
 
+    public Grid Grid { get { return grid; } }
     public void AddChargerPos(Vector3 pos)
     {
         _chargers.Add(pos);

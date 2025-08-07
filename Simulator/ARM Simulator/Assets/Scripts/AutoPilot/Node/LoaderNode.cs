@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class LoaderNode : Node
 {
-    LoaderNode (Vector2 pos)
+    public override void SetData(Vector2 pos)
     {
         Walkable = true;
         Pos = pos;
+        NodeType = NODE_TYPE.LOADER;
     }
 }

@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class ObstacleNode : Node
 {
-    ObstacleNode(Vector2 pos)
+    public override void SetData(Vector2 pos)
     {
         Walkable = false;
         Pos = pos;
+        NodeType = NODE_TYPE.OBSTACLE;
     }
 }

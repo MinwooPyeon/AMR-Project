@@ -33,3 +33,12 @@ public enum BrushColor
 {
     White, Black, Red, Blue, Green, Yellow
 }
+
+public enum NODE_TYPE
+{
+    FREE,
+    OBSTACLE,
+    CHARGER,
+    LOADER,
+    DROPER
+}

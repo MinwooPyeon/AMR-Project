@@ -2874,7 +2874,7 @@ MonoBehaviour:
   DeviceInfoCanvas: {fileID: 1571839626}
   MapEditCanvas: {fileID: 580412607}
   EditorPathEditCanvas: {fileID: 237112640}
-  DeviceDetailCanvas: {fileID: 0}
+  DeviceDetailCanvas: {fileID: 1658155979}
 --- !u!1 &396047633
 GameObject:
   m_ObjectHideFlags: 0
