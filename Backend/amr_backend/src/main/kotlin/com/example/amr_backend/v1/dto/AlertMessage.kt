@@ -3,7 +3,7 @@ package com.example.amr_backend.v1.dto
 import java.time.LocalDateTime
 
 data class AlertInboundMessage(
-    val situation: Situation,
+    val case: Case,
     val image: ByteArray,
     val x: Double,
     val y: Double,
@@ -15,7 +15,7 @@ data class AlertInboundMessage(
 
         other as AlertInboundMessage
 
-        if (situation != other.situation) return false
+        if (case != other.case) return false
         if (!image.contentEquals(other.image)) return false
         if (x != other.x) return false
         if (y != other.y) return false
@@ -25,7 +25,7 @@ data class AlertInboundMessage(
     }
 
     override fun hashCode(): Int {
-        var result = situation.hashCode()
+        var result = case.hashCode()
         result = 31 * result + image.contentHashCode()
         result = 31 * result + x.hashCode()
         result = 31 * result + y.hashCode()
@@ -42,6 +42,6 @@ data class AlertOutboundMessage(
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )
 
-enum class Situation {
+enum class Case {
     COLLAPSE, SMOKE, EQUIPMENT
 }
