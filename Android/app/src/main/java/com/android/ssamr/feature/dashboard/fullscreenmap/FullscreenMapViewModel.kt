@@ -1,12 +1,12 @@
-// ViewModel
 package com.android.ssamr.feature.dashboard.fullscreenmap
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.ssamr.core.domain.repository.DashboardRepository
-import com.android.ssamr.core.data.model.amr.response.toAmrMapPositionModel
 import com.android.ssamr.core.domain.model.AmrMapPosition
+import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.core.domain.model.DashboardAmrStatus
+import com.android.ssamr.core.domain.repository.AmrRepository
+import com.android.ssamr.core.domain.repository.DashboardRepository
 import com.android.ssamr.core.ui.ImageDecoder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -15,10 +15,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FullscreenMapViewModel @Inject constructor(
-    private val repository: DashboardRepository
+    private val dashboardRepository: DashboardRepository,
+    private val amrRepository: AmrRepository
 ) : ViewModel() {
 
-    private val USE_DUMMY_DATA = false
     private var isMapImageLoaded = false
 
     private val _state = MutableStateFlow(FullscreenMapState())
@@ -31,7 +31,7 @@ class FullscreenMapViewModel @Inject constructor(
                 _state.update { it.copy(selectedAmrId = intent.id) }
             }
             is FullscreenMapIntent.Close -> {
-                // 처리 필요 시 추가
+                // 필요 시 처리
             }
         }
     }
@@ -40,26 +40,13 @@ class FullscreenMapViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true, error = null) }
 
-            if (USE_DUMMY_DATA) {
-                val dummyAmrs = listOf(
-                    AmrMapPosition(1L, "AMR-001", 100f, 200f, DashboardAmrStatus.RUNNING),
-                    AmrMapPosition(2L, "AMR-002", 300f, 400f, DashboardAmrStatus.CHARGING),
-                    AmrMapPosition(3L, "AMR-003", 500f, 150f, DashboardAmrStatus.CHECK)
-                )
-                val dummyMap = generateDummyMapImage(720, 1280)
-                _state.update {
-                    it.copy(isLoading = false, amrPositions = dummyAmrs, mapImage = dummyMap)
-                }
-                return@launch
-            }
-
             runCatching {
-                val amrDtos = repository.getMapAmrPositions()
-                val amrPositions = amrDtos.map { it.toAmrMapPositionModel() }
+                val amrStatuses = amrRepository.getAmrList()
+                val amrPositions = amrStatuses.map { it.toMapPosition() }
 
                 val mapImage = if (!isMapImageLoaded) {
                     isMapImageLoaded = true
-                    val base64 = repository.getMapImage()
+                    val base64 = dashboardRepository.getMapImage()
                     ImageDecoder.decodeBase64ToImageBitmap(base64)
                 } else {
                     _state.value.mapImage
@@ -73,8 +60,27 @@ class FullscreenMapViewModel @Inject constructor(
                     )
                 }
             }.onFailure { e ->
-                _state.update { it.copy(isLoading = false, error = "지도 로딩 실패: ${e.message}") }
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        error = "지도 로딩 실패: ${e.message}"
+                    )
+                }
             }
         }
+    }
+
+    private fun AmrStatus.toMapPosition(): AmrMapPosition {
+        return AmrMapPosition(
+            id = id,
+            name = name,
+            x = locationX.toFloat(),
+            y = locationY.toFloat(),
+            status = when (status) {
+                com.android.ssamr.core.domain.model.AmrAction.RUNNING -> DashboardAmrStatus.RUNNING
+                com.android.ssamr.core.domain.model.AmrAction.CHARGING -> DashboardAmrStatus.CHARGING
+                com.android.ssamr.core.domain.model.AmrAction.CHECKING -> DashboardAmrStatus.CHECK
+            }
+        )
     }
 }
