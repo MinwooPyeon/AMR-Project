@@ -7,6 +7,7 @@ data class AlertInboundMessage(
     val image: ByteArray,
     val x: Double,
     val y: Double,
+    val timeStamp: LocalDateTime,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -18,6 +19,7 @@ data class AlertInboundMessage(
         if (!image.contentEquals(other.image)) return false
         if (x != other.x) return false
         if (y != other.y) return false
+        if (timeStamp != other.timeStamp) return false
 
         return true
     }
@@ -27,6 +29,7 @@ data class AlertInboundMessage(
         result = 31 * result + image.contentHashCode()
         result = 31 * result + x.hashCode()
         result = 31 * result + y.hashCode()
+        result = 31 * result + timeStamp.hashCode()
         return result
     }
 }
