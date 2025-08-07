@@ -9,7 +9,8 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 from ultralytics import YOLO
 import threading
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-
+from pose_api import start_pose_api_server, update_pose
+from datetime import datetime
 # 알림을 보낼 특정 클래스 이름 정의
 ALERT_CLASSES = [
     "MATERIAL_COLLAPSE",     # 적재 물류 붕괴
@@ -61,9 +62,12 @@ class PoseSubscriber(Node):
 
     def listener_callback(self, msg):
         global robot_pose
-        robot_pose['x'] = msg.pose.pose.position.x
-        robot_pose['y'] = msg.pose.pose.position.y
-        self.get_logger().info(f"Received pose: x={robot_pose['x']}, y={robot_pose['y']}")
+        x = msg.pose.pose.position.x
+        y = msg.pose.pose.position.y
+        robot_pose['x'] = x
+        robot_pose['y'] = y
+        update_pose(x, y)  # <--- API 서버에 현재 좌표 업데이트
+        self.get_logger().info(f"Received pose: x={x}, y={y}")
 
 
 def start_ros2_node():
@@ -76,6 +80,9 @@ def start_ros2_node():
 # 스레드로 실행
 ros_thread = threading.Thread(target=start_ros2_node, daemon=True)
 ros_thread.start()
+
+# API 서버 실행 (로컬 + 외부에서 좌표 접근 가능)
+start_pose_api_server()
 
 def send_alert_to_backend(situation, image_base64="", x=None, y=None, detail=""):
     """
@@ -95,6 +102,7 @@ def send_alert_to_backend(situation, image_base64="", x=None, y=None, detail="")
     else:
         x_val = x
         y_val = y
+    current_time_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
     message = {
         "serial" : "AMR001",
@@ -102,7 +110,7 @@ def send_alert_to_backend(situation, image_base64="", x=None, y=None, detail="")
         "image": image_base64,
         "x": x_val,
         "y": y_val,
-        "timeStamp": "12:30"
+        "timeStamp": current_time_str
     }
 
     try:
