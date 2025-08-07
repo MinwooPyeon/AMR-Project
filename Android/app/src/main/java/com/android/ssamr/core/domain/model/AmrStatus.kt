@@ -4,7 +4,8 @@ data class AmrStatus (
     val id: Long,
     val name: String,
     val status: AmrAction,
-    val location: String,
+    val locationX: Double,
+    val locationY: Double,
     val speed: String,
     val job: String,
 )

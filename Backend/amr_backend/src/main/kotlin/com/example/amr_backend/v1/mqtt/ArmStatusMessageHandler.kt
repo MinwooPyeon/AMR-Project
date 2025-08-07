@@ -38,6 +38,7 @@ class ArmStatusMessageHandler(
     @Transactional
     override fun messageArrived(topic: String?, message: MqttMessage?) {
         try {
+            logger.debug("{} message received : {}", topic, message)
             val amrStatusMessage = objectMapper.readValue(message?.payload, AmrStatusMessage::class.java)
             val amr = amrRepository.findBySerial(amrStatusMessage.serial)
             amrStatusRepository.save(amrStatusMessage.toAmrStatus(amr))

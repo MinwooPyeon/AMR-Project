@@ -33,7 +33,7 @@ class AmrRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
-        return AmrDetailStatus("AMR-001", AmrDetailAction.RUNNING, "A-1구역", "1.4m/s", "자재이동", "RB-100", "RB100-2024-001", "v2.1.3", "111.111.1111")
+        return AmrDetailStatus(1,"AMR-001", AmrDetailAction.RUNNING, 0.0, 1.0, "1.4m/s", "자재이동", "RB-100", "RB100-2024-001", "v2.1.3", "111.111.1111")
 //        return remoteDataSource.getAmrDetail(amrId)
     }
 

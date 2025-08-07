@@ -95,6 +95,13 @@ class AmrDetailViewModel @Inject constructor(
                     _state.value = _state.value.copy(showReturnDialog = false)
                 }
             }
+            is AmrDetailIntent.SelectedWorksheet -> {
+                _state.value = _state.value.copy(showStartDialog = true)
+                viewModelScope.launch {
+                    delay(2000)
+                    _state.value = _state.value.copy(showStartDialog = false)
+                }
+            }
         }
     }
 }

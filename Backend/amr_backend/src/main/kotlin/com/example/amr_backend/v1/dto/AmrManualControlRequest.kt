@@ -4,3 +4,8 @@ data class AmrManualControlRequest(
     val serial: String,
     val area: String,
 )
+
+fun AmrManualControlRequest.toAmrManualControlMessage() = TopicMessage.AmrManualControlMessage(
+    serial = serial,
+    area = area
+)

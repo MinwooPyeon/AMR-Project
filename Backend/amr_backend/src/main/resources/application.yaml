@@ -8,3 +8,9 @@ spring:
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
     url: ${POSTGRES_URL}
+firebase:
+  key:
+    location: ${FIREBASE_KEY_LOCATION}
+logging:
+  level:
+    com.example.amr_backend: DEBUG

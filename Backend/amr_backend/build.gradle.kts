@@ -32,6 +32,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springframework.integration:spring-integration-mqtt:6.5.0")
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
+    implementation("com.google.firebase:firebase-admin:9.5.0")
 }
 
 kotlin {

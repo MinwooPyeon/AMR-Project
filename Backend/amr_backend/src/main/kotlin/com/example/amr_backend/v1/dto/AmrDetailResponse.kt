@@ -1,11 +1,12 @@
 package com.example.amr_backend.v1.dto
 
 import com.example.amr_backend.v1.entity.AmrStatus
-import com.example.amr_backend.v1.entity.Status
+import com.example.amr_backend.v1.entity.State
 
 data class AmrDetailResponse(
+    val id: Long,
     val name: String,
-    val status: Status,
+    val state: State,
     val speed: Double,
     val model: String,
     val serial: String,
@@ -14,8 +15,9 @@ data class AmrDetailResponse(
 )
 
 fun AmrStatus.toAmrDetailResponse() = AmrDetailResponse(
+    id = id,
     name = amr.name,
-    status = status,
+    state = state,
     speed = speed,
     model = amr.model,
     serial = amr.serial,
