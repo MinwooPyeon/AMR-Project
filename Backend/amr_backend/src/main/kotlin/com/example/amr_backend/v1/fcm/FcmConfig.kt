@@ -16,6 +16,11 @@ class FcmConfig(
 ) {
     @Bean
     fun firebaseApp(): FirebaseApp {
+        val existingApps = FirebaseApp.getApps()
+        return if (existingApps.isEmpty()) buildNewFirebaseApp() else FirebaseApp.getInstance()
+    }
+
+    private fun buildNewFirebaseApp(): FirebaseApp {
         val serviceAccount = FileInputStream(keyLocation)
         val options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))

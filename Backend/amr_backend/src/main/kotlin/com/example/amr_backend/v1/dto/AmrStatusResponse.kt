@@ -8,7 +8,8 @@ data class AmrStatusResponse(
     val name: String,
     val state: State,
     val speed: Double,
-    val battery: Int
+    val x: Double,
+    val y: Double,
 )
 
 fun AmrStatus.toAmrStatusResponse() = AmrStatusResponse(
@@ -16,5 +17,6 @@ fun AmrStatus.toAmrStatusResponse() = AmrStatusResponse(
     name = amr.name,
     state = state,
     speed = speed,
-    battery = batteryLevel
+    x = x,
+    y = y
 )

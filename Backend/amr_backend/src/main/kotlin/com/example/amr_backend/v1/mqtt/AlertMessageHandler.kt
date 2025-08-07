@@ -2,7 +2,7 @@ package com.example.amr_backend.v1.mqtt
 
 import com.example.amr_backend.v1.dto.AlertInboundMessage
 import com.example.amr_backend.v1.dto.AlertOutboundMessage
-import com.example.amr_backend.v1.dto.Situation
+import com.example.amr_backend.v1.dto.Case
 import com.example.amr_backend.v1.fcm.FirebaseMessageHandler
 import com.example.amr_backend.v1.service.AreaMapper
 import com.example.amr_backend.v1.storage.ImageSaver
@@ -50,20 +50,20 @@ class AlertMessageHandler(
     }
 
     private fun AlertInboundMessage.toOutboundMessage(imagePath: String): AlertOutboundMessage {
-        val situationMessage = situation.toMessage()
+        val caseMessage = case.toMessage()
         val area = areaMapper.convertCoordinateToArea(x, y)
 
         return AlertOutboundMessage(
-            title = "$situationMessage 감지",
-            summary = "${area}에 ${situationMessage}감지",
+            title = "$caseMessage 감지",
+            summary = "${area}에 ${caseMessage}감지",
             area = area,
             image = imagePath,
         )
     }
 
-    private fun Situation.toMessage() = when (this) {
-        Situation.COLLAPSE -> "충돌"
-        Situation.SMOKE -> "흡연"
-        Situation.EQUIPMENT -> "안전 장비 미착용"
+    private fun Case.toMessage() = when (this) {
+        Case.COLLAPSE -> "충돌"
+        Case.SMOKE -> "흡연"
+        Case.EQUIPMENT -> "안전 장비 미착용"
     }
 }

@@ -35,7 +35,7 @@ class AlertInboundMessageTest {
         val result = objectMapper.readValue(VALID_JSON, AlertInboundMessage::class.java)
 
         // then
-        assertThat(result.situation, `is`(Situation.COLLAPSE))
+        assertThat(result.case, `is`(Case.COLLAPSE))
     }
 
     companion object {
