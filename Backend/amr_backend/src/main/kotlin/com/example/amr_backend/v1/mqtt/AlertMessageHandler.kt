@@ -46,6 +46,7 @@ class AlertMessageHandler(
             firebaseMessageHandler.sendAlertMessage(outboundMessage)
         } catch (e: Exception) {
             logger.warn("Failed to handle alert message : {}", e.message)
+            logger.warn(e.stackTraceToString())
         }
     }
 
