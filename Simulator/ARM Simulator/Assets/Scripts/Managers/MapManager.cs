@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class MapManager
@@ -30,5 +31,28 @@ public class MapManager
         _chargers.Clear();
         _loaders.Clear();
         _dropers.Clear();
+    }
+
+    public Node GetRandomChargerPos()
+    {
+        if (_chargers.Count == 0) throw new System.InvalidOperationException("No chargers registered");
+        int idx = Random.Range(0, _chargers.Count);
+        Vector3 charger = _chargers[idx];
+        return Grid.GetLocateNode((int)charger.x, (int)charger.z);
+    }
+
+    public Node GetRandomLoaderPos()
+    {
+        if (_loaders.Count == 0) throw new System.InvalidOperationException("No loaders registered");
+        int idx = Random.Range(0, _loaders.Count);
+        Vector3 loader = _loaders[idx];
+        return Grid.GetLocateNode((int)loader.x, (int)loader.z);
+    }
+    public Node GetRandomDroperPos()
+    {
+        if (_dropers.Count == 0) throw new System.InvalidOperationException("No dropers registered");
+        int idx = Random.Range(0, _dropers.Count);
+        Vector3 droper = _dropers[idx];
+        return Grid.GetLocateNode((int)droper.x, (int)droper.z);
     }
 }

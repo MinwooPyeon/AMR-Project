@@ -8,5 +8,6 @@ public class DroperNode : Node
         Walkable = true;
         Pos = pos;
         NodeType = NODE_TYPE.DROPER;
+        Parent = null;
     }
 }

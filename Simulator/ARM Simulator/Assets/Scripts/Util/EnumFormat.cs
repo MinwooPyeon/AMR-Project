@@ -21,14 +21,6 @@ public enum DangerCase
     NO_HELMET,
     BOX_COLLISION
 }
-
-
-public enum UIEvent
-{
-    CLICK,
-    DRAG
-}
-
 public enum BrushColor
 {
     White, Black, Red, Blue, Green, Yellow

@@ -3,12 +3,14 @@ using UnityEngine;
 public class StateData : MonoBehaviour
 {
     float _speed = 0;
-
+    string _serial;
     AMR_STATE _state = AMR_STATE.RUNNING;
     ACTION_STATE _actionState = ACTION_STATE.STOP;
+
     public string SerialNumber
     {
-        get { return this.gameObject.GetInstanceID().ToString(); }
+        get { return _serial; }
+        set { _serial = value; }
     }
     
     public Vector2 Position

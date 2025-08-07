@@ -7,5 +7,6 @@ public class FreeNode : Node
         Walkable = true;
         Pos = pos;
         NodeType = NODE_TYPE.FREE;
+        Parent = null;
     }
 }

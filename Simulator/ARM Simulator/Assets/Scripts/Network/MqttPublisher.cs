@@ -33,7 +33,8 @@ public class MqttPublisher : MonoBehaviour
     {
         string message = jb.BuildStatusJson(data);
         client.Publish(topic[1], Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
-        Debug.Log($"Published Status Json {message.Length}");
+        //Debug.Log($"Published Status Json {message.Length}");
+        //Debug.Log($"PUblish Json {message}");
     }
 
     IEnumerator PublishStatus()

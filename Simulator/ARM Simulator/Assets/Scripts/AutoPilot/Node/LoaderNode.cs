@@ -8,5 +8,6 @@ public class LoaderNode : Node
         Walkable = true;
         Pos = pos;
         NodeType = NODE_TYPE.LOADER;
+        Parent = null;
     }
 }

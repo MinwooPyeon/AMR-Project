@@ -8,5 +8,6 @@ public class ChargerNode : Node
         Walkable = true;
         Pos = pos;
         NodeType = NODE_TYPE.CHARGER;
+        Parent = null;
     }
 }

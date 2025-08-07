@@ -36,7 +36,6 @@ public class Grid
         Node node = dict[type]();
         node.SetData(new Vector2(worldPos.x, worldPos.z));
         grid[(int)worldPos.x, (int)worldPos.z] = node;
-
     }
 
     public List<Node> GetNeighborNode(Node node)
@@ -52,6 +51,7 @@ public class Grid
 
             if (CheckBound(dx, dy) && grid[dx, dy].Walkable)
             {
+                //Debug.Log(grid[dx, dy]);
                 neighbor.Add(grid[dx, dy]);
             }
         }

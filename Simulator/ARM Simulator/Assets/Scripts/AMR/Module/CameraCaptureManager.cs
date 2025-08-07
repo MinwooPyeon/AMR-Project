@@ -119,7 +119,7 @@ public class CameraCaptureManager : MonoBehaviour
         input.Dispose();
         output.Dispose();
 
-        StateData state = Managers.Device.Devices[id].gameObject.GetComponent<StateData>();
+        StateData state = Managers.Device.VirtualDevices[id].gameObject.GetComponent<StateData>();
         //Debug.Log("Camera Capture Complete");
         // 최종 콜백
         Managers.Data.OnCameraCaptured(id, gray, timestamp, state);
