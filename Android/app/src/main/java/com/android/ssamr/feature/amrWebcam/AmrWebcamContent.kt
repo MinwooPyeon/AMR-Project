@@ -71,10 +71,10 @@ fun AmrWebcamInfoPanel (
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-//                Text("위치\n${state.amr?.location}", color = Color.White)
-//                Text("상태\n${state.am  r?.status}", color = Color.White)
-                Text("위치\nA구역-라인1", color = Color.White)
-                Text("상태\n작동중", color = Color.White)
+                Text("위치\n${state.amr?.locationX} ${state.amr?.locationY}", color = Color.White)
+                Text("상태\n${state.amr?.status}", color = Color.White)
+//                Text("위치\nA구역-라인1", color = Color.White)
+//                Text("상태\n작동중", color = Color.White)
                 Spacer(Modifier.width(16.dp))
             }
         }

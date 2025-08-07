@@ -32,9 +32,9 @@ class AmrWebcamViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         AmrWebcamState(
-//            rtspUrl = makeRtspUrl(ipAddress)
-            rtspUrl = makeRtspUrl(testRtspUrl),
-            lastUpdated = "2025-08-01 12:34:56",
+            rtspUrl = makeRtspUrl(ipAddress)
+//            rtspUrl = makeRtspUrl(testRtspUrl),
+//            lastUpdated = "2025-08-01 12:34:56",
         )
     )
 

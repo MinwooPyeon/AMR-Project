@@ -7,9 +7,9 @@ import com.android.ssamr.core.domain.model.AmrStatus
 data class AmrDto(
     val id: Long,
     val name: String,
-    val status: String,
-    val locationX: Double,
-    val locationY: Double,
+    val state: String,
+    val x: Double,
+    val y: Double,
     val location: String,
     val speed: String,
 )
@@ -17,9 +17,9 @@ data class AmrDto(
 fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
     id = id,
     name = name,
-    status = AmrAction.valueOf(status),
-    locationX = this.locationX,
-    locationY = this.locationY,
+    status = AmrAction.valueOf(state),
+    locationX = this.x,
+    locationY = this.y,
     speed = speed,
-    job = status,
+    job = state,
 )

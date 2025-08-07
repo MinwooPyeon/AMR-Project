@@ -12,18 +12,19 @@ class AmrRepositoryImpl @Inject constructor(
     private val remoteDataSource: AmrRemoteDataSource
 ) : AmrRepository {
 
+
     override suspend fun getAmrList(): List<AmrStatus> {
-        return listOf(
-            AmrStatus(1L, "1번로봇", AmrAction.RUNNING, 0.0, 1.0, "1.4m/s", "자재이동"),
-            AmrStatus(2L, "2번로봇", AmrAction.CHARGING, 2.0, 3.0, "0.0m/s", "대기"),
-            AmrStatus(3L, "3번로봇", AmrAction.CHECKING, 4.0, 5.0, "0.0m/s", "점검")
-        )
-//        return remoteDataSource.getAmrList()
+//        return listOf(
+//            AmrStatus(1L, "1번로봇", AmrAction.RUNNING, 0.0, 1.0, "1.4m/s", "자재이동"),
+//            AmrStatus(2L, "2번로봇", AmrAction.CHARGING, 2.0, 3.0, "0.0m/s", "대기"),
+//            AmrStatus(3L, "3번로봇", AmrAction.CHECKING, 4.0, 5.0, "0.0m/s", "점검")
+//        )
+        return remoteDataSource.getAmrList()
     }
 
     override suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
-        return AmrDetailStatus(1,"AMR-001", AmrDetailAction.RUNNING, 0.0, 1.0, "1.4m/s", "자재이동", "RB-100", "RB100-2024-001", "v2.1.3", "111.111.1111")
-//        return remoteDataSource.getAmrDetail(amrId)
+//        return AmrDetailStatus(1,"AMR-001", AmrDetailAction.RUNNING, 0.0, 1.0, "1.4m/s", "자재이동", "RB-100", "RB100-2024-001", "v2.1.3", "111.111.1111")
+        return remoteDataSource.getAmrDetail(amrId)
     }
 
 }
