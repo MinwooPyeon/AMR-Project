@@ -79,7 +79,7 @@ class FullscreenMapViewModel @Inject constructor(
             status = when (status) {
                 com.android.ssamr.core.domain.model.AmrAction.RUNNING -> DashboardAmrStatus.RUNNING
                 com.android.ssamr.core.domain.model.AmrAction.CHARGING -> DashboardAmrStatus.CHARGING
-                com.android.ssamr.core.domain.model.AmrAction.CHECKING -> DashboardAmrStatus.CHECK
+                com.android.ssamr.core.domain.model.AmrAction.CHECKING -> DashboardAmrStatus.CHECKING
             }
         )
     }

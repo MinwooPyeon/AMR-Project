@@ -58,7 +58,7 @@ class DashboardViewModel @Inject constructor(
 
                 val runningCount = amrs.count { it.status == DashboardAmrStatus.RUNNING }
                 val chargingCount = amrs.count { it.status == DashboardAmrStatus.CHARGING }
-                val checkingCount = amrs.count { it.status == DashboardAmrStatus.CHECK }
+                val checkingCount = amrs.count { it.status == DashboardAmrStatus.CHECKING }
 
                 DashboardState(
                     amrList = amrs,
@@ -83,7 +83,7 @@ class DashboardViewModel @Inject constructor(
             status = when (this.status) {
                 AmrAction.RUNNING -> DashboardAmrStatus.RUNNING
                 AmrAction.CHARGING -> DashboardAmrStatus.CHARGING
-                AmrAction.CHECKING -> DashboardAmrStatus.CHECK
+                AmrAction.CHECKING -> DashboardAmrStatus.CHECKING
             },
             location = this.job // 필요시 locationX/Y 기반으로 별도 생성 가능
         )
