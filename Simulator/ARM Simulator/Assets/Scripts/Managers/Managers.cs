@@ -9,6 +9,7 @@ public class Managers : MonoBehaviour
     static DeviceManager _device = new DeviceManager();
     static DataManager _data = new DataManager();
     static MapManager _map = new MapManager();
+    static PathRequestManager _pathRequestManager = new PathRequestManager();
     #endregion
     #region Methods
     public static Managers Manager { get { return _instance; } }
@@ -16,6 +17,7 @@ public class Managers : MonoBehaviour
     public static DeviceManager Device { get { return _device; } }
     public static DataManager Data { get { return _data; } }
     public static MapManager Map { get { return _map; } }
+    public static PathRequestManager Path { get { return _pathRequestManager; } }
 
     public static void OnStart()
     {

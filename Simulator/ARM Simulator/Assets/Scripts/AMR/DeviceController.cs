@@ -33,7 +33,7 @@ public class DeviceController : MonoBehaviour
         };
 
         // DeviceManager¿¡ µî·Ï
-        Managers.Device.DeviceRegister(this.gameObject.GetInstanceID().ToString(), this);
+        //Managers.Device.RegistVirtualDevice(this.gameObject.GetInstanceID().ToString(), this);
     }
 
     private void OnDestroy()
