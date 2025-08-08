@@ -30,6 +30,9 @@ class FullscreenMapViewModel @Inject constructor(
             is FullscreenMapIntent.ClickAmr -> {
                 _state.update { it.copy(selectedAmrId = intent.id) }
             }
+            is FullscreenMapIntent.ClearSelectedAmr -> {
+                _state.update { it.copy(selectedAmrId = null) }
+            }
             is FullscreenMapIntent.Close -> {
                 // 필요 시 처리
             }
