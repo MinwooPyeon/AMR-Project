@@ -3608,7 +3608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e688dc13a8856d04eb568b0a77f36216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resolution: 224
+  resolution: 120
 --- !u!114 &532932571
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -37,7 +37,7 @@ public class VirtualNavigator : MonoBehaviour
 
     private void RequestAndMove()
     {
-        _start = Managers.Map.Grid.GetLocateNode((int)_state.Position.x, (int)_state.Position.y);
+        _start = Managers.Map.Grid.GetLocateNode((int)_state.GridPosition.x, (int)_state.GridPosition.y);
         Managers.Path.RequestPath(_start, _end, route =>
         {
             if (route == null || route.Count == 0)
@@ -46,7 +46,6 @@ public class VirtualNavigator : MonoBehaviour
             }
             else
             {
-                Debug.Log(_deviceController);
                 _deviceController.MoveDevice(route, AssignTask);
             }
         });

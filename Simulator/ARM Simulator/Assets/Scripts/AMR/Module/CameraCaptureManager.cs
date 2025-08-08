@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -11,17 +9,16 @@ public class CameraCaptureManager : MonoBehaviour
     public Dictionary<string, Camera> cameras = new Dictionary<string, Camera>();
 
     [Header("출력 해상도")]
-    public int resolution = 224;
+    public int resolution = 64;
 
     // ID → RenderTexture
     private Dictionary<string, RenderTexture> renderTextures = new Dictionary<string, RenderTexture>();
 
-    // WaitForEndOfFrame 인스턴스 풀링
+    // FrameEnd 풀링
     private static readonly YieldInstruction FrameEnd = new WaitForEndOfFrame();
 
     void OnEnable()
     {
-        // Inspector나 RegistCamera로 미리 cameras가 채워졌다고 가정
         foreach (var kv in cameras)
             AllocateRenderTexture(kv.Key);
     }
@@ -34,18 +31,16 @@ public class CameraCaptureManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 외부에서 카메라가 생성될 때 호출
+    /// 카메라 등록 시 호출
     /// </summary>
     public void RegistCamera(string id, Camera cam)
     {
         cameras[id] = cam;
         AllocateRenderTexture(id);
-
-        //Debug.Log($"[CAMERA] Regist Camera {id}");
     }
 
     /// <summary>
-    /// 외부에서 카메라가 제거될 때 호출
+    /// 카메라 해제 시 호출
     /// </summary>
     public void UnregistCamera(string id)
     {
@@ -60,25 +55,22 @@ public class CameraCaptureManager : MonoBehaviour
     private void AllocateRenderTexture(string id)
     {
         if (renderTextures.ContainsKey(id)) return;
-
         var rt = new RenderTexture(resolution, resolution, 24, RenderTextureFormat.ARGB32);
         rt.Create();
         renderTextures[id] = rt;
     }
 
     /// <summary>
-    /// 외부에서 호출: 비동기 캡처 요청
+    /// 캡처 요청: 비동기 렌더 → CPU 복사
     /// </summary>
     public void RequestCapture(string id, long timestamp)
     {
-        //Debug.Log("Request Capture: " + id);
         if (!cameras.ContainsKey(id)) return;
         StartCoroutine(CaptureCameraAsync(id, cameras[id], timestamp));
     }
 
     private IEnumerator CaptureCameraAsync(string id, Camera cam, long timestamp)
     {
-        // GPU 렌더링이 끝난 뒤 실행
         yield return FrameEnd;
 
         var rt = renderTextures[id];
@@ -86,7 +78,6 @@ public class CameraCaptureManager : MonoBehaviour
         cam.Render();
         cam.targetTexture = null;
 
-        // 비동기 GPU→CPU 복사
         AsyncGPUReadback.Request(rt, 0, TextureFormat.RGB24,
             req => OnCompleteReadback(req, id, timestamp)
         );
@@ -100,42 +91,13 @@ public class CameraCaptureManager : MonoBehaviour
             return;
         }
 
-        // Color32 → 그레이스케일 처리 (Job 사용)
-        var pixelData = request.GetData<Color32>();
-        int n = pixelData.Length;
+        // Color32 배열로 바로 추출
+        Color32[] pixels = request.GetData<Color32>().ToArray();
 
-        var input = new NativeArray<Color32>(pixelData.ToArray(), Allocator.TempJob);
-        var output = new NativeArray<float>(n, Allocator.TempJob);
+        StateData state = Managers.Device.VirtualDevices[id]
+                             .gameObject.GetComponent<StateData>();
 
-        var job = new PixelProcessingJob
-        {
-            inputPixels = input,
-            output = output
-        };
-        var handle = job.Schedule(n, 64);
-        handle.Complete();
-
-        float[] gray = output.ToArray();
-        input.Dispose();
-        output.Dispose();
-
-        StateData state = Managers.Device.VirtualDevices[id].gameObject.GetComponent<StateData>();
-        //Debug.Log("Camera Capture Complete");
-        // 최종 콜백
-        Managers.Data.OnCameraCaptured(id, gray, timestamp, state);
-    }
-
-    // 그레이스케일 변환 Job
-    struct PixelProcessingJob : IJobParallelFor
-    {
-        [ReadOnly] public NativeArray<Color32> inputPixels;
-        public NativeArray<float> output;
-
-        public void Execute(int i)
-        {
-            Color32 c = inputPixels[i];
-            // 표준 가중치: 0.299·R + 0.587·G + 0.114·B
-            output[i] = (0.299f * c.r + 0.587f * c.g + 0.114f * c.b) / 255f;
-        }
+        // 최종 콜백 (Color32[] 버전)
+        Managers.Data.OnCameraCaptured(id, pixels, timestamp, state);
     }
 }

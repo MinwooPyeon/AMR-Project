@@ -41,7 +41,7 @@ public class PathFinder
         if (cost + _current.GCost < node.GCost || node.Parent == null)
         {
             node.Parent = _current;
-            node.GCost = cost + _current.HCost;
+            node.GCost = cost + _current.GCost;
             node.HCost = Mathf.Abs(_end.Pos.x - _current.Pos.x) + Mathf.Abs(_end.Pos.y - _current.Pos.y);
         }
     }
@@ -78,18 +78,32 @@ public class PathFinder
 
     private List<Node> GetRoute()
     {
-        Node idx = _end;
-        List<Node> routes = new();
+        var path = new List<Node>();
+        var visited = new HashSet<Node>();
+        Node node = _end;
 
-        while (idx != null) 
+        while (node != null)
         {
-            routes.Add(idx);
-            if (idx == _start) break;
-            idx = idx.Parent;
+            // 사이클 체크: 이미 본 노드면 경고하고 빠져나감
+            if (!visited.Add(node))
+            {
+                Debug.LogError("GetRoute: Parent 체인에 사이클이 감지되었습니다.");
+                break;
+            }
+
+            path.Add(node);
+
+            // 시작점에 도달했으면 정상 종료
+            if (node == _start)
+                break;
+
+            node = node.Parent;
         }
-        routes.Reverse();
-        return routes;
+
+        path.Reverse();
+        return path;
     }
+
     public List<Node> PathFinding(Node start, Node end)
     {
         ResetCost();

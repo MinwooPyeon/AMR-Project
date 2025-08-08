@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 public class SensorFrame
 {
-    public float[] grayscaleCameraData;
+    public Color32[] cameraData;
     public float acceleration;
     public float chargeAmount;
     public Vector3 position;
@@ -14,14 +14,14 @@ public class DataManager
 {
     private Dictionary<string, List<SensorFrame>> _deviceFrameHistory = new();
 
-    public void AddSensorFrame(string deviceIndex, float[] cameraData, StateData state, long timestamp)
+    public void AddSensorFrame(string deviceIndex, Color32[] cameraData, StateData state, long timestamp)
     {
         if (!_deviceFrameHistory.ContainsKey(deviceIndex))
             _deviceFrameHistory[deviceIndex] = new List<SensorFrame>();
 
         _deviceFrameHistory[deviceIndex].Add(new SensorFrame
         {
-            grayscaleCameraData = cameraData,
+            cameraData = cameraData,
             acceleration = state.Speed,
             amrState = state.AmrState,
             actionState = state.ActionState,
@@ -54,14 +54,14 @@ public class DataManager
 
     public class CaptureSession
     {
-        public float[] cameraData = null;
+        public Color32[] cameraData = null;
         public StateData state = null;
         public long timestamp;
     }
 
     private Dictionary<(string deviceIndex, long timestamp), CaptureSession> _pendingSessions = new();
 
-    public void OnCameraCaptured(string deviceIndex, float[] data, long timestamp, StateData state)
+    public void OnCameraCaptured(string deviceIndex, Color32[] data, long timestamp, StateData state)
     {
         var key = (deviceIndex, timestamp);
         if (!_pendingSessions.TryGetValue(key, out var session))

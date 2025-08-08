@@ -13,11 +13,15 @@ public class StateData : MonoBehaviour
         set { _serial = value; }
     }
     
-    public Vector2 Position
+    public Vector2 GridPosition
     {
         get { return new Vector2(transform.position.x, transform.position.z); }
     }
 
+    public Vector3 WorldPosition
+    {
+        get { return transform.position; }
+    }
     public float Angle
     {
         get { return transform.rotation.y; }

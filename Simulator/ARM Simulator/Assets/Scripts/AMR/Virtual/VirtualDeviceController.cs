@@ -31,10 +31,12 @@ public class VirtualDeviceController : MonoBehaviour
     private IEnumerator ProcessRoute()
     {
         int cnt = _route.Count;
+        //Debug.Log(_route[cnt - 1].Pos);
         for(int i =0;i<cnt;i++)
         {
-            Vector3 targetPos = _route[i].Pos;
-
+            Vector2 routePos = _route[i].Pos;
+            Vector3 targetPos = new Vector3(routePos.x, 1, routePos.y);
+            //Debug.Log(targetPos);
             // 1) 목표 방향으로 회전
             yield return StartCoroutine(RotateTo(targetPos));
 
@@ -73,7 +75,8 @@ public class VirtualDeviceController : MonoBehaviour
 
     private IEnumerator Approach(Vector3 targetPos)
     {
-        while (Vector3.Distance(_state.Position, targetPos) > PositionThreshold)
+        Debug.Log(Vector3.Distance(_state.WorldPosition, targetPos));
+        while (Vector3.Distance(_state.WorldPosition, targetPos) > PositionThreshold)
         {
             _moveController.MoveForward(_moveController.MoveSpeed);
             yield return null;

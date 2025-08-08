@@ -38,7 +38,7 @@ public class PathRequestManager
         if (_processing || _requestQueue.Count == 0) return;
 
         _current = _requestQueue.Dequeue();
-        Debug.Log($"current: {_current.start} , {_current.end}");
+        Debug.Log($"current: {_current.start.Pos} , {_current.end.Pos}");
         _processing = true;
         Managers.Manager.StartCoroutine(ProcessPath());
     }
