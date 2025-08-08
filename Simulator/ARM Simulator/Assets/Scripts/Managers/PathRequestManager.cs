@@ -29,16 +29,13 @@ public class PathRequestManager
     {
         PathRequest request = new PathRequest(start, end, callback);
         _requestQueue.Enqueue(request);
-        //Debug.Log($"request: {start} , {end}");
         TryProcessNext();
     }
 
     private void TryProcessNext()
     {
         if (_processing || _requestQueue.Count == 0) return;
-
         _current = _requestQueue.Dequeue();
-        Debug.Log($"current: {_current.start.Pos} , {_current.end.Pos}");
         _processing = true;
         Managers.Manager.StartCoroutine(ProcessPath());
     }

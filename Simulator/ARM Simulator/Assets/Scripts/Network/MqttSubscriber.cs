@@ -13,7 +13,7 @@ public class MqttSubscriber : MonoBehaviour
     private readonly int brokerPort = 1883;
 
     // 구독할 토픽 목록
-    private readonly string[] topics = { "position", "status" };
+    private readonly string[] topics = { "map", "status" };
     // 각 토픽의 QoS 레벨 (토픽 배열 순서와 대응)
     private readonly byte[] qosLevels = {
         MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE,
@@ -69,7 +69,7 @@ public class MqttSubscriber : MonoBehaviour
         Debug.Log($"Velocity 데이터 수신: {json}");
         StatusMsg msg = parser.ParseStatusMessage(json);
 
-        Managers.Device.RegistRealDevice(msg);
+        //Managers.Device.RegistRealDevice(msg);
     }
 
     private void OnDestroy()

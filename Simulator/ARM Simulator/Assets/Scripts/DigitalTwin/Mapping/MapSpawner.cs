@@ -30,7 +30,7 @@ public class MapSpawner : MonoBehaviour
     {
         yamlParser.ParseYaml(yamlFileName, out yamlData);
         imgData = imageParser.LoadPNG(imageFileName);
-        //Debug.Log($"IMAGE : {imgData.width}  {imgData.height}");
+        Debug.Log($"IMAGE : {imgData.width}  {imgData.height}  YAML : {yamlData.resolution}");
         Managers.Map.ClearPoses();
         Managers.Map.Grid.SetSize(imgData.width, imgData.height);
         SpawnByProbRanges();
