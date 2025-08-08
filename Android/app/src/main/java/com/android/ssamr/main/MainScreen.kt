@@ -27,6 +27,7 @@ import com.android.ssamr.feature.dashboard.DashboardRoute
 import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
 import com.android.ssamr.feature.more.MorescreenRoute
 import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
+import com.android.ssamr.feature.notification.NotificationRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -131,7 +132,13 @@ fun MainScreen() {
                     onRefresh = { onCallbackAction = it }
                 )
             }
-            composable(AlarmScreen.route) { /* AlarmScreen() */ }
+            composable(AlarmScreen.route) {
+                NotificationRoute(
+                    navigateToNotificationDetail = { notificationId ->
+                        navController.navigate("notification_detail/$notificationId")
+                    }
+                )
+            }
             composable(MoreScreen.route) {
                 MorescreenRoute(
                     navController = navController, // 상위 NavController

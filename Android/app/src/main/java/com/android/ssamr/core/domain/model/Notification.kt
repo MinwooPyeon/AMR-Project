@@ -7,7 +7,8 @@ data class Notification(
     val riskLevel: NotificationAction,
     val date: String,
     val image: String?,
-    val location: String
+    val location: String,
+    val isRead: Boolean = false
 )
 
 

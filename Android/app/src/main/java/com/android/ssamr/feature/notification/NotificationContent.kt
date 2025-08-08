@@ -114,13 +114,32 @@ fun NotificationCard(
     notification: Notification,
     onNotificationCardClick: (Long) -> Unit
 ) {
-    // 알림 타입별 색상/아이콘 매핑
-    val (iconRes, statusColor) = when (notification.riskLevel) {
-        NotificationAction.DANGER -> Pair(R.drawable.ic_error, Color(0xFFF7575C))
-        NotificationAction.WARNING -> Pair(R.drawable.ic_warning, Color(0xFFF7B500))
-        NotificationAction.INFORMATION -> Pair(R.drawable.ic_info, Color(0xFF508DFF))
-        else -> Pair(R.drawable.ic_info, Color.Gray)
+    // 타입별 색상/아이콘
+    val (iconRes, baseStatusColor) = when (notification.riskLevel) {
+        NotificationAction.DANGER -> R.drawable.ic_error to Color(0xFFF7575C)
+        NotificationAction.WARNING -> R.drawable.ic_warning to Color(0xFFF7B500)
+        NotificationAction.INFORMATION -> R.drawable.ic_info to Color(0xFF508DFF)
+        else -> R.drawable.ic_info to Color.Gray
     }
+
+    // 읽음 스타일
+    val containerColor =
+        if (notification.isRead) MaterialTheme.colorScheme.surfaceVariant
+        else Color.White
+    val statusColor =
+        if (notification.isRead) baseStatusColor.copy(alpha = 0.45f)
+        else baseStatusColor
+    val titleColor =
+        if (notification.isRead) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+        else Color(0xFF191F28)
+    val bodyColor =
+        if (notification.isRead) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        else Color(0xFF404150)
+    val metaColor =
+        if (notification.isRead) MaterialTheme.colorScheme.onSurfaceVariant
+        else Color(0xFF8C8D96)
+    val elevation =
+        if (notification.isRead) 0.dp else 2.dp
 
     Card(
         modifier = Modifier
@@ -128,8 +147,8 @@ fun NotificationCard(
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .clickable { onNotificationCardClick(notification.id) },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
     ) {
         Column(
             modifier = Modifier
@@ -137,7 +156,8 @@ fun NotificationCard(
                 .padding(vertical = 16.dp, horizontal = 16.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                // 알림 타입 아이콘
+
+                // 타입 아이콘 박스 (읽음이면 더 옅게)
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -154,49 +174,55 @@ fun NotificationCard(
 
                 Spacer(Modifier.width(12.dp))
 
-                // 제목, 설명, 위치
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = notification.title,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFF191F28)
+                            color = titleColor
                         )
-                        Spacer(Modifier.width(4.dp))
-                        // 상태 점(동그라미)
+                        Spacer(Modifier.width(6.dp))
+
+                        // 상태 점
                         Box(
                             modifier = Modifier
                                 .size(8.dp)
                                 .background(statusColor, CircleShape)
                         )
+
                         Spacer(Modifier.weight(1f))
-                        // 시간(오른쪽 끝)
+
+                        // 시간
                         Text(
-                            text = notification.date, // "5분 전"
+                            text = notification.date,
                             style = MaterialTheme.typography.labelSmall,
-                            color = Color(0xFF8C8D96)
+                            color = metaColor
                         )
                     }
+
                     Spacer(Modifier.height(4.dp))
+
                     Text(
                         text = notification.content,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFF404150)
+                        color = bodyColor
                     )
+
                     Spacer(Modifier.height(10.dp))
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             painter = painterResource(id = R.drawable.current_location),
                             contentDescription = null,
-                            tint = Color(0xFFD1D5DC),
+                            tint = metaColor.copy(alpha = 0.9f),
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
                             text = notification.location,
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF8C8D96)
+                            color = metaColor
                         )
                     }
                 }
@@ -204,6 +230,7 @@ fun NotificationCard(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -228,7 +255,8 @@ fun NotificationListPreview() {
                 riskLevel = NotificationAction.DANGER,
                 location = "A구역-1",
                 date = "3분전",
-                image = ""
+                image = "",
+                isRead = false
                 ),
             Notification(
                 id = 1L,
@@ -237,7 +265,8 @@ fun NotificationListPreview() {
                 riskLevel = NotificationAction.WARNING,
                 location = "A구역-1",
                 date = "3분전",
-                image = ""
+                image = "",
+                isRead = true
             ),
             Notification(
                 id = 1L,
@@ -246,7 +275,8 @@ fun NotificationListPreview() {
                 riskLevel = NotificationAction.INFORMATION,
                 location = "A구역-1",
                 date = "3분전",
-                image = ""
+                image = "",
+                isRead = true
             ),
             Notification(
                 id = 1L,
@@ -255,7 +285,8 @@ fun NotificationListPreview() {
                 riskLevel = NotificationAction.DANGER,
                 location = "A구역-1",
                 date = "3분전",
-                image = ""
+                image = "",
+                isRead = false
             ),
             Notification(
                 id = 1L,
@@ -264,7 +295,8 @@ fun NotificationListPreview() {
                 riskLevel = NotificationAction.DANGER,
                 location = "A구역-1",
                 date = "3분전",
-                image = ""
+                image = "",
+                isRead = true
             )
         )
 

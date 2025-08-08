@@ -67,16 +67,18 @@ val sampleNotifications = listOf(
         riskLevel = NotificationAction.DANGER,
         location = "A구역-1",
         date = "3분전",
-        image = ""
+        image = "",
+        isRead = false
     ),
     Notification(
         id = 1L,
         title = "알림 제목 1",
-        content = "알림 내용 1",
+        content = "알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 알림 내용 1 ",
         riskLevel = NotificationAction.WARNING,
         location = "A구역-1",
         date = "3분전",
-        image = ""
+        image = "",
+        isRead = true
     ),
     Notification(
         id = 1L,
@@ -85,7 +87,8 @@ val sampleNotifications = listOf(
         riskLevel = NotificationAction.INFORMATION,
         location = "A구역-1",
         date = "3분전",
-        image = ""
+        image = "",
+        isRead = true
     ),
     Notification(
         id = 1L,
@@ -94,7 +97,8 @@ val sampleNotifications = listOf(
         riskLevel = NotificationAction.DANGER,
         location = "A구역-1",
         date = "3분전",
-        image = ""
+        image = "",
+        isRead = false
     ),
     Notification(
         id = 1L,
@@ -103,6 +107,7 @@ val sampleNotifications = listOf(
         riskLevel = NotificationAction.DANGER,
         location = "A구역-1",
         date = "3분전",
-        image = ""
+        image = "",
+        isRead = true
     )
 )
