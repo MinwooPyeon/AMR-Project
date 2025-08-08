@@ -85,7 +85,7 @@ val sampleDashboardAmrs = listOf(
     DashboardAmr(
         id = 3L,
         name = "AMR-003",
-        status = DashboardAmrStatus.CHECK,
+        status = DashboardAmrStatus.CHECKING,
         location = "B구역-라인3",
     )
 )

@@ -132,7 +132,7 @@ fun FullscreenMapContentPreview() {
         amrPositions = listOf(
             AmrMapPosition(1L, "AMR-001", x = 100f, y = 150f, status = DashboardAmrStatus.RUNNING),
             AmrMapPosition(2L, "AMR-002", x = 200f, y = 300f, status = DashboardAmrStatus.CHARGING),
-            AmrMapPosition(3L, "AMR-003", x = 120f, y = 400f, status = DashboardAmrStatus.CHECK),
+            AmrMapPosition(3L, "AMR-003", x = 120f, y = 400f, status = DashboardAmrStatus.CHECKING),
         ),
         mapImage = generateDummyMapImage()
     )

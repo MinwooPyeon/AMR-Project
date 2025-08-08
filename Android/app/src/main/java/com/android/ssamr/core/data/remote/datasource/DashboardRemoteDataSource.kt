@@ -1,18 +1,11 @@
 package com.android.ssamr.core.data.remote.datasource
 
-import com.android.ssamr.core.data.model.amr.response.DashMapDto
 import com.android.ssamr.core.data.remote.service.DashboardService
 import javax.inject.Inject
 
 class DashboardRemoteDataSource @Inject constructor(
     private val service: DashboardService
 ){
-
-    suspend fun getMapAmrPositions(): List<DashMapDto> {
-        val response = service.getMapAmrPositions()
-        return response.data ?: emptyList()
-    }
-
     suspend fun getMapImage(): String {
         val response = service.getMapImage()
         return response.data ?: ""
