@@ -42,7 +42,7 @@ public class VirtualNavigator : MonoBehaviour
         {
             if (route == null || route.Count == 0)
             {
-                //AssignTask();
+                AssignTask();
             }
             else
             {

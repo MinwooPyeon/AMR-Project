@@ -33,7 +33,7 @@ public class MqttSubscriber : MonoBehaviour
 
         // 4) 복수 토픽 구독
         client.Subscribe(topics, qosLevels);
-        Debug.Log($"Subscribed to: {string.Join(", ", topics)}");
+        //Debug.Log($"Subscribed to: {string.Join(", ", topics)}");
     }
 
     // 5) 메시지 도착 시 호출

@@ -3,115 +3,84 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 경로 순회 시 MoveController 없이 제자리 회전 및 직진 이동만으로 AMR을 제어합니다.
+/// </summary>
 public class VirtualDeviceController : MonoBehaviour
 {
-    #region Attributes
-    private MoveController _moveController;
-    private StateData _state;
+    [Header("제자리 회전 속도 (deg/s)")]
+    public float rotateSpeed = 180f;
+    [Header("직진 이동 속도 (units/s)")]
+    public float moveSpeed = 5f;
+
     private List<Node> _route;
     private Action _onRouteComplete;
 
-    private const float AngleThreshold = 1f;      // 도 단위
-    private const float PositionThreshold = 0.1f; // 월드 단위
-    #endregion
+    private const float AngleThreshold = 1f;   // 도 단위
+    private const float PositionThreshold = 0.1f; // 유닛 단위
 
-    #region Public API
     /// <summary>
-    /// 경로 리스트와 완료 콜백을 받아 AMR을 이동시킵니다.
+    /// 경로 리스트와 완료 콜백을 받아 순차적으로 제자리 회전 & 직진 이동을 수행합니다.
     /// </summary>
     public void MoveDevice(List<Node> route, Action onComplete = null)
     {
         _route = route;
         _onRouteComplete = onComplete;
+        StopAllCoroutines();
         StartCoroutine(ProcessRoute());
     }
-    #endregion
 
-    #region Coroutine Steps
     private IEnumerator ProcessRoute()
     {
-        int cnt = _route.Count;
-        //Debug.Log(_route[cnt - 1].Pos);
-        for(int i =0;i<cnt;i++)
+        foreach (var node in _route)
         {
-            Vector2 routePos = _route[i].Pos;
-            Vector3 targetPos = new Vector3(routePos.x, 1, routePos.y);
-            //Debug.Log(targetPos);
-            // 1) 목표 방향으로 회전
-            yield return StartCoroutine(RotateTo(targetPos));
+            // 목표 월드 좌표 (Y 축은 현재 유지)
+            Vector3 targetPos = new Vector3(node.Pos.x, transform.position.y, node.Pos.y);
 
-            // 2) 목표 지점까지 이동
-            yield return StartCoroutine(Approach(targetPos));
-
-            // 3) 정지
-            StopMovement();
-            yield return null;
+            // 1) 제자리 회전
+            yield return StartCoroutine(RotateToFace(targetPos));
+            // 2) 직진 이동
+            yield return StartCoroutine(MoveToPoint(targetPos));
         }
-        // 모든 노드 순회 후 완료 콜백 호출
+
+        // 완료 콜백
         _onRouteComplete?.Invoke();
     }
-
-    private IEnumerator RotateTo(Vector3 targetPos)
+    /// <summary>
+    /// 제자리에서 목표 방향을 바라보도록 회전합니다.
+    /// </summary>
+    private IEnumerator RotateToFace(Vector3 target)
     {
-        float angle = GetAngleToTarget(targetPos);
-        while (Mathf.Abs(angle) > AngleThreshold)
+        while (true)
         {
-            if (angle > 0)
-                _moveController.RotateRight();
-            else
-                _moveController.RotateLeft();
+            Vector3 direction = target - transform.position;
+            direction.y = 0;
+            if (direction.sqrMagnitude < 0.0001f)
+                yield break;
 
-            // 회전이 끝날 때까지 매 프레임 상태만 체크
-            while (_state.ActionState != ACTION_STATE.STOP)
-                yield return null;
+            float angle = Vector3.SignedAngle(transform.forward, direction, Vector3.up);
+            if (Mathf.Abs(angle) < AngleThreshold)
+                yield break;
 
-            angle = GetAngleToTarget(targetPos);
-            Debug.Log(angle);
-        }
-
-        _moveController.Stop();  // Stop() 에서 ActionState도 바뀌도록 수정했기 때문에
-    }
-
-
-    private IEnumerator Approach(Vector3 targetPos)
-    {
-        Debug.Log(Vector3.Distance(_state.WorldPosition, targetPos));
-        while (Vector3.Distance(_state.WorldPosition, targetPos) > PositionThreshold)
-        {
-            _moveController.MoveForward(_moveController.MoveSpeed);
+            float step = rotateSpeed * Time.deltaTime;
+            float turn = Mathf.Clamp(angle, -step, step);
+            transform.Rotate(0f, turn, 0f);
             yield return null;
         }
-        StopMovement();
     }
-    #endregion
 
-    #region Movement Helpers
-    private void StopMovement()
+    /// <summary>
+    /// 목표 지점까지 MoveSpeed 속도로 직진 이동합니다.
+    /// </summary>
+    private IEnumerator MoveToPoint(Vector3 target)
     {
-        _moveController.Stop();
+        while (Vector3.Distance(transform.position, target) > PositionThreshold)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                target,
+                moveSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
-    #endregion
-
-    #region Utility
-    private float GetAngleToTarget(Vector3 targetWorldPos)
-    {
-        Vector3 toTarget = (targetWorldPos - transform.position).normalized;
-        return Vector3.SignedAngle(transform.forward, toTarget, Vector3.up);
-    }
-    #endregion
-
-    #region Unity Methods
-    private void Start()
-    {
-        _moveController = GetComponent<MoveController>();
-        _state = GetComponent<StateData>();
-
-        Managers.Device.RegistVirtualDevice(gameObject.GetInstanceID().ToString(), this);
-    }
-
-    private void OnDestroy()
-    {
-        Managers.Device.DeviceUnregister(gameObject.GetInstanceID().ToString());
-    }
-    #endregion
 }
