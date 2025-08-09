@@ -35,7 +35,7 @@ public class MapSpawner : MonoBehaviour
         Managers.Map.Resolution = yamlData.resolution;
         Managers.Map.Grid.SetSize(imgData.width, imgData.height);
         SpawnByProbRanges();
-        
+
         MainCamera.OnMapLoaded(imgData);
     }
 
@@ -65,42 +65,38 @@ public class MapSpawner : MonoBehaviour
                     GameObject go = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
                     SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
                     Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.FREE);
-                    //Debug.Log($"{pos}, {NODE_TYPE.FREE}");
                 }
                 else if (p < 0.1f)
                 {
-                    GameObject go = Instantiate(obstaclePrefab, worldPos, Quaternion.identity, obstacleGroup.transform);
+                    GameObject go = Instantiate(obstaclePrefab, worldPos + Vector3.up, Quaternion.identity, obstacleGroup.transform);
                     SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
                     Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.OBSTACLE);
-                    //Debug.Log($"{pos}, {NODE_TYPE.OBSTACLE}");
                 }
                 else if (p >= 0.55f && p < 0.7f)
                 {
-                    GameObject go = Instantiate(loadPrefab, worldPos, Quaternion.identity, loadGroup.transform);
-                    SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
+                    GameObject go = Instantiate(loadPrefab, worldPos + Vector3.up, Quaternion.identity, loadGroup.transform);
+                    GameObject tile = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(tile, yamlData.resolution);
                     Managers.Map.AddLoaderPos(worldPos);
                     Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.LOADER);
-                    //Debug.Log($"{pos}, {NODE_TYPE.LOADER}");
                 }
-
                 else if (p >= 0.48f && p < 0.52f)
                 {
-                    GameObject go = Instantiate(chargerPrefab, worldPos, Quaternion.identity, chargerGroup.transform);
-                    SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
+                    GameObject go = Instantiate(chargerPrefab, worldPos + Vector3.up, Quaternion.identity, chargerGroup.transform);
+                    GameObject tile = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(tile, yamlData.resolution);
                     Managers.Map.AddChargerPos(worldPos);
                     Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.CHARGER);
-                    //Debug.Log($"{pos}, {NODE_TYPE.CHARGER}");
                 }
-
                 else if (p >= 0.3f && p < 0.37f)
                 {
-                    GameObject go = Instantiate(dropPrefab, worldPos, Quaternion.identity, dropGroup.transform);
-                    SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
+                    GameObject go = Instantiate(dropPrefab, worldPos + Vector3.up, Quaternion.identity, dropGroup.transform);
+                    GameObject tile = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(tile, yamlData.resolution);
                     Managers.Map.AddDroperPos(worldPos);
                     Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.DROPER);
-                    //Debug.Log($"{pos}, {NODE_TYPE.DROPER}");
                 }
-                
+
             }
         }
     }

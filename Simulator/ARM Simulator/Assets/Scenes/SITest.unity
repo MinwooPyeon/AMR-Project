@@ -12733,9 +12733,9 @@ MonoBehaviour:
   imageFileName: "C:\\Users\\park5\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Map\\map.png"
   MainCamera: {fileID: 543015125}
   obstaclePrefab: {fileID: 6367951854641072274, guid: bb522d3a4fa21f245b0c48cd8450659d, type: 3}
-  chargerPrefab: {fileID: 6603727346776819930, guid: 7273a999af0bfc7428d4cf764b4e2ef1, type: 3}
-  loadPrefab: {fileID: 8791553212763182605, guid: c51db1dc31b4c624187de0c7386b7158, type: 3}
-  dropPrefab: {fileID: 6873474067821122631, guid: 2bd0a291eac43e74cb1fcc0efce0e6cf, type: 3}
+  chargerPrefab: {fileID: 7648985461312419520, guid: 7273a999af0bfc7428d4cf764b4e2ef1, type: 3}
+  loadPrefab: {fileID: 3138251209056617984, guid: f36613ba8824a5c4f96b2db0a3c702a2, type: 3}
+  dropPrefab: {fileID: 7506269515492785893, guid: 868c86d691f8c1740936e9b60b6724f8, type: 3}
   freePrefab: {fileID: 6367951854641072274, guid: e18df715f788eb4429d0f3bbeb90c5be, type: 3}
 --- !u!114 &1796634512
 MonoBehaviour:
