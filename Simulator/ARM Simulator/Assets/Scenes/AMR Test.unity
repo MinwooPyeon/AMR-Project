@@ -317,7 +317,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 210215724}
-  - component: {fileID: 210215727}
   - component: {fileID: 210215726}
   - component: {fileID: 210215725}
   m_Layer: 0
@@ -368,21 +367,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraManager: {fileID: 210215725}
-  lidarManager: {fileID: 210215727}
+  lidarManager: {fileID: 0}
   frameBudget: 0.005
   updateInterval: 1
---- !u!114 &210215727
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 210215723}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc9bbbfed6b3d704c8c0645196cafce7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1046872774
 GameObject:
   m_ObjectHideFlags: 0

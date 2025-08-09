@@ -12729,8 +12729,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f94f684c7f18067489b749e94de094d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yamlFileName: C:\Users\SSAFY\Desktop\Map\test.yaml
-  imageFileName: C:\Users\SSAFY\Desktop\Map\map.png
+  yamlFileName: "C:\\Users\\park5\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Map\\test.yaml"
+  imageFileName: "C:\\Users\\park5\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\Map\\map.png"
   MainCamera: {fileID: 543015125}
   obstaclePrefab: {fileID: 6367951854641072274, guid: bb522d3a4fa21f245b0c48cd8450659d, type: 3}
   chargerPrefab: {fileID: 6603727346776819930, guid: 7273a999af0bfc7428d4cf764b4e2ef1, type: 3}

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class FreeNode : Node
 {
-    public override void SetData(Vector2 pos)
+    public override void SetData(Vector2Int pos)
     {
         Walkable = true;
         Pos = pos;

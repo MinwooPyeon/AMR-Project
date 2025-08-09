@@ -32,6 +32,7 @@ public class MapSpawner : MonoBehaviour
         imgData = imageParser.LoadPNG(imageFileName);
         Debug.Log($"IMAGE : {imgData.width}  {imgData.height}  YAML : {yamlData.resolution}");
         Managers.Map.ClearPoses();
+        Managers.Map.Resolution = yamlData.resolution;
         Managers.Map.Grid.SetSize(imgData.width, imgData.height);
         SpawnByProbRanges();
         
@@ -57,7 +58,7 @@ public class MapSpawner : MonoBehaviour
             for (int y = 0; y < imgData.height; y++)
             {
                 float p = imgData.probGrid[x, y];
-                Vector2 gridPos = new Vector2(x, y);
+                Vector2Int gridPos = new Vector2Int(x, y);
                 Vector3 worldPos = CoordinateCalc.GridToWorld(gridPos, 0, yamlData.resolution);
                 if (p > 0.9f)
                 {

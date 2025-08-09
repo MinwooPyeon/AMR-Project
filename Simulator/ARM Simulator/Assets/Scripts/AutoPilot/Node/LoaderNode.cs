@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LoaderNode : Node
 {
-    public override void SetData(Vector2 pos)
+    public override void SetData(Vector2Int pos)
     {
         Walkable = true;
         Pos = pos;

@@ -9,11 +9,16 @@ public class MapManager
     List<Vector3> _dropers = new();
     Grid grid = new();
     float _resolution = 0f;
+    int _width;
+    int _height;
     public List<Vector3> Chargers {  get { return _chargers; } }
     public List<Vector3> Loaders { get {return _loaders; } }
     public List<Vector3> Dropers { get {return _dropers; } }
     public Grid Grid { get { return grid; } }
     public float Resolution { get { return _resolution; } set { _resolution = value; } }
+    public int Width { get { return _width; } set { _width = value; } }
+    public int Height { get { return _height; } set { _height = value; } }
+    
     public void AddChargerPos(Vector3 pos)
     {
         _chargers.Add(pos);

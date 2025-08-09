@@ -32,7 +32,7 @@ public class Grid
         return grid[(int)gridPos.x, (int)gridPos.y];
     }
 
-    public void SetNode(Vector3 worldPos, Vector2 gridPos, NODE_TYPE type)
+    public void SetNode(Vector3 worldPos, Vector2Int gridPos, NODE_TYPE type)
     {
         Node node = dict[type]();
         node.SetData(gridPos);

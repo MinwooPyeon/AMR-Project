@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ObstacleNode : Node
 {
-    public override void SetData(Vector2 pos)
+    public override void SetData(Vector2Int pos)
     {
         Walkable = false;
         Pos = pos;
