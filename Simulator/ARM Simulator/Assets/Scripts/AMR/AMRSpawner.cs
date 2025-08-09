@@ -13,7 +13,8 @@ public class AMRSpawner : MonoBehaviour
         {
             Vector3 spawnPos = pos + Vector3.up;
             if (count == num) break;
-            Instantiate(AMR, spawnPos, Quaternion.identity);
+            GameObject go = Instantiate(AMR, spawnPos, Quaternion.identity);
+            //SizeScaler.ChangeAMRScale(go, Managers.Map.Resolution);
             count++;
         }
     }

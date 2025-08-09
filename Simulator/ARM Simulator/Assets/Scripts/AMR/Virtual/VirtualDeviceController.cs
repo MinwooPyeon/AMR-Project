@@ -35,7 +35,7 @@ public class VirtualDeviceController : MonoBehaviour
         foreach (var node in _route)
         {
             // 목표 월드 좌표 (Y 축은 현재 유지)
-            Vector3 targetPos = new Vector3(node.Pos.x, transform.position.y, node.Pos.y);
+            Vector3 targetPos = CoordinateCalc.GridToWorld(node.Pos, 1, Managers.Map.Resolution);
 
             // 1) 제자리 회전
             yield return StartCoroutine(RotateToFace(targetPos));
