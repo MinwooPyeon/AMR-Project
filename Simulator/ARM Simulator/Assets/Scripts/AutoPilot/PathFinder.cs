@@ -106,6 +106,7 @@ public class PathFinder
 
     public List<Node> PathFinding(Node start, Node end)
     {
+        Debug.Log($"{start}, {end}");
         ResetCost();
         ClearList();
 

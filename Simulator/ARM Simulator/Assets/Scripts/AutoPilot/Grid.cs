@@ -26,16 +26,18 @@ public class Grid
         grid = new Node[width, height];
     }
 
-    public Node GetLocateNode(int width, int height)
+    public Node GetLocateNode(Vector3 worldPos)
     {
-        return grid[width,height];
+        Vector2 gridPos = CoordinateCalc.WorldToGrid(worldPos, Managers.Map.Resolution);
+        return grid[(int)gridPos.x, (int)gridPos.y];
     }
 
-    public void SetNode(Vector3 worldPos, NODE_TYPE type)
+    public void SetNode(Vector3 worldPos, Vector2 gridPos, NODE_TYPE type)
     {
         Node node = dict[type]();
-        node.SetData(new Vector2(worldPos.x, worldPos.z));
-        grid[(int)worldPos.x, (int)worldPos.z] = node;
+        node.SetData(gridPos);
+
+        grid[(int)gridPos.x, (int)gridPos.y] = node;
     }
 
     public List<Node> GetNeighborNode(Node node)
