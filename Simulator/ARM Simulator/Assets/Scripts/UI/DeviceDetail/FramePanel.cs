@@ -10,12 +10,12 @@ public class FramePanel : MonoBehaviour
     public void SetData(SensorFrame frame)
     {
         this.frame = frame;
-        timeStampText.text = frame.timestamp.ToString("yyyy-MM-dd HH:mm:ss");
+        timeStampText.text = frame.timestamp.ToString();
         //issueText.text = frame.issueCase.ToString();
     }
 
     public void OnClicked()
     {
-        PanelList.Panels.DeviceDetailCanvas.GetComponent<DeviceDetailPanel>().SetData(frame);
+        PanelList.Panels.DeviceDetailCanvas.GetComponent<DeviceDetailUI>().deviceDetailPanel.SetData(frame);
     }
 }

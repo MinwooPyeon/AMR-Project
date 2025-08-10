@@ -29,6 +29,7 @@ public class DeviceInfoPanel : MonoBehaviour
     public void OnParticularButtonClicked()
     {
         GameObject panel = PanelList.Panels.DeviceDetailCanvas;
-        
+        panel.SetActive(true);
+        panel.GetComponent<DeviceDetailUI>().SetData(_serialNumber);
     }
 }

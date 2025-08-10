@@ -5,7 +5,7 @@ public class SensorFrame
     public Color32[] cameraData;
     public float acceleration;
     public float chargeAmount;
-    public Vector3 position;
+    public Vector2Int position;
     public AMR_STATE amrState;
     public ACTION_STATE actionState;
     public long timestamp;
@@ -25,7 +25,7 @@ public class DataManager
             acceleration = state.Speed,
             amrState = state.AmrState,
             actionState = state.ActionState,
-            position = state.transform.position,
+            position = state.GridPosition,
             timestamp = timestamp
         });
     }
