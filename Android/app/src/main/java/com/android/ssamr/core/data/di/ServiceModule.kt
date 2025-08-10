@@ -2,6 +2,7 @@ package com.android.ssamr.core.data.di
 
 import com.android.ssamr.core.data.remote.service.AmrService
 import com.android.ssamr.core.data.remote.service.DashboardService
+import com.android.ssamr.core.data.remote.service.NotificationService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,5 +25,11 @@ object ServiceModule {
     fun provideDashboardService(retrofit: Retrofit): DashboardService {
         return retrofit.create(DashboardService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(retrofit: Retrofit): NotificationService =
+        retrofit.create(NotificationService::class.java)
+
 
 }

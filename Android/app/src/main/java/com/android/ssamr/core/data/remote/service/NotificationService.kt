@@ -1,0 +1,14 @@
+package com.android.ssamr.core.data.remote.service
+
+import com.android.ssamr.core.data.model.amr.response.NotificationDto
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+
+interface NotificationService {
+    @GET("notifications")
+    suspend fun getNotifications(): List<NotificationDto>
+
+    @POST("notifications/{id}/read")
+    suspend fun markRead(@Path("id") id: Long)
+}
