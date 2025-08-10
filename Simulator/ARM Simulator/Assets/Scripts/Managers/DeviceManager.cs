@@ -31,28 +31,38 @@ public class DeviceManager
         get { return _deviceCount; }
         set { _deviceCount = value; }
     }
-
     public ModuleSyncManager SyncManager { get { return _syncManager; } set { _syncManager = value; } }
-    public void RegistVirtualDevice(string id, VirtualDeviceController device)
+
+
+    public void RegistVirtualDevice(VirtualDeviceController device)
     {
-        //Debug.Log($"[MODULE] {id} Register Request");
         if (device == null) return;
-        if (!_virtualDevices.ContainsKey(id)) _virtualDevices.Add(id, device);
-        else _virtualDevices[id] = device;
+        string serial = _deviceCount.ToString();
+        if (!_virtualDevices.ContainsKey(serial)) _virtualDevices.Add(serial, device);
+        else _virtualDevices[serial] = device;
 
         StateData state = device.gameObject.GetComponent<StateData>();
-        if (!_deviceState.ContainsKey(id)) _deviceState.Add(id, state);
-        else _deviceState[id] = state;
-        state.SerialNumber = id;
-        _syncManager.RegistModule(id, device.gameObject);
+        if (!_deviceState.ContainsKey(serial)) _deviceState.Add(serial, state);
+        else _deviceState[serial] = state;
+        state.SerialNumber = serial;
+        _syncManager.RegistModule(serial, device.gameObject);
     }
 
     public void DeviceUnregister(string id)
     {
         if (_devices.ContainsKey(id))
         {
-            _syncManager.UnregistModule(id);
             _devices.Remove(id);
+            _deviceState.Remove(id);
+        }
+    }
+
+    public void VirtualDeviceUnregister(string id)
+    {
+        if (_virtualDevices.ContainsKey(id))
+        {
+            _syncManager.UnregistModule(id);
+            _virtualDevices.Remove(id);
             _deviceState.Remove(id);
         }
     }

@@ -83,4 +83,14 @@ public class VirtualDeviceController : MonoBehaviour
             yield return null;
         }
     }
+
+    private void Start()
+    {
+        Managers.Device.RegistVirtualDevice(this);
+    }
+
+    private void OnDestroy()
+    {
+        Managers.Device.VirtualDeviceUnregister(gameObject.GetComponent<StateData>().SerialNumber);
+    }
 }

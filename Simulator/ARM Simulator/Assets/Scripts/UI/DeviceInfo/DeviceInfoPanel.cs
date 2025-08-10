@@ -28,6 +28,7 @@ public class DeviceInfoPanel : MonoBehaviour
 
     public void OnParticularButtonClicked()
     {
-
+        GameObject panel = PanelList.Panels.DeviceDetailCanvas;
+        
     }
 }
