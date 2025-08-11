@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-echo "trying to stop running amr server container"
-docker-compose down amr-server
-
 echo "building spring server"
 ./gradlew build -x test > /dev/null 2>&1
 build_result=$?
@@ -24,6 +21,9 @@ if [ $docker_build_result -ne 0 ]; then
 fi
 
 echo "successfully built docker images"
+
+echo "trying to stop running amr server container"
+docker-compose down amr-server
 
 echo "trying to run containers"
 docker-compose up -d 2>&1
