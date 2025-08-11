@@ -10,6 +10,8 @@ interface AmrStatusJpaRepository : JpaRepository<AmrStatus, Long> {
     fun findAllLatestStatuses(): List<AmrStatus>
 
     fun findAllByAmrSerialIn(amrSerials: List<String>): List<AmrStatus>
+
+    fun findTopByAmrSerialOrderByCreatedAtDesc(amrSerial: String): AmrStatus
 }
 
 fun AmrStatusJpaRepository.findAmrStatusById(id: Long): AmrStatus = findById(id).orElseThrow {

@@ -76,6 +76,26 @@ class AmrStatusRepositoryImpl(
         return amrStatusJpaRepository.findAmrStatusById(id)
     }
 
+    override fun findLatestStatusBySerial(serial: String): AmrStatus {
+        val key = getRedisKey(serial)
+
+        val cachedStatus = amrStatusTemplate.opsForValue().get(key)
+        if (cachedStatus != null) return cachedStatus
+
+        val statusFromDb = amrStatusJpaRepository.findTopByAmrSerialOrderByCreatedAtDesc(serial)
+        putSingleIntoRedis(statusFromDb)
+        return statusFromDb
+    }
+
+    private fun putSingleIntoRedis(status: AmrStatus) {
+        amrStatusTemplate.opsForValue().set(getRedisKey(status.amr.serial), status)
+        stringTemplate.opsForZSet().add(
+            SERIALS_KEY,
+            status.amr.serial,
+            status.createdAt.toEpochSecond(ZoneOffset.UTC).toDouble()
+        )
+    }
+
     override fun save(amrStatus: AmrStatus): AmrStatus {
         return amrStatusJpaRepository.save(amrStatus)
     }
