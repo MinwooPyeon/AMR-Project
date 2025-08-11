@@ -15,7 +15,7 @@ fi
 echo "successfully built spring server"
 
 echo "building amr server image"
-docker build --tag amr-sever . 2>&1
+docker build --tag amr-server . 2>&1
 docker_build_result=$?
 
 if [ $docker_build_result -ne 0 ]; then
