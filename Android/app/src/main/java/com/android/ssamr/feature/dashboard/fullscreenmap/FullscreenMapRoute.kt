@@ -19,6 +19,7 @@ fun FullscreenMapRoute(
 
     if (state.selectedAmrId != null) {
         navigateToAmrDetail(state.selectedAmrId)
+        viewModel.onIntent(FullscreenMapIntent.ClearSelectedAmr)
     }
 
     FullscreenMapScreen(

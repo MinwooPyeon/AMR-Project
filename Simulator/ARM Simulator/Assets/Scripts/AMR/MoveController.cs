@@ -6,10 +6,14 @@ public class MoveController : MonoBehaviour
     #region Attribute
     private StateData _stateData;
     [SerializeField] private float _rotateSpeed = 180f;
+    [SerializeField] private float _moveSpeed = 1f;
     private Coroutine activeCoroutine = null;
     #endregion
     #region Public API
-
+    public float MoveSpeed
+    {
+        get { return _moveSpeed; }
+    }
     public void MoveForward(float acceleration)
     {
         // 다른 행동 중이면 이동 명령 무시
@@ -45,7 +49,7 @@ public class MoveController : MonoBehaviour
     public void Stop(float value = 0)
     {
         StopActiveCoroutine();
-        _stateData.AmrState = AMR_STATE.RUNNING;
+        _stateData.ActionState = ACTION_STATE.STOP;
     }
 
     public void RotateLeft()
@@ -102,6 +106,7 @@ public class MoveController : MonoBehaviour
         }
 
         _stateData.ActionState = ACTION_STATE.STOP;
+        Debug.Log("Complete Rotate");
         activeCoroutine = null;
     }
 

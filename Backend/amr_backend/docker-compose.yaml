@@ -24,6 +24,7 @@ services:
     image: amr-server
     build: .
     container_name: amr-server
+    restart: always
     depends_on:
       postgres:
         condition: service_started

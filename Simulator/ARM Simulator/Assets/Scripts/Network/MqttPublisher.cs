@@ -10,7 +10,7 @@ public class MqttPublisher : MonoBehaviour
     private MqttClient client;
     private readonly string brokerAddress = "192.168.100.141";
     private readonly int brokerPort = 1883;
-    private readonly string[] topic = {"EditMap", "VirtualDeviceStatus" };
+    private readonly string[] topic = {"editmap", "virtualdevicestatus" };
 
     private JsonBuilder jb = new JsonBuilder();
     void Start()
@@ -34,6 +34,7 @@ public class MqttPublisher : MonoBehaviour
         string message = jb.BuildStatusJson(data);
         client.Publish(topic[1], Encoding.UTF8.GetBytes(message), MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, false);
         Debug.Log($"Published Status Json {message.Length}");
+        //Debug.Log($"PUblish Json {message}");
     }
 
     IEnumerator PublishStatus()

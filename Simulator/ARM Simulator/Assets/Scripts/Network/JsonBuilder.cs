@@ -25,8 +25,8 @@ public class JsonBuilder
 
         sb.Append($"\"serial\":\"{data.SerialNumber}\",");
         sb.Append($"\"state\":\"{data.AmrState}\",");
-        sb.Append($"\"x\":{data.Position.x},");
-        sb.Append($"\"y\":{data.Position.y},");
+        sb.Append($"\"x\":{data.GridPosition.x},");
+        sb.Append($"\"y\":{data.GridPosition.y},");
         sb.Append($"\"speed\":{data.Speed},");
         sb.Append($"\"angle\":{data.Angle}");
 

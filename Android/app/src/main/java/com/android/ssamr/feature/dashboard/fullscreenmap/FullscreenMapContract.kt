@@ -15,4 +15,5 @@ sealed interface FullscreenMapIntent {
     data object LoadMap : FullscreenMapIntent
     data class ClickAmr(val id: Long) : FullscreenMapIntent
     data object Close : FullscreenMapIntent
+    data object ClearSelectedAmr : FullscreenMapIntent //selectedAmrId 선택 해제를 위한
 }

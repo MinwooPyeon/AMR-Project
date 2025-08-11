@@ -7,7 +7,6 @@ public class ModuleSyncManager : MonoBehaviour
 {
     [Header("매니저 참조")]
     public CameraCaptureManager cameraManager;
-    public LidarManager lidarManager;
 
     [Header("프레임 예산 (초)")]
     public float frameBudget = 0.005f; // 5ms
@@ -92,7 +91,6 @@ public class ModuleSyncManager : MonoBehaviour
 
         // 업데이트 대상 리스트 갱신
         sortedDeviceIds = cameraManager.cameras.Keys
-            .Intersect(lidarManager.Sensors.Keys)
             .OrderBy(x => x)
             .ToList();
     }
@@ -105,7 +103,6 @@ public class ModuleSyncManager : MonoBehaviour
         lastProcessTime.Remove(id);
 
         sortedDeviceIds = cameraManager.cameras.Keys
-            .Intersect(lidarManager.Sensors.Keys)
             .OrderBy(x => x)
             .ToList();
     }

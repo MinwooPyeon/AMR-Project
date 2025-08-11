@@ -33,6 +33,8 @@ dependencies {
     implementation("org.springframework.integration:spring-integration-mqtt:6.5.0")
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation("com.google.firebase:firebase-admin:9.5.0")
+    testImplementation("io.mockk:mockk:1.14.5")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
 }
 
 kotlin {

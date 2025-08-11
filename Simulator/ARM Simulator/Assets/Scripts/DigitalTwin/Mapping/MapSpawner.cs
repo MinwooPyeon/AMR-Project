@@ -30,8 +30,11 @@ public class MapSpawner : MonoBehaviour
     {
         yamlParser.ParseYaml(yamlFileName, out yamlData);
         imgData = imageParser.LoadPNG(imageFileName);
-        Debug.Log($"IMAGE : {imgData.width}  {imgData.height}");
+        Debug.Log($"IMAGE : {imgData.width}  {imgData.height}  YAML : {yamlData.resolution}");
+        Managers.Map.ClearPoses();
+        Managers.Map.Grid.SetSize(imgData.width, imgData.height);
         SpawnByProbRanges();
+        
         MainCamera.OnMapLoaded(imgData);
     }
 
@@ -48,6 +51,8 @@ public class MapSpawner : MonoBehaviour
         loadGroup.transform.parent = transform;
         dropGroup.transform.parent = transform;
         chargerGroup.transform.parent = transform;
+        
+        
 
         for (int x = 0; x < imgData.width; x++)
         {
@@ -57,27 +62,41 @@ public class MapSpawner : MonoBehaviour
                 Vector3 pos = new Vector3(x, 0, y);
 
                 if (p > 0.9f)
+                {
                     Instantiate(freePrefab, pos, Quaternion.identity, freeGroup.transform);
+                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.FREE);
+                    //Debug.Log($"{pos}, {NODE_TYPE.FREE}");
+                }
                 else if (p < 0.1f)
+                {
                     Instantiate(obstaclePrefab, pos, Quaternion.identity, obstacleGroup.transform);
+                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.OBSTACLE);
+                    //Debug.Log($"{pos}, {NODE_TYPE.OBSTACLE}");
+                }
                 else if (p >= 0.55f && p < 0.7f)
                 {
                     Instantiate(loadPrefab, pos, Quaternion.identity, loadGroup.transform);
                     Managers.Map.AddLoaderPos(pos);
+                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.LOADER);
+                    //Debug.Log($"{pos}, {NODE_TYPE.LOADER}");
                 }
-                    
+
                 else if (p >= 0.48f && p < 0.52f)
                 {
                     Instantiate(chargerPrefab, pos, Quaternion.identity, chargerGroup.transform);
                     Managers.Map.AddChargerPos(pos);
+                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.CHARGER);
+                    //Debug.Log($"{pos}, {NODE_TYPE.CHARGER}");
                 }
-                    
+
                 else if (p >= 0.3f && p < 0.37f)
                 {
                     Instantiate(dropPrefab, pos, Quaternion.identity, dropGroup.transform);
-                    Managers.Map.AddChargerPos(pos);
+                    Managers.Map.AddDroperPos(pos);
+                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.DROPER);
+                    //Debug.Log($"{pos}, {NODE_TYPE.DROPER}");
                 }
-                    
+                
             }
         }
     }
