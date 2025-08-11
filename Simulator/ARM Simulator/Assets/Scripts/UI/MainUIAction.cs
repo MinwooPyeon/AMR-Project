@@ -7,7 +7,6 @@ public class MainUIAction : MonoBehaviour
     public void OnPathEditButtonClicked()
     {
         PanelList.Panels.VirtualMapCanvas.SetActive(true);
-        
         PanelList.Panels.PathEditCanvas.SetActive(true);
         PanelList.Panels.TimeLapseCanvas.SetActive(false);
         PanelList.Panels.DeviceInfoCanvas.SetActive(false);

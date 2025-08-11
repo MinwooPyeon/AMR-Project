@@ -51,4 +51,14 @@ public class EditButtonAction : MonoBehaviour
     {
         paintCanvas.Load();
     }
+
+    public void OffEditWindow()
+    {
+        PanelList.Panels.VirtualMapCanvas.SetActive(true);
+        PanelList.Panels.PathEditCanvas.SetActive(false);
+        PanelList.Panels.TimeLapseCanvas.SetActive(false);
+        PanelList.Panels.DeviceInfoCanvas.SetActive(false);
+        PanelList.Panels.DeviceNumberCanvas.SetActive(false);
+        PanelList.Panels.MapEditCanvas.SetActive(false);
+    }
 }

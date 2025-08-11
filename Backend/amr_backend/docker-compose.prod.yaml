@@ -23,6 +23,7 @@ services:
   amr-server:
     image: amr-server
     build: .
+    restart: always
     container_name: amr-server
     depends_on:
       postgres:

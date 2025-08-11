@@ -6,6 +6,7 @@ public class DeviceManager
 {
     #region Attribute
     Dictionary<string, DeviceController> _devices = new();
+    Dictionary<string, VirtualDeviceController> _virtualDevices = new();
     Dictionary<string, StateData> _deviceState = new();
     ModuleSyncManager _syncManager;
     MqttPublisher _mqttPublisher;
@@ -16,6 +17,10 @@ public class DeviceManager
     public Dictionary<string, DeviceController> Devices
     {
         get { return _devices; }
+    }
+    public Dictionary<string, VirtualDeviceController> VirtualDevices
+    {
+        get { return _virtualDevices; }
     }
     public Dictionary<string, StateData> DeviceStates
     {
@@ -28,16 +33,17 @@ public class DeviceManager
     }
 
     public ModuleSyncManager SyncManager { get { return _syncManager; } set { _syncManager = value; } }
-    public void DeviceRegister(string id, DeviceController device)
+    public void RegistVirtualDevice(string id, VirtualDeviceController device)
     {
         //Debug.Log($"[MODULE] {id} Register Request");
         if (device == null) return;
-        if (!_devices.ContainsKey(id)) _devices.Add(id, device);
-        else _devices[id] = device;
+        if (!_virtualDevices.ContainsKey(id)) _virtualDevices.Add(id, device);
+        else _virtualDevices[id] = device;
 
-        if (!_deviceState.ContainsKey(id)) _deviceState.Add(id, device.gameObject.GetComponent<StateData>());
-        else _deviceState[id] = device.gameObject.GetComponent<StateData>();
-
+        StateData state = device.gameObject.GetComponent<StateData>();
+        if (!_deviceState.ContainsKey(id)) _deviceState.Add(id, state);
+        else _deviceState[id] = state;
+        state.SerialNumber = id;
         _syncManager.RegistModule(id, device.gameObject);
     }
 

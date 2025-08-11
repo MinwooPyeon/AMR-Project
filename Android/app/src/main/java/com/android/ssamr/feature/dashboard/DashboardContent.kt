@@ -204,7 +204,7 @@ fun PreviewAmrStatusSection() {
     val dummyList = listOf(
         DashboardAmr(1L, "AMR001", "AMR-001", DashboardAmrStatus.RUNNING, "Zone A"),
         DashboardAmr(2L, "AMR001", "AMR-002", DashboardAmrStatus.CHARGING, "Zone B"),
-        DashboardAmr(3L, "AMR001", "AMR-003", DashboardAmrStatus.CHECK, "Zone C")
+        DashboardAmr(3L, "AMR001", "AMR-003", DashboardAmrStatus.CHECKING, "Zone C")
     )
     SSAMRTheme {
         AmrStatusSection(

@@ -22,7 +22,7 @@ public class DeviceInfoPanel : MonoBehaviour
 
         StateData data = Managers.Device.DeviceStates[_serialNumber];
 
-        PositionText.text = $"x : {data.Position.x} / y: {data.Position.y}";
+        PositionText.text = $"x : {data.GridPosition.x} / y: {data.GridPosition.y}";
         StateText.text = data.AmrState.ToString();
     }
 
