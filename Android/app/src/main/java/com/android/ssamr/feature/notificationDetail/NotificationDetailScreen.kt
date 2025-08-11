@@ -32,7 +32,7 @@ fun NotificationDetailScreen(
                 CurrentSituationPhoto(
                     imageUrl = n.image,
                     timeText = n.date,
-                    onClick = { /* 전체보기 등 */ }
+                    onClick = { sendIntent(NotificationDetailIntent.ClickPhotoView(n.image)) }
                 )
             }
         }

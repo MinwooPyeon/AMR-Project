@@ -15,11 +15,11 @@ data class AmrState(
 sealed class AmrIntent {
     data class ClickAmrCategory(val category: AmrCategory) : AmrIntent()
 
-    data class ClickAmrManageCard(val amrId: Long) : AmrIntent()
+    data class ClickAmrManageCard(val serial: String) : AmrIntent()
 
 }
 
 sealed class AmrEffect {
-    data class NavigateToAmrDetail(val amrId: Long) : AmrEffect()
+    data class NavigateToAmrDetail(val serial: String) : AmrEffect()
     data class ShowError(val message: String) : AmrEffect()
 }

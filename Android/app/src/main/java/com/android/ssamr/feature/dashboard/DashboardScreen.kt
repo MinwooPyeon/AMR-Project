@@ -44,7 +44,7 @@ fun DashboardScreen(
         item {
             AmrStatusSection(
                 amrs = state.amrList,
-                onClick = { id -> sendIntent(DashboardIntent.ClickAmrItem(id)) },
+                onClick = { serial -> sendIntent(DashboardIntent.ClickAmrItem(serial)) },
                 onViewAllClick = { sendIntent(DashboardIntent.ClickViewAllAmr) }
             )
         }
@@ -71,18 +71,21 @@ fun DashboardScreenPreview() {
 val sampleDashboardAmrs = listOf(
     DashboardAmr(
         id = 1L,
+        serial = "AMR001",
         name = "AMR-001",
         status = DashboardAmrStatus.RUNNING,
         location = "A구역-라인1",
     ),
     DashboardAmr(
         id = 2L,
+        serial = "AMR001",
         name = "AMR-002",
         status = DashboardAmrStatus.CHARGING,
         location = "충전소-1번",
     ),
     DashboardAmr(
         id = 3L,
+        serial = "AMR001",
         name = "AMR-003",
         status = DashboardAmrStatus.CHECK,
         location = "B구역-라인3",

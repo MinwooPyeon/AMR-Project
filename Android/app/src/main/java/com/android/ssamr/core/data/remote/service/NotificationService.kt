@@ -10,7 +10,7 @@ interface NotificationService {
     @GET("notifications")
     suspend fun getNotifications(): List<NotificationDto>
 
-    @PATCH("notifications/{id}/read")
+    @PATCH("notifications/{id}")
     suspend fun markRead(@Path("id") id: Long)
 
     @GET("notifications/{id}")

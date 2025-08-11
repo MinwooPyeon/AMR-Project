@@ -3,7 +3,6 @@ package com.android.ssamr.feature.notificationDetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.ssamr.core.domain.repository.NotificationRepository
 import com.android.ssamr.core.domain.usecase.notification.FetchNotificationDetailUseCase
 import com.android.ssamr.core.domain.usecase.notification.MarkNotificationReadLocalUseCase
 import com.android.ssamr.core.domain.usecase.notification.MarkNotificationReadRemoteUseCase
@@ -63,6 +62,9 @@ class NotificationDetailViewModel @Inject constructor(
     fun sendIntent(intent: NotificationDetailIntent) {
         when (intent) {
             NotificationDetailIntent.ClickMarkRead -> markAsRead()
+            is NotificationDetailIntent.ClickPhotoView -> {
+                viewModelScope.launch { _effect.emit(NotificationDetailEffect.NavigateToPhotoView(intent.url)) }
+            }
         }
     }
 

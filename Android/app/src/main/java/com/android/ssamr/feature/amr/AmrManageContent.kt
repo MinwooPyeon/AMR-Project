@@ -46,7 +46,7 @@ import com.android.ssamr.ui.theme.SSAMRTheme
 @Composable
 fun AmrCardList(
     amrs: List<AmrStatus>,
-    onAmrCardClick: (Long) -> Unit
+    onAmrCardClick: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -104,7 +104,7 @@ fun AmrCategoryTabRow(
 @Composable
 fun AmrCard(
     amr: AmrStatus,
-    onAmrCardClick: (Long) -> Unit
+    onAmrCardClick: (String) -> Unit
 ) {
     val statusColor = when (amr.state) {
         AmrAction.RUNNING -> Color(0xFF4CAF50)
@@ -119,7 +119,7 @@ fun AmrCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = { onAmrCardClick(amr.id) }
+        onClick = { onAmrCardClick(amr.serial) }
     ) {
         Row(
             modifier = Modifier
@@ -236,6 +236,7 @@ fun AmrCardListPreview() {
             locationY = 1.0,
             speed = "1.2",
             job = "화물 운반 중",
+            serial = "AMR001"
         ),
         AmrStatus(
             id = 2L,
@@ -245,6 +246,7 @@ fun AmrCardListPreview() {
             locationY = 3.0,
             speed = "0",
             job = "충전 중",
+            serial = "AMR002"
         ),
         AmrStatus(
             id = 3L,
@@ -254,6 +256,7 @@ fun AmrCardListPreview() {
             locationY = 5.0,
             speed = "0",
             job = "점검 중",
+            serial = "AMR003"
         )
     )
     SSAMRTheme {

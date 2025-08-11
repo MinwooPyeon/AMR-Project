@@ -6,7 +6,7 @@ import javax.inject.Inject
 class ManualControlUseCase @Inject constructor(
     private val repository: AmrRepository
 ) {
-    suspend operator fun invoke(amrId: Long, destination: String): Result<Unit> {
-        return repository.manualControl(amrId, destination)
+    suspend operator fun invoke(serial: String, area: String): Result<Unit> {
+        return repository.manualControl(serial, area)
     }
 }

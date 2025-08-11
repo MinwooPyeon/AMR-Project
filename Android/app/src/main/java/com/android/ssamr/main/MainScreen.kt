@@ -29,12 +29,14 @@ import com.android.ssamr.feature.more.MorescreenRoute
 import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
 import com.android.ssamr.feature.notification.NotificationRoute
 import com.android.ssamr.feature.notificationDetail.NotificationDetailRoute
+import com.android.ssamr.feature.notificationDetail.fullscreenPhoto.FullscreenPhotoRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.getBaseRoute
 import com.android.ssamr.main.navigation.FullmapRoute
+import com.android.ssamr.main.navigation.FullscreenPhotoScreen
 import com.android.ssamr.main.navigation.topBarPolicies
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.NotificationDetailScreen
@@ -115,7 +117,7 @@ fun MainScreen() {
         ) {
             composable(DashboardScreen.route) {
                 DashboardRoute(
-                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
+                    navigateToAmrDetail = { serial -> navController.navigate("amr_detail/$serial") },
                     navigateToMapFullScreen = { navController.navigate("full_map") },
                     navigateToAmrList = {
                         navController.navigate("amr") {
@@ -128,8 +130,8 @@ fun MainScreen() {
             }
             composable(AmrScreen.route) {
                 AmrManageRoute(
-                    navigateToAmrDetail = { amrId ->
-                        navController.navigate("amr_detail/$amrId")
+                    navigateToAmrDetail = { serial ->
+                        navController.navigate("amr_detail/$serial")
                     },
                     onRefresh = { onCallbackAction = it }
                 )
@@ -153,28 +155,30 @@ fun MainScreen() {
             }
             composable(FullmapRoute.route) {
                 FullscreenMapRoute(
-                    navigateToAmrDetail = { amrId ->
-                        navController.navigate(AmrDetailScreen.routeWithArgs(amrId))
+                    navigateToAmrDetail = { serial ->
+                        navController.navigate(AmrDetailScreen.routeWithArgs(serial))
                     },
                     onBack = { navController.popBackStack() }
                 )
             }
             composable(
-                route = "${AmrDetailScreen.route}/{amrId}",
-                arguments = listOf(navArgument("amrId") { type = NavType.LongType })
+                route = "${AmrDetailScreen.route}/{serial}",
+                arguments = listOf(
+                    navArgument("serial") { type = NavType.StringType },
+                )
             ) { backStackEntry ->
-                val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
+                val serial = backStackEntry.arguments?.getString("serial") ?: ""
                 AmrDetailRoute(
                     onBack = { navController.popBackStack() },
                     navigateToWebcam = { ipAddress ->
-                        navController.navigate("amr_webcam/$amrId/$ipAddress")
+                        navController.navigate("amr_webcam/$serial/$ipAddress")
                     }
                 )
             }
             composable(
-                route = "${WebcamScreen.route}/{amrId}/{ipAddress}",
+                route = "${WebcamScreen.route}/{serial}/{ipAddress}",
                 arguments = listOf(
-                    navArgument("amrId") { type = NavType.LongType },
+                    navArgument("serial") { type = NavType.StringType },
                     navArgument("ipAddress") { type = NavType.StringType }
                 )
             ) {
@@ -189,7 +193,22 @@ fun MainScreen() {
                 route = "${NotificationDetailScreen.route}/{notificationId}",
                 arguments = listOf(navArgument("notificationId") { type = NavType.LongType })
             ) {
-                NotificationDetailRoute(onBack = { navController.popBackStack() })
+                NotificationDetailRoute(
+                    navigateToPhotoView = { url ->
+                        navController.navigate(FullscreenPhotoScreen.routeWithArgs(url))
+                    },
+                    onBack = { navController.popBackStack() })
+            }
+
+            composable(
+                route = "${FullscreenPhotoScreen.route}/{imageUrl}",
+                arguments = listOf(navArgument("imageUrl") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString("imageUrl") ?: ""
+                FullscreenPhotoRoute(
+                    imageUrl = url,
+                    onBack = { navController.popBackStack() }
+                )
             }
         }
     }

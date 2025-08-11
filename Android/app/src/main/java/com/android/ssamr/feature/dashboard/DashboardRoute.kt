@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun DashboardRoute(
     viewModel: DashboardViewModel = hiltViewModel(),
-    navigateToAmrDetail: (Long) -> Unit,
+    navigateToAmrDetail: (String) -> Unit,
     navigateToMapFullScreen: () -> Unit,
     navigateToAmrList: () -> Unit
 ) {
@@ -18,7 +18,7 @@ fun DashboardRoute(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is DashboardEffect.NavigateToAmrDetail -> navigateToAmrDetail(effect.amrId)
+                is DashboardEffect.NavigateToAmrDetail -> navigateToAmrDetail(effect.serial)
                 is DashboardEffect.NavigateToMapFullScreen -> navigateToMapFullScreen()
                 is DashboardEffect.NavigateToAmrList -> navigateToAmrList()
             }

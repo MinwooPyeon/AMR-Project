@@ -1,8 +1,6 @@
 package com.android.ssamr.core.data.repository
 
 import com.android.ssamr.core.data.remote.datasource.AmrRemoteDataSource
-import com.android.ssamr.core.domain.model.AmrAction
-import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.core.domain.repository.AmrRepository
@@ -22,14 +20,14 @@ class AmrRepositoryImpl @Inject constructor(
         return remoteDataSource.getAmrList()
     }
 
-    override suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
+    override suspend fun getAmrDetail(serial: String): AmrDetailStatus {
 //        return AmrDetailStatus(1,"AMR-001", AmrDetailAction.RUNNING, 0.0, 1.0, "1.4m/s", "자재이동", "RB-100", "RB100-2024-001", "v2.1.3", "111.111.1111")
-        return remoteDataSource.getAmrDetail(amrId)
+        return remoteDataSource.getAmrDetail(serial)
     }
 
-    override suspend fun manualControl(amrId: Long, destination: String): Result<Unit> =
+    override suspend fun manualControl(serial: String, area: String): Result<Unit> =
         runCatching {
-            val response = remoteDataSource.manualControl(amrId, destination)
+            val response = remoteDataSource.manualControl(serial, area)
             if (response.isSuccessful) {
                 Unit
             } else {

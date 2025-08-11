@@ -32,8 +32,8 @@ fun AmrManageScreen(
             AmrCardList(
                 amrs = state.amrList,
 //                amrs = sampleAmrs,
-                onAmrCardClick = { amrId ->
-                    sendIntent(AmrIntent.ClickAmrManageCard(amrId))
+                onAmrCardClick = { serial ->
+                    sendIntent(AmrIntent.ClickAmrManageCard(serial))
                 }
             )
         }
@@ -70,6 +70,7 @@ val sampleAmrs = listOf(
         locationY = 1.0,
         speed = "1.2",
         job = "화물 운반 중",
+        serial = "AMR001"
     ),
     AmrStatus(
         id = 2L,
@@ -79,6 +80,7 @@ val sampleAmrs = listOf(
         locationY = 3.0,
         speed = "1.2",
         job = "충전 중",
+        serial = "AMR002"
     ),
     AmrStatus(
         id = 3L,
@@ -88,5 +90,6 @@ val sampleAmrs = listOf(
         locationY = 5.0,
         speed = "1.2",
         job = "점검 중",
+        serial = "AMR003"
     )
 )

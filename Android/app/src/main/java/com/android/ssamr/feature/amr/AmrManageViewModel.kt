@@ -50,7 +50,7 @@ class AmrManageViewModel @Inject constructor(
             }
 
             is AmrIntent.ClickAmrManageCard -> {
-                viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.amrId)) }
+                viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.serial)) }
             }
         }
     }

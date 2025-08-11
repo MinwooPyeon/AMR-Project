@@ -11,7 +11,7 @@ import com.android.ssamr.core.domain.model.AmrCategory
 
 @Composable
 fun AmrManageRoute(
-    navigateToAmrDetail: (Long) -> Unit,
+    navigateToAmrDetail: (String) -> Unit,
     viewModel: AmrManageViewModel = hiltViewModel(),
     onRefresh: ((() -> Unit) -> Unit)? = null
 ) {
@@ -27,7 +27,7 @@ fun AmrManageRoute(
             when (effect) {
 
                 is AmrEffect.NavigateToAmrDetail -> {
-                    navigateToAmrDetail(effect.amrId)
+                    navigateToAmrDetail(effect.serial)
                 }
 
                 is AmrEffect.ShowError -> {

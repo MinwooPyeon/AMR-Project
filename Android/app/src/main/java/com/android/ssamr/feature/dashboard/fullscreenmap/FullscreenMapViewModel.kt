@@ -28,7 +28,7 @@ class FullscreenMapViewModel @Inject constructor(
         when (intent) {
             is FullscreenMapIntent.LoadMap -> loadMapFromRepository()
             is FullscreenMapIntent.ClickAmr -> {
-                _state.update { it.copy(selectedAmrId = intent.id) }
+                _state.update { it.copy(selectedAmrSerial = intent.serial) }
             }
             is FullscreenMapIntent.Close -> {
                 // 처리 필요 시 추가
@@ -42,9 +42,9 @@ class FullscreenMapViewModel @Inject constructor(
 
             if (USE_DUMMY_DATA) {
                 val dummyAmrs = listOf(
-                    AmrMapPosition(1L, "AMR-001", 100f, 200f, DashboardAmrStatus.RUNNING),
-                    AmrMapPosition(2L, "AMR-002", 300f, 400f, DashboardAmrStatus.CHARGING),
-                    AmrMapPosition(3L, "AMR-003", 500f, 150f, DashboardAmrStatus.CHECK)
+                    AmrMapPosition(1L, "AMR001","AMR-001", 100f, 200f, DashboardAmrStatus.RUNNING),
+                    AmrMapPosition(2L, "AMR001", "AMR-002", 300f, 400f, DashboardAmrStatus.CHARGING),
+                    AmrMapPosition(3L, "AMR001", "AMR-003", 500f, 150f, DashboardAmrStatus.CHECK)
                 )
                 val dummyMap = generateDummyMapImage(720, 1280)
                 _state.update {

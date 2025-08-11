@@ -11,6 +11,7 @@ data class AmrDto(
     val y: Double,
     val location: String,
     val speed: String,
+    val serial: String
 )
 
 fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
@@ -21,4 +22,5 @@ fun AmrDto.toUiModel(): AmrStatus = AmrStatus(
     locationY = this.y,
     speed = speed,
     job = state,
+    serial = this.serial
 )

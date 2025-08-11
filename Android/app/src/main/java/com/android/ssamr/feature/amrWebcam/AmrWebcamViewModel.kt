@@ -22,8 +22,9 @@ class AmrWebcamViewModel @Inject constructor(
     private val getAmrDetailUseCase: GetAmrDetailUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val amrId: Long = requireNotNull(savedStateHandle["amrId"]) { "amrId가 없습니다. "}
     private val ipAddress: String = requireNotNull(savedStateHandle["ipAddress"]) { "ip주소가 없습니다. " }
+
+    private val serial: String = requireNotNull(savedStateHandle["serial"]) {"serial 번호가 없습니다."}
 
     private val testRtspUrl = "192.168.100.217"
 
@@ -58,7 +59,7 @@ class AmrWebcamViewModel @Inject constructor(
                 viewModelScope.launch {
                     _state.value = _state.value.copy(isLoading = true)
                     try {
-                        val amr = getAmrDetailUseCase(amrId)
+                        val amr = getAmrDetailUseCase(serial)
                         delay(500)
                         _state.value = _state.value.copy(
                             isLoading = false,

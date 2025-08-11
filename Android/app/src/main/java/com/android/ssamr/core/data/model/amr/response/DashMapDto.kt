@@ -5,6 +5,7 @@ import com.android.ssamr.core.domain.model.DashboardAmrStatus
 
 data class DashMapDto(
     val id: Long,
+    val serial: String,
     val name: String,
     val x: Float,
     val y: Float,
@@ -13,7 +14,8 @@ data class DashMapDto(
 
 fun DashMapDto.toAmrMapPositionModel():  AmrMapPosition = AmrMapPosition(
     id = this.id,
-    name = this.name,
+    serial = this.serial,
+    this.name,
     x = this.x,
     y = this.y,
     status = DashboardAmrStatus.from(state)

@@ -11,8 +11,10 @@ data class NotificationDetailState(
 
 sealed class NotificationDetailIntent {
     data object ClickMarkRead : NotificationDetailIntent()
+    data class ClickPhotoView(val url: String?) : NotificationDetailIntent()
 }
 
 sealed class NotificationDetailEffect {
+    data class NavigateToPhotoView(val url: String?) : NotificationDetailEffect()
     data class ShowError(val message: String) : NotificationDetailEffect()
 }

@@ -4,7 +4,6 @@ import com.android.ssamr.core.data.model.amr.request.ManualControlRequest
 import com.android.ssamr.core.data.model.amr.response.toDetailModel
 import com.android.ssamr.core.data.model.amr.response.toUiModel
 import com.android.ssamr.core.data.remote.service.AmrService
-import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrDetailStatus
 import com.android.ssamr.core.domain.model.AmrStatus
 import retrofit2.Response
@@ -19,15 +18,15 @@ class AmrRemoteDataSource @Inject constructor(
         return response.map { it.toUiModel() }
     }
 
-    suspend fun getAmrDetail(amrId: Long): AmrDetailStatus {
+    suspend fun getAmrDetail(serial: String): AmrDetailStatus {
 
-        val response = service.getAmrDetail(amrId)
+        val response = service.getAmrDetail(serial)
 
         return response.toDetailModel()
     }
 
 
-    suspend fun manualControl(amrId: Long, destination: String): Response<Unit> {
-        return service.requestControl(amrId, ManualControlRequest(destination))
+    suspend fun manualControl(serial: String, area: String): Response<Unit> {
+        return service.requestControl(ManualControlRequest(serial, area))
     }
 }
