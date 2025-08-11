@@ -1,13 +1,13 @@
 package com.example.amr_backend.v1.repository
 
 import com.example.amr_backend.v1.entity.AmrStatus
+import com.example.amr_backend.v1.repository.RedisUtil.SERIALS_KEY
+import com.example.amr_backend.v1.repository.RedisUtil.getRedisKey
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Repository
 import java.time.ZoneOffset
-
-private const val SERIALS_KEY = "amr:serials"
 
 @Repository
 class AmrStatusRepositoryImpl(
@@ -69,8 +69,6 @@ class AmrStatusRepositoryImpl(
             null
         }
     }
-
-    private fun getRedisKey(serial: String): String = "amr:${serial}:status"
 
     override fun findAmrStatusById(id: Long): AmrStatus {
         return amrStatusJpaRepository.findAmrStatusById(id)
