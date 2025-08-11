@@ -16,7 +16,6 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDateTime
-import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -60,7 +59,7 @@ class AmrServiceTest {
     fun `findAmrDetail, amr status repository returns status, then returns correctly`() {
         // given
         val expected = ValidAmrStatus.copy(id = 123)
-        every { amrStatusRepository.findById(123) } returns Optional.of(expected)
+        every { amrStatusRepository.findAmrStatusById(123) } returns expected
 
         // when
         val result = amrService.findAmrDetail(123)
@@ -72,7 +71,7 @@ class AmrServiceTest {
     @Test
     fun `findAmrDetail, no amr of given id exists, then throws NoSuchAmr`() {
         // given
-        every { amrStatusRepository.findById(123) } returns Optional.empty()
+        every { amrStatusRepository.findAmrStatusById(123) } throws NoSuchAmr("ID가 123인 AMR이 없습니다.")
 
         // when
         // then

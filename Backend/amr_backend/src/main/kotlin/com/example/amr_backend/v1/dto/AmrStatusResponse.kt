@@ -5,6 +5,7 @@ import com.example.amr_backend.v1.entity.State
 
 data class AmrStatusResponse(
     val id: Long,
+    val serial: String,
     val name: String,
     val state: State,
     val speed: Double,
@@ -14,6 +15,7 @@ data class AmrStatusResponse(
 
 fun AmrStatus.toAmrStatusResponse() = AmrStatusResponse(
     id = id,
+    serial = amr.serial,
     name = amr.name,
     state = state,
     speed = speed,

@@ -22,8 +22,9 @@ class AmrController(
     fun findAllLatestStatuses(): List<AmrStatusResponse> =
         amrService.findAllLatestStatuses().map { it.toAmrStatusResponse() }
 
-    @GetMapping("/{id}/detail")
-    fun findAmrDetailById(@PathVariable id: Long) = amrService.findAmrDetail(id).toAmrDetailResponse()
+    @GetMapping("/{serial}/detail")
+    fun findLatestStatusDetailBySerial(@PathVariable serial: String) =
+        amrService.findLatestStatusBySerial(serial).toAmrDetailResponse()
 
     @PostMapping("/control")
     fun sendManualControlMessage(@RequestBody request: AmrManualControlRequest) =
