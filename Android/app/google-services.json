@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "522714053255",
+    "project_id": "sars-1099c",
+    "storage_bucket": "sars-1099c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522714053255:android:fd04775e68fe7fa5175622",
+        "android_client_info": {
+          "package_name": "com.android.ssamr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrcHMbuOibs-WPCV28dWsq67rFGuoFlIc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -20,4 +20,7 @@ interface NotificationDao {
 
     @Query("DELETE FROM notifications")
     suspend fun clear()
+
+    @Query("SELECT * FROM notifications WHERE id = :id LIMIT 1")
+    fun observeById(id: Long): Flow<NotificationEntity>
 }

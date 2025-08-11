@@ -37,6 +37,15 @@ class NotificationRepositoryImpl @Inject constructor(
         remote.markRead(id)
     }
 
+    override suspend fun observeNotification(id: Long): Flow<Notification?> =
+        local.observeById(id).map { it.let(NotificationMapper::fromEntity) } // Room: SELECT * FROM notification WHERE id=:id
+
+    override suspend fun fetchNotificationDetailFromServer(id: Long): Notification =
+        NotificationMapper.dtoToDomain(remote.getNotificationDetail(id))
+
+    override suspend fun upsertNotification(item: Notification) =
+        upsertNotifications(listOf(item)) // 기존 배치 API로 위임
+
     suspend fun syncWithMerge() {
         val server = fetchNotificationsFromServer()
         val localSnapshot = observeNotifications().first()

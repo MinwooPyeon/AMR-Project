@@ -21,3 +21,8 @@ data object WebcamScreen: DetailRoute {
     override val route = "amr_webcam"
     override val label = "Amr 웹캠"
 }
+
+data object NotificationDetailScreen : DetailRoute {
+    override val route = "notification_detail"
+    override val label = "알림 상세"
+}

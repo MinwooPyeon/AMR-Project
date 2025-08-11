@@ -18,4 +18,11 @@ interface NotificationRepository {
 
     /** Server: 읽음 동기화(베스트에포트) */
     suspend fun markReadRemote(id: Long)
+
+    // ✅ 상세용 (추가)
+    suspend fun observeNotification(id: Long): Flow<Notification?>
+
+    suspend fun fetchNotificationDetailFromServer(id: Long): Notification
+
+    suspend fun upsertNotification(item: Notification)
 }

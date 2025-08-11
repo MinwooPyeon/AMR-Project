@@ -85,6 +85,12 @@ fun getTopBarConfig(
             showBack = true,
             onBackClick = { navController.popBackStack() }
         )
+
+        route.startsWith("notification_detail") -> TopBarConfig(
+            title = "알림 상세",
+            showBack = true,
+            onBackClick = { navController.popBackStack() }
+        )
         else -> null
     }
 }

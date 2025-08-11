@@ -14,4 +14,6 @@ class NotificationLocalDataSource @Inject constructor(
     suspend fun markRead(id: Long) = dao.markRead(id)
 
     suspend fun clear() = dao.clear()
+
+    suspend fun observeById(id: Long) = dao.observeById(id)
 }

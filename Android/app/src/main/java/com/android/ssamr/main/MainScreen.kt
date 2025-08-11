@@ -28,6 +28,7 @@ import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
 import com.android.ssamr.feature.more.MorescreenRoute
 import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
 import com.android.ssamr.feature.notification.NotificationRoute
+import com.android.ssamr.feature.notificationDetail.NotificationDetailRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -36,6 +37,7 @@ import com.android.ssamr.main.navigation.getBaseRoute
 import com.android.ssamr.main.navigation.FullmapRoute
 import com.android.ssamr.main.navigation.topBarPolicies
 import com.android.ssamr.main.navigation.MoreScreen
+import com.android.ssamr.main.navigation.NotificationDetailScreen
 import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
@@ -181,6 +183,13 @@ fun MainScreen() {
                         isWebcamFullScreen = isFullScreen
                     }
                 )
+            }
+
+            composable(
+                route = "${NotificationDetailScreen.route}/{notificationId}",
+                arguments = listOf(navArgument("notificationId") { type = NavType.LongType })
+            ) {
+                NotificationDetailRoute(onBack = { navController.popBackStack() })
             }
         }
     }

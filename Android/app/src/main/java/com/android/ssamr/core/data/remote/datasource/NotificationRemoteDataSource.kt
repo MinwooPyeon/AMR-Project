@@ -13,4 +13,7 @@ class NotificationRemoteDataSource @Inject constructor(
 
     suspend fun markRead(id: Long) =
         service.markRead(id)
+
+    suspend fun getNotificationDetail(id: Long): NotificationDto =
+        service.getNotificationDetail(id)
 }
