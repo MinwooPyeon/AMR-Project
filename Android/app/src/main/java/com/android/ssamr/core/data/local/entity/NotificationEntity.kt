@@ -9,9 +9,10 @@ data class NotificationEntity(
     val title: String,
     val content: String,
     val riskLevel: String,
-    val date: String,
+    val area: String,
+    val case: String,
     val image: String?,
-    val location: String,
     val isRead: Boolean,
-    val readAt: Long? = null
-)
+    val readAt: Long? = null,
+    val createAt: String,
+    )

@@ -14,9 +14,10 @@ object NotificationMapper {
             title = d.title,
             content = d.content,
             riskLevel = d.riskLevel.name,
-            date = d.date,
+            case = d.case,
+            createAt = d.createAt,
             image = d.image,
-            location = d.location,
+            area = d.area,
             isRead = d.isRead,
             readAt = null
         )
@@ -28,9 +29,10 @@ object NotificationMapper {
             title = e.title,
             content = e.content,
             riskLevel = NotificationAction.valueOf(e.riskLevel),
-            date = e.date,
+            case = e.case,
+            createAt = e.createAt,
             image = e.image,
-            location = e.location,
+            area = e.area,
             isRead = e.isRead,
             )
 
@@ -40,10 +42,11 @@ object NotificationMapper {
             id = dto.id,
             title = dto.title,
             content = dto.content,
-            riskLevel = NotificationAction.valueOf(dto.riskLevel),
-            date = dto.date,
+            riskLevel = NotificationAction.DANGER,
+            case = dto.case,
+            createAt = dto.createAt,
             image = dto.image,
-            location = dto.location,
+            area = dto.area,
             isRead = dto.isRead ?: false
         )
 

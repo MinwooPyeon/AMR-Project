@@ -5,11 +5,12 @@ data class Notification(
     val title: String,
     val content: String,
     val riskLevel: NotificationAction,
-    val date: String,
+    val area: String,
+    val case: String,
     val image: String?,
-    val location: String,
-    val isRead: Boolean = false
-)
+    val isRead: Boolean = false,
+    val createAt: String,
+    )
 
 
 enum class NotificationCategory(val label: String) {

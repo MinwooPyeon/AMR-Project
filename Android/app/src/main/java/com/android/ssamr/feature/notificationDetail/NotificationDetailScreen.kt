@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.ssamr.core.common.time.formatMonthDayTimeKorean
 import com.android.ssamr.core.domain.model.Notification
 import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.ui.theme.SSAMRTheme
@@ -31,7 +32,7 @@ fun NotificationDetailScreen(
                 Spacer(Modifier.height(8.dp))
                 CurrentSituationPhoto(
                     imageUrl = n.image,
-                    timeText = n.date,
+                    timeText = formatMonthDayTimeKorean(n.createAt),
                     onClick = { sendIntent(NotificationDetailIntent.ClickPhotoView(n.image)) }
                 )
             }
@@ -79,6 +80,7 @@ val sampleNotification = Notification(
     title = "알림 제목 1",
     content = "알림 내용 1",
     riskLevel = NotificationAction.DANGER,
-    location = "A구역-1",
-    date = "3분전",
+    case = "화재",
+    area = "A구역-1",
+    createAt = "3분전",
     image = "",)
