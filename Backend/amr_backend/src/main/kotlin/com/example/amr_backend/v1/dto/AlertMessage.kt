@@ -4,6 +4,7 @@ import com.example.amr_backend.v1.entity.Notification
 import java.time.LocalDateTime
 
 data class AlertInboundMessage(
+    val serial: String,
     val case: Case,
     val image: ByteArray,
     val x: Double,
@@ -36,6 +37,7 @@ data class AlertInboundMessage(
 }
 
 data class AlertOutboundMessage(
+    val serial: String,
     val title: String,
     val content: String,
     val area: String,
@@ -49,6 +51,7 @@ enum class Case {
 }
 
 fun AlertOutboundMessage.toEntity() = Notification(
+    serial = serial,
     title = title,
     content = content,
     area = area,

@@ -22,6 +22,8 @@ class Notification(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     var id: Long = 0L,
+    @Column(name = "serial")
+    var serial: String,
     @Column(name = "title")
     var title: String,
     @Column(name = "content")

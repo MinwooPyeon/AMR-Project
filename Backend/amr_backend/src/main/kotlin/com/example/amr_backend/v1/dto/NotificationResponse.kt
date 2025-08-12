@@ -5,6 +5,7 @@ import java.time.LocalDateTime
 
 data class NotificationResponse(
     val id: Long,
+    val serial: String,
     val title: String,
     val content: String,
     val area: String,
@@ -17,6 +18,7 @@ data class NotificationResponse(
 
 fun Notification.toNotificationResponse() = NotificationResponse(
     id = id,
+    serial = serial,
     title = title,
     content = content,
     area = area,
