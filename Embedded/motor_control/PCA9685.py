@@ -25,13 +25,39 @@ class PCA9685:
   __ALLLED_OFF_L       = 0xFC
   __ALLLED_OFF_H       = 0xFD
 
-  def __init__(self, address, debug=True):
-    self.bus = smbus.SMBus(7)
+  def __init__(self, address, debug=True, i2c_bus=None):
     self.address = address
     self.debug = debug
+    
+    # I2C 버스 자동 감지 또는 지정된 버스 사용
+    if i2c_bus is None:
+      self.bus = self._find_available_bus()
+    else:
+      self.bus = smbus.SMBus(i2c_bus)
+    
     if (self.debug):
-      print("Reseting PCA9685")
+      print(f"PCA9685 초기화 - 주소: 0x{address:02X}, 버스: {self.bus.fileno() if hasattr(self.bus, 'fileno') else 'unknown'}")
     self.write(self.__MODE1, 0x00)
+
+  def _find_available_bus(self):
+    for bus_num in range(10): 
+      try:
+        bus = smbus.SMBus(bus_num)
+        try:
+          bus.read_byte_data(self.address, 0x00)  
+          if self.debug:
+            print(f"PCA9685 발견 - I2C 버스 {bus_num}")
+          return bus
+        except:
+          bus.close()
+          continue
+      except:
+        continue
+    
+    # 사용 가능한 버스가 없으면 기본값 사용
+    if self.debug:
+      print("사용 가능한 I2C 버스를 찾을 수 없어 기본값 사용")
+    return smbus.SMBus(1)  # 기본값으로 버스 1 사용
 
   def write(self, reg, value):
     "Writes an 8-bit value to the specified register/address"

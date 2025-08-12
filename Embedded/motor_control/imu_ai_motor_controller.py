@@ -16,17 +16,23 @@ import os
 import threading
 from datetime import datetime
 
-# PCA9685 모듈 경로 추가
-current_dir = os.path.dirname(os.path.abspath(__file__))
-pca9685_path = os.path.join(current_dir, "Motor_Driver_HAT_Code", "Motor_Driver_HAT_Code", "Jetson Nano", "python3")
-sys.path.insert(0, pca9685_path)
-
+# PCA9685 모듈 import (현재 디렉터리에서)
 from PCA9685 import PCA9685
 
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+# 프로젝트 루트 경로 추가
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 from mqtt.sensor_data_transmitter import SensorDataTransmitter
+
+# 명령 테이블 정의
+COMMAND_TABLE = {
+    0: 'STOP',
+    1: 'MOVING_FORWARD', 
+    2: 'MOVING_BACKWARD',
+    3: 'ROTATE_LEFT',
+    4: 'ROTATE_RIGHT'
+}
 
 class IMUAIMotorController:
     
@@ -51,6 +57,9 @@ class IMUAIMotorController:
         self.api_url = api_url
         self.backend_broker = backend_broker
         self.backend_port = backend_port
+        
+        # 서보 모터 주소 설정
+        self.servo_address = 0x60  # 서보 모터용 PCA9685 주소
         
         # 모터 핀 정의
         self.PWMA = 0  # 모터 A PWM
@@ -149,8 +158,15 @@ class IMUAIMotorController:
     def initialize_imu(self):
         """IMU 초기화 및 캘리브레이션"""
         try:
-            # I2C 버스 초기화
-            self.imu_bus = smbus.SMBus(1)  # I2C 버스 1 사용
+            # I2C 버스 자동 감지
+            self.imu_bus = self._find_imu_bus()
+            if not self.imu_bus:
+                raise Exception("사용 가능한 I2C 버스를 찾을 수 없습니다")
+            
+            # IMU 주소 자동 감지
+            self.imu_address = self._find_imu_address()
+            if not self.imu_address:
+                raise Exception("IMU 센서를 찾을 수 없습니다")
             
             # MPU6050 초기화
             self.imu_bus.write_byte_data(self.imu_address, 0x6B, 0)  # PWR_MGMT_1 레지스터
@@ -176,6 +192,8 @@ class IMUAIMotorController:
             
             if self.debug:
                 print(f"IMU 초기화 완료")
+                print(f"  - I2C 버스: {self.imu_bus}")
+                print(f"  - IMU 주소: 0x{self.imu_address:02X}")
                 print(f"  - 원시 초기 각도: {raw_initial_angle:.2f}도")
                 print(f"  - 보정된 초기 각도: {self.initial_angle:.2f}도 (정중앙)")
                 print(f"  - 각도 오프셋: {self.angle_offset:.2f}도")
@@ -185,16 +203,69 @@ class IMUAIMotorController:
             print("IMU 없이 모터 제어만 사용합니다.")
             self.imu_available = False
 
+    def _find_imu_bus(self):
+        """사용 가능한 I2C 버스 찾기"""
+        import os
+        
+        # 사용 가능한 I2C 버스 확인
+        for bus_num in range(10):
+            bus_path = f"/dev/i2c-{bus_num}"
+            if os.path.exists(bus_path):
+                try:
+                    bus = smbus.SMBus(bus_num)
+                    # 간단한 테스트로 버스가 작동하는지 확인
+                    bus.close()
+                    if self.debug:
+                        print(f"사용 가능한 I2C 버스 발견: {bus_num}")
+                    return bus_num
+                except Exception as e:
+                    if self.debug:
+                        print(f"버스 {bus_num} 테스트 실패: {e}")
+                    continue
+        
+        return None
+
+    def _find_imu_address(self):
+        """IMU 센서 주소 찾기"""
+        imu_addresses = [0x68, 0x69]  # MPU6050 가능한 주소들
+        
+        for addr in imu_addresses:
+            try:
+                # PWR_MGMT_1 레지스터 초기화
+                self.imu_bus.write_byte_data(addr, 0x6B, 0)
+                time.sleep(0.1)
+                
+                # WHO_AM_I 레지스터 읽기
+                who_am_i = self.imu_bus.read_byte_data(addr, 0x75)
+                
+                if who_am_i == 0x68:  # MPU6050 WHO_AM_I 값
+                    if self.debug:
+                        print(f"IMU 센서 발견: 주소 0x{addr:02X}")
+                    return addr
+                else:
+                    if self.debug:
+                        print(f"주소 0x{addr:02X} WHO_AM_I: 0x{who_am_i:02X} (예상: 0x68)")
+                        
+            except Exception as e:
+                if self.debug:
+                    print(f"주소 0x{addr:02X} 접근 실패: {e}")
+                continue
+        
+        return None
+
     def read_imu_yaw(self):
         """IMU에서 Yaw 각도 읽기 (정중앙 기준)"""
         if not self.imu_available or not self.imu_bus:
             return 0.0
             
         try:
+            # SMBus 객체 생성 (버스 번호로)
+            bus = smbus.SMBus(self.imu_bus)
+            
             # 자이로스코프 데이터 읽기
-            gyro_x = self.imu_bus.read_word_data(self.imu_address, 0x43)
-            gyro_y = self.imu_bus.read_word_data(self.imu_address, 0x45)
-            gyro_z = self.imu_bus.read_word_data(self.imu_address, 0x47)
+            gyro_x = bus.read_word_data(self.imu_address, 0x43)
+            gyro_y = bus.read_word_data(self.imu_address, 0x45)
+            gyro_z = bus.read_word_data(self.imu_address, 0x47)
             
             # 16비트 값을 부호 있는 정수로 변환
             gyro_x = self.convert_to_signed(gyro_x)
@@ -215,7 +286,12 @@ class IMUAIMotorController:
             
             # 정중앙 기준으로 보정된 각도 반환
             corrected_angle = self.current_angle - self.angle_offset
-            return self.normalize_angle(corrected_angle)
+            result = self.normalize_angle(corrected_angle)
+            
+            # SMBus 객체 닫기
+            bus.close()
+            
+            return result
             
         except Exception as e:
             if self.debug:
@@ -1141,6 +1217,20 @@ class IMUAIMotorController:
             self.stop_servo(channel)
         
         print("\n서보 모터 테스트 완료")
+
+    def start_command_processor(self):
+        """명령 처리 스레드 시작"""
+        if self.debug:
+            print("명령 처리 스레드 시작")
+        # 여기에 명령 처리 로직 추가 가능
+
+    def get_current_command(self):
+        """현재 명령 상태 반환"""
+        return {
+            "code": 0,
+            "name": "STOP",
+            "timestamp": datetime.now().isoformat()
+        }
 
 def main():
     print("=" * 60)
