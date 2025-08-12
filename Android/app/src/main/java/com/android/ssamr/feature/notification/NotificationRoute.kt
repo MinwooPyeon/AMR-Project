@@ -1,5 +1,6 @@
 package com.android.ssamr.feature.notification
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,9 +32,10 @@ fun NotificationRoute(
                 is NotificationEffect.ShowError -> {
                     Toast.makeText(
                         context,
-                        "알림창에 오류가 발생했습니다.",
+                        "알림창에 오류가 발생했습니다. ${state.error}",
                         Toast.LENGTH_SHORT
                     ).show()
+                    Log.d("TAG", "NotificationRoute: ${state.error}")
                 }
             }
         }

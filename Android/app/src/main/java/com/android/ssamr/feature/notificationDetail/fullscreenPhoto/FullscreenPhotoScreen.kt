@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android.ssamr.BuildConfig
 import com.android.ssamr.R
 import com.android.ssamr.ui.theme.SSAMRTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -49,7 +52,7 @@ fun FullscreenPhotoScreen(
         Box(Modifier.fillMaxSize()) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
+                    .data("${BuildConfig.BASE_URL.dropLast(1)}${imageUrl}")
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
@@ -81,12 +84,14 @@ fun FullscreenPhotoScreen(
             IconButton(
                 onClick = onBack,
                 modifier = Modifier
-                    .align(Alignment.TopStart)
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_close),
                     contentDescription = "닫기",
-                    tint = Color.White
+                    tint = Color.White,
+                    modifier = Modifier.size(48.dp)
                 )
             }
         }

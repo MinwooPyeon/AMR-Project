@@ -1,6 +1,5 @@
 package com.android.ssamr.feature.notificationDetail
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.android.ssamr.BuildConfig
 import com.android.ssamr.R
+import com.android.ssamr.core.common.time.formatRelativeTimeKorean
 import com.android.ssamr.core.domain.model.Notification
 import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.ui.theme.SSAMRTheme
@@ -108,7 +109,7 @@ fun NotificationDetailInfoCard(
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            text = notification.date, // “5분 전” 혹은 포맷된 시간
+                            text = formatRelativeTimeKorean(notification.createAt), // “5분 전” 혹은 포맷된 시간
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF6B7280)
                         )
@@ -121,7 +122,7 @@ fun NotificationDetailInfoCard(
                         )
                         Spacer(Modifier.width(6.dp))
                         Text(
-                            text = notification.location,
+                            text = notification.area,
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF6B7280)
                         )
@@ -171,13 +172,13 @@ fun CurrentSituationPhoto(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(imageUrl)
+                            .data("${BuildConfig.BASE_URL.dropLast(1)}${imageUrl}")
                             .crossfade(true)
                             .placeholder(R.drawable.ic_image_placeholder) // 선택
                             .error(R.drawable.ic_image_placeholder)       // 선택
                             .build(),
                         contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier.fillMaxSize()
                     )
 
@@ -209,8 +210,9 @@ fun NotificationDetailInfoCardPreview() {
         title = "알림 제목 1",
         content = "알림 내용 1",
         riskLevel = NotificationAction.DANGER,
-        location = "A구역-1",
-        date = "3분전",
+        case = "화재",
+        area = "A구역-1",
+        createAt = "3분전",
         image = "",)
 
     SSAMRTheme {

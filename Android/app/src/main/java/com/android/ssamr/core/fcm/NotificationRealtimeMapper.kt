@@ -11,6 +11,7 @@ class NotificationRealtimeMapper @Inject constructor() {
         val title = data["title"].orEmpty()
         val content = data["content"].orEmpty()
         val risk = data["riskLevel"]?.uppercase().orEmpty()
+        val case = data["case"].orEmpty()
         val date = data["date"].orEmpty()
         val image = data["image"]
         val location = data["location"].orEmpty()
@@ -27,9 +28,10 @@ class NotificationRealtimeMapper @Inject constructor() {
             title = title,
             content = content,
             riskLevel = riskLevel,
-            date = date,
+            case = case,
+            createAt = date,
             image = image,
-            location = location,
+            area = location,
             isRead = false
         )
     }

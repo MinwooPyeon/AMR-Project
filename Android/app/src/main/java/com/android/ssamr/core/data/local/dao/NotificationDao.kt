@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotificationDao {
-    @Query("SELECT * FROM notifications ORDER BY date DESC")
+    @Query("SELECT * FROM notifications ORDER BY createAt DESC")
     fun observeAll(): Flow<List<NotificationEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

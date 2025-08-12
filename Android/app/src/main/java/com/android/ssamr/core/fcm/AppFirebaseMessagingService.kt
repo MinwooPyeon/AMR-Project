@@ -14,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.android.ssamr.R
 import com.android.ssamr.core.domain.model.Notification
+import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.repository.NotificationRepository
 import com.android.ssamr.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -53,10 +54,11 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
                 id = System.currentTimeMillis(),        // 임시 ID
                 title = n.title ?: "알림",
                 content = n.body ?: "",
-                riskLevel = com.android.ssamr.core.domain.model.NotificationAction.INFORMATION,
-                date = "",
+                riskLevel = NotificationAction.INFORMATION,
+                case = "",
+                createAt = "",
                 image = null,
-                location = "",
+                area = "",
                 isRead = false
             )
             Log.d("FCM", "onMessageReceived data=${message.data} notif=${message.notification}")
