@@ -37,7 +37,7 @@ data class AlertInboundMessage(
 
 data class AlertOutboundMessage(
     val title: String,
-    val summary: String,
+    val content: String,
     val area: String,
     val case: Case,
     val image: String,
@@ -50,7 +50,7 @@ enum class Case {
 
 fun AlertOutboundMessage.toEntity() = Notification(
     title = title,
-    content = summary,
+    content = content,
     area = area,
     case = case,
     image = image,

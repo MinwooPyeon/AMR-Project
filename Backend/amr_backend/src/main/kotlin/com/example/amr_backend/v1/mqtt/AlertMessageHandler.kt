@@ -60,7 +60,7 @@ class AlertMessageHandler(
 
         return AlertOutboundMessage(
             title = "$caseMessage 감지",
-            summary = "${area}에 ${caseMessage}감지",
+            content = "${area}에 ${caseMessage}감지",
             area = area,
             case = case,
             image = imagePath,
