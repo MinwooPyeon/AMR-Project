@@ -3,7 +3,6 @@ package com.example.amr_backend.v1.controller
 import com.example.amr_backend.v1.dto.NotificationReadUpdateRequest
 import com.example.amr_backend.v1.dto.NotificationResponse
 import com.example.amr_backend.v1.dto.toNotificationResponse
-import com.example.amr_backend.v1.entity.Notification
 import com.example.amr_backend.v1.service.NotificationService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -19,7 +18,7 @@ class NotificationController(
 ) {
 
     @GetMapping
-    fun findAll(): List<Notification> = notificationService.findAll()
+    fun findAll(): List<NotificationResponse> = notificationService.findAll().map { it.toNotificationResponse() }
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): NotificationResponse =
