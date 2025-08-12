@@ -39,6 +39,7 @@ data class AlertOutboundMessage(
     val title: String,
     val summary: String,
     val area: String,
+    val case: Case,
     val image: String,
     val createdAt: LocalDateTime = LocalDateTime.now(),
 )
@@ -51,6 +52,7 @@ fun AlertOutboundMessage.toEntity() = Notification(
     title = title,
     content = summary,
     area = area,
+    case = case,
     image = image,
     isRead = false,
     readAt = null,
