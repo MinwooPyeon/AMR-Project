@@ -6,6 +6,7 @@ import com.example.amr_backend.v1.repository.getNotificationById
 import jakarta.persistence.EntityNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class NotificationService(
@@ -21,5 +22,14 @@ class NotificationService(
         logger.error("no such notification whose id is {}", id)
         logger.error(e.stackTraceToString())
         throw e
+    }
+
+    fun updateRead(id: Long, isRead: Boolean): Notification {
+        val notification = getById(id)
+
+        notification.isRead = isRead
+        notification.readAt = if (isRead) LocalDateTime.now() else null
+
+        return notificationRepository.save(notification)
     }
 }
