@@ -19,7 +19,7 @@ class FirebaseMessageHandler(
 
     fun sendAlertMessage(message: AlertOutboundMessage) {
         val title = message.title
-        val body = message.summary
+        val body = message.content
         val payload = message.toPayload()
         send(title, body, payload)
     }
