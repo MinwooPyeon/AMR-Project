@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-센서 데이터 전송기
-"""
-
 import json
 import time
 import threading
@@ -26,7 +20,16 @@ class SensorDataTransmitter:
         
         self.send_success_callback = None
         
-        self.sensor_data = {}
+        # Embedded -> Backend 데이터 구조
+        self.embedded_data = {
+            "serial": robot_id,
+            "state": "IDLE",
+            "x": 0.0,
+            "y": 0.0,
+            "speed": 0.0,
+            "angle": 0.0
+        }
+        
         self.data_lock = threading.Lock()
         
         self.stats_lock = threading.Lock()
@@ -35,11 +38,15 @@ class SensorDataTransmitter:
         
         self.sensors = {}
         
-        mqtt_logger.success(f"Sensor Data Transmitter 초기화 완료 - Robot ID: {robot_id}")
+        # 주기적 전송 관련 변수
+        self.periodic_sending = False
+        self.periodic_thread = None
+        self.send_interval = 1.0  # 1초 간격
+        
+        # 초기화 완료
     
     def connect_mqtt(self) -> bool:
         try:
-            mqtt_logger.info(f"MQTT 브로커에 연결 중: {self.mqtt_broker}:{self.mqtt_port}")
             self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, 60)
             self.mqtt_client.loop_start()
             
@@ -49,44 +56,49 @@ class SensorDataTransmitter:
                 time.sleep(0.1)
             
             if self.connected:
-                mqtt_logger.success("MQTT 브로커 연결 성공")
                 return True
             else:
-                mqtt_logger.error("MQTT 연결 시간 초과")
                 return False
                 
         except Exception as e:
-            mqtt_logger.error(f"MQTT 연결 실패: {e}")
             return False
     
     def disconnect_mqtt(self):
         if self.connected:
+            # 주기적 전송 중지
+            self.stop_periodic_sending()
+            
             self.mqtt_client.loop_stop()
             self.mqtt_client.disconnect()
             self.connected = False
-            mqtt_logger.info("MQTT 연결 해제")
     
-    def register_sensor(self, sensor_name: str, sensor_data: Dict):
+    def update_embedded_data(self, serial: str = None, state: str = None, x: float = None, 
+                           y: float = None, speed: float = None, angle: float = None):
+        """Embedded 데이터 업데이트"""
         with self.data_lock:
-            self.sensors[sensor_name] = sensor_data
-        mqtt_logger.info(f"센서 등록: {sensor_name}")
+            if serial is not None:
+                self.embedded_data["serial"] = str(serial)
+            if state is not None:
+                self.embedded_data["state"] = str(state)
+            if x is not None:
+                self.embedded_data["x"] = float(x)
+            if y is not None:
+                self.embedded_data["y"] = float(y)
+            if speed is not None:
+                self.embedded_data["speed"] = float(speed)
+            if angle is not None:
+                self.embedded_data["angle"] = float(angle)
     
-    def update_sensor_data(self, sensor_name: str, data: Dict):
-        with self.data_lock:
-            if sensor_name in self.sensors:
-                self.sensors[sensor_name].update(data)
-            else:
-                self.sensors[sensor_name] = data
-    
-    def send_sensor_data(self, data: Dict) -> bool:
+    def send_embedded_data(self) -> bool:
+        """Embedded 데이터를 Backend로 전송"""
         if not self.connected:
-            mqtt_logger.warn("MQTT가 연결되지 않아 데이터 전송 불가")
             return False
         
         try:
-            topic = "status"
+            topic = "status"  
             
-            json_data = json.dumps(data, ensure_ascii=False)
+            with self.data_lock:
+                json_data = json.dumps(self.embedded_data, ensure_ascii=False)
             
             result = self.mqtt_client.publish(topic, json_data, qos=1)
             
@@ -95,44 +107,82 @@ class SensorDataTransmitter:
                     self.total_sent += 1
                     self.last_sent_time = time.time()
                 
-                mqtt_logger.mqtt_send_success(topic, data)
+                mqtt_logger.mqtt_send_success(topic, self.embedded_data)
                 
                 if self.send_success_callback:
-                    self.send_success_callback(topic, data)
+                    self.send_success_callback(topic, self.embedded_data)
                 
                 return True
             else:
-                mqtt_logger.error(f"센서 데이터 전송 실패: {result.rc}")
                 return False
                 
         except Exception as e:
-            mqtt_logger.error(f"센서 데이터 전송 오류: {e}")
             return False
+    
+    def send_sensor_data(self, data: Dict) -> bool:
+        """기존 센서 데이터 전송 (하위 호환성)"""
+        return self.send_embedded_data()
+    
+    def get_embedded_data(self) -> Dict:
+        """현재 Embedded 데이터 조회"""
+        with self.data_lock:
+            return self.embedded_data.copy()
     
     def get_transmission_stats(self) -> Dict:
         with self.stats_lock:
             return {
                 "total_sent": self.total_sent,
                 "last_sent_time": self.last_sent_time,
-                "connected": self.connected
+                "connected": self.connected,
+                "current_data": self.get_embedded_data()
             }
     
     def set_send_success_callback(self, callback: Callable[[str, Dict], None]):
         self.send_success_callback = callback
-        mqtt_logger.info("송신 성공 콜백 설정 완료")
     
     def _on_mqtt_connect(self, client, userdata, flags, rc):
         if rc == 0:
             self.connected = True
-            mqtt_logger.success("MQTT 브로커에 연결됨")
         else:
-            mqtt_logger.error(f"MQTT 연결 실패: {rc}")
+            pass
     
     def _on_mqtt_disconnect(self, client, userdata, rc):
         self.connected = False
-        mqtt_logger.warn("MQTT 브로커 연결 해제")
+    
+    def start_periodic_sending(self, interval: float = 1.0) -> bool:
+        """주기적 데이터 전송 시작"""
+        if self.periodic_sending:
+            return False
+        
+        if not self.connected:
+            return False
+        
+        self.send_interval = interval
+        self.periodic_sending = True
+        self.periodic_thread = threading.Thread(target=self._periodic_send_loop, daemon=True)
+        self.periodic_thread.start()
+        
+        return True
+    
+    def stop_periodic_sending(self):
+        """주기적 데이터 전송 중지"""
+        if not self.periodic_sending:
+            return
+        
+        self.periodic_sending = False
+        if self.periodic_thread and self.periodic_thread.is_alive():
+            self.periodic_thread.join(timeout=2.0)
+    
+    def _periodic_send_loop(self):
+        """주기적 전송 루프"""
+        while self.periodic_sending and self.connected:
+            try:
+                self.send_embedded_data()
+                time.sleep(self.send_interval)
+            except Exception as e:
+                time.sleep(self.send_interval)
     
     def _on_mqtt_publish(self, client, userdata, mid):
-        mqtt_logger.debug(f"MQTT 메시지 발행 완료: {mid}")
+        pass
 
  

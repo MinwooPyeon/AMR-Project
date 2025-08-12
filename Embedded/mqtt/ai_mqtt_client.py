@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-AI MQTT 클라이언트
-AI와 localhost 통신을 위한 MQTT 클라이언트
-"""
-
 import json
 import time
 import threading
@@ -27,17 +20,7 @@ class AIMQTTClient:
         self.mqtt_client.on_message = self._on_mqtt_message
         self.mqtt_client.on_publish = self._on_mqtt_publish
         
-        # 임베디드에서 보내는 데이터 구조 (192.168.100.141:1883)
-        self.embedded_data = {
-            "serial": "",
-            "state": "",
-            "x": 0.0,
-            "y": 0.0,
-            "speed": 0.0,
-            "angle": 0.0
-        }
-        
-        # AI에서 받는 데이터 구조 (localhost)
+        # AI에서 받는 데이터 구조 (localhost:1883)
         self.ai_received_data = {
             "serial": "",
             "x": 0.0,
@@ -50,7 +33,6 @@ class AIMQTTClient:
         self.data_lock = threading.Lock()
         
         # 콜백 함수들
-        self.embedded_data_callback: Optional[Callable[[Dict], None]] = None
         self.ai_data_callback: Optional[Callable[[Dict], None]] = None
         
         # 통계
@@ -59,6 +41,7 @@ class AIMQTTClient:
         self.last_received_time = 0
         
         mqtt_logger.success(f"AI MQTT Client 초기화 완료 - Robot ID: {robot_id}, Broker: {mqtt_broker}:{mqtt_port}")
+        mqtt_logger.info(f"AI -> Embedded 연결: {mqtt_broker}:{mqtt_port}")
     
     def connect_mqtt(self) -> bool:
         try:
@@ -89,18 +72,6 @@ class AIMQTTClient:
             self.mqtt_connected = False
             mqtt_logger.info("AI MQTT 연결 해제")
     
-    def subscribe_to_embedded_data(self, robot_id: str = "AMR001"):
-        """임베디드에서 보내는 데이터 구독"""
-        topic = "robot_data"  # 임베디드에서 전송하는 데이터 토픽
-        result = self.mqtt_client.subscribe(topic, qos=1)
-        
-        if result[0] == mqtt.MQTT_ERR_SUCCESS:
-            mqtt_logger.info(f"임베디드 데이터 구독 성공: {topic}")
-            return True
-        else:
-            mqtt_logger.error(f"임베디드 데이터 구독 실패: {result[0]}")
-            return False
-    
     def subscribe_to_ai_data(self, robot_id: str = "AMR001"):
         """AI에서 받는 데이터 구독"""
         topic = "ai_data"  # AI에서 받는 데이터 토픽
@@ -113,50 +84,30 @@ class AIMQTTClient:
             mqtt_logger.error(f"AI 데이터 구독 실패: {result[0]}")
             return False
     
-    def set_embedded_data_callback(self, callback: Callable[[Dict], None]):
-        """임베디드 데이터 콜백 설정"""
-        self.embedded_data_callback = callback
-        mqtt_logger.info("임베디드 데이터 콜백 설정 완료")
-    
     def set_ai_data_callback(self, callback: Callable[[Dict], None]):
         """AI 데이터 콜백 설정"""
         self.ai_data_callback = callback
         mqtt_logger.info("AI 데이터 콜백 설정 완료")
-    
-    def get_latest_embedded_data(self) -> Dict:
-        """최신 임베디드 데이터 조회"""
-        with self.data_lock:
-            return self.embedded_data.copy()
     
     def get_latest_ai_data(self) -> Dict:
         """최신 AI 데이터 조회"""
         with self.data_lock:
             return self.ai_received_data.copy()
     
-    def get_robot_position(self) -> tuple:
-        """로봇 위치 조회"""
+    def get_ai_serial(self) -> str:
+        """AI 시리얼 조회"""
         with self.data_lock:
-            x = self.embedded_data.get("x", 0.0)
-            y = self.embedded_data.get("y", 0.0)
+            return self.ai_received_data.get("serial", "")
+    
+    def get_ai_position(self) -> tuple:
+        """AI 위치 조회"""
+        with self.data_lock:
+            x = self.ai_received_data.get("x", 0.0)
+            y = self.ai_received_data.get("y", 0.0)
             return (x, y)
     
-    def get_robot_state(self) -> str:
-        """로봇 상태 조회"""
-        with self.data_lock:
-            return self.embedded_data.get("state", "")
-    
-    def get_robot_speed(self) -> float:
-        """로봇 속도 조회"""
-        with self.data_lock:
-            return self.embedded_data.get("speed", 0.0)
-    
-    def get_robot_angle(self) -> float:
-        """로봇 각도 조회"""
-        with self.data_lock:
-            return self.embedded_data.get("angle", 0.0)
-    
     def get_ai_image(self) -> str:
-        """AI 이미지 조회"""
+        """AI 이미지 조회 (Base64)"""
         with self.data_lock:
             return self.ai_received_data.get("img", "")
     
@@ -165,6 +116,11 @@ class AIMQTTClient:
         with self.data_lock:
             return self.ai_received_data.get("case", "")
     
+    def get_ai_timestamp(self) -> str:
+        """AI 타임스탬프 조회"""
+        with self.data_lock:
+            return self.ai_received_data.get("timeStamp", "")
+    
     def get_reception_stats(self) -> Dict[str, Any]:
         """수신 통계 조회"""
         with self.stats_lock:
@@ -172,7 +128,6 @@ class AIMQTTClient:
                 "total_received": self.total_received,
                 "last_received_time": self.last_received_time,
                 "mqtt_connected": self.mqtt_connected,
-                "latest_embedded_data": self.get_latest_embedded_data(),
                 "latest_ai_data": self.get_latest_ai_data()
             }
         return stats
@@ -205,22 +160,7 @@ class AIMQTTClient:
             
             mqtt_logger.mqtt_receive_success(topic, data)
             
-            if topic == "robot_data":
-                # 임베디드에서 보내는 데이터 처리
-                with self.data_lock:
-                    # 필수 필드 확인 및 업데이트
-                    required_fields = ["serial", "state", "x", "y", "speed", "angle"]
-                    for field in required_fields:
-                        if field in data:
-                            if field in ["x", "y", "speed", "angle"]:
-                                self.embedded_data[field] = float(data[field])
-                            else:
-                                self.embedded_data[field] = str(data[field])
-                
-                if self.embedded_data_callback:
-                    self.embedded_data_callback(data)
-                    
-            elif topic == "ai_data":
+            if topic == "ai_data":
                 # AI에서 받는 데이터 처리
                 with self.data_lock:
                     # 필수 필드 확인 및 업데이트
