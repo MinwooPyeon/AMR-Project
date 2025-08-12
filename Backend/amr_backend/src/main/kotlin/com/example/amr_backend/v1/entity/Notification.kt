@@ -29,7 +29,7 @@ class Notification(
     @Column(name = "area")
     var area: String,
     @Enumerated(EnumType.STRING)
-    @Column(name = "case")
+    @Column(name = "_case")
     var case: Case,
     @Column(name = "image")
     var image: String? = null,
