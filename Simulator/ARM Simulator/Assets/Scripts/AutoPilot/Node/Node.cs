@@ -10,7 +10,7 @@ public abstract class Node
     NODE_TYPE _nodeType;
     Node _parent;
     float _hcost;
-    float _gcost;
+    float _gcost = int.MaxValue;
     public Vector2Int Pos { get { return _pos; } set { _pos = value; } }
     public bool Walkable { get { return _walkable; } set { _walkable = value; } }
     public bool AmrExist { get { return _amrExist; } set { _amrExist = value; } }

@@ -37,7 +37,7 @@ public class DeviceManager
     public void RegistVirtualDevice(VirtualDeviceController device)
     {
         if (device == null) return;
-        string serial = _deviceCount.ToString();
+        string serial = _deviceCount++.ToString();
         if (!_virtualDevices.ContainsKey(serial)) _virtualDevices.Add(serial, device);
         else _virtualDevices[serial] = device;
 

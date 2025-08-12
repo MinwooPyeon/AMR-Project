@@ -44,13 +44,13 @@ public class Grid
     {
         List<Node> neighbor = new();
 
-        Vector2 pos = node.Pos;
+        Vector2Int pos = node.Pos;
 
         for(int i = 0; i < 4; i++)
         {
             int dx = (int)pos.x + _dirX[i];
             int dy = (int)pos.y + _dirY[i];
-
+            
             if (CheckBound(dx, dy) && grid[dx, dy].Walkable)
             {
                 //Debug.Log(grid[dx, dy]);
