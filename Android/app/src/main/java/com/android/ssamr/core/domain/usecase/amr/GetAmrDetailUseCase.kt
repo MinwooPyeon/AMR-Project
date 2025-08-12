@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetAmrDetailUseCase @Inject constructor(
     private val amrRepository: AmrRepository
 ) {
-    suspend operator fun invoke(amrId: Long): AmrDetailStatus {
-        return amrRepository.getAmrDetail(amrId)
+    suspend operator fun invoke(serial: String): AmrDetailStatus {
+        return amrRepository.getAmrDetail(serial)
     }
 }

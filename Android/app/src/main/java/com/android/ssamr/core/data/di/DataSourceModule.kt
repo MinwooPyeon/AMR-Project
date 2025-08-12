@@ -1,9 +1,13 @@
 package com.android.ssamr.core.data.di
 
+import com.android.ssamr.core.data.local.dao.NotificationDao
+import com.android.ssamr.core.data.local.datasource.NotificationLocalDataSource
 import com.android.ssamr.core.data.remote.datasource.AmrRemoteDataSource
 import com.android.ssamr.core.data.remote.service.AmrService
 import com.android.ssamr.core.data.remote.datasource.DashboardRemoteDataSource
+import com.android.ssamr.core.data.remote.datasource.NotificationRemoteDataSource
 import com.android.ssamr.core.data.remote.service.DashboardService
+import com.android.ssamr.core.data.remote.service.NotificationService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,4 +29,17 @@ object DataSourceModule {
     fun provideDashboardRemoteDataSource(
         service: DashboardService
     ): DashboardRemoteDataSource = DashboardRemoteDataSource(service)
+
+    @Provides
+    @Singleton
+    fun provideNotificationRemoteDataSource(
+        service: NotificationService
+    ): NotificationRemoteDataSource = NotificationRemoteDataSource(service)
+
+    @Provides
+    @Singleton
+    fun provideNotificationLocalDataSource(
+        dao: NotificationDao
+    ): NotificationLocalDataSource = NotificationLocalDataSource(dao)
+
 }

@@ -33,8 +33,8 @@ class AmrDetailViewModel @Inject constructor(
         initialValue = AmrDetailState()
     )
 
-    val amrId = requireNotNull(savedStateHandle.get<Long>("amrId")) {
-        "amr id is null in AmrDetailViewModel"
+    val serial = requireNotNull(savedStateHandle.get<String>("serial")) {
+        "serial is null in AmrDetailViewModel"
     }
 
     private val _effect = MutableSharedFlow<AmrDetailEffect>()
@@ -46,7 +46,7 @@ class AmrDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     _state.value = _state.value.copy(isLoading = true)
                     try {
-                        val amr = getAmrDetailUseCase(amrId)
+                        val amr = getAmrDetailUseCase(serial)
                         delay(500)
                         _state.value = _state.value.copy(
                             isLoading = false,
@@ -71,7 +71,7 @@ class AmrDetailViewModel @Inject constructor(
             is AmrDetailIntent.SelectedWorksheet -> {
                 _state.value = _state.value.copy(showStartDialog = true)
                 viewModelScope.launch {
-                    val result = manualControlUseCase(amrId, intent.worksheet)
+                    val result = manualControlUseCase(serial, intent.worksheet)
                     if (result.isFailure) {
                         _effect.emit(AmrDetailEffect.ShowError("작업지 이동 실패"))
                     } else {
@@ -85,7 +85,7 @@ class AmrDetailViewModel @Inject constructor(
             is AmrDetailIntent.SelectedChargeStation -> {
                 _state.value = _state.value.copy(showReturnDialog = true)
                 viewModelScope.launch {
-                    val result = manualControlUseCase(amrId, intent.station)
+                    val result = manualControlUseCase(serial, intent.station)
                     if (result.isFailure) {
                         _effect.emit(AmrDetailEffect.ShowError("충전소 이동 실패"))
                     } else {

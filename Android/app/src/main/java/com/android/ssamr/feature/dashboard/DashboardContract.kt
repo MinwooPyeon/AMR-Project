@@ -18,7 +18,7 @@ data class DashboardState(
 // 사용자의 액션 정의
 sealed class DashboardIntent {
     data object LoadDashboard : DashboardIntent()
-    data class ClickAmrItem(val id: Long) : DashboardIntent()
+    data class ClickAmrItem(val serial: String) : DashboardIntent()
     data object Refresh : DashboardIntent()
 
     data object ClickMapExpand : DashboardIntent()
@@ -27,7 +27,7 @@ sealed class DashboardIntent {
 
 // UI에서 처리해야 할 일회성 이벤트
 sealed class DashboardEffect {
-    data class NavigateToAmrDetail(val amrId: Long) : DashboardEffect()
+    data class NavigateToAmrDetail(val serial: String) : DashboardEffect()
 
     data object NavigateToMapFullScreen : DashboardEffect()
     data object NavigateToAmrList : DashboardEffect()

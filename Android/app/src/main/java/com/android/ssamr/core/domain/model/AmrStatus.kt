@@ -3,11 +3,12 @@ package com.android.ssamr.core.domain.model
 data class AmrStatus (
     val id: Long,
     val name: String,
-    val status: AmrAction,
+    val state: AmrAction,
     val locationX: Double,
     val locationY: Double,
     val speed: String,
     val job: String,
+    val serial: String,
 )
 
 enum class AmrCategory(val label: String) {

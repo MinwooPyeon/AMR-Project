@@ -8,7 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun FullscreenMapRoute(
     viewModel: FullscreenMapViewModel = hiltViewModel(),
-    navigateToAmrDetail: (Long) -> Unit,
+    navigateToAmrDetail: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val state = viewModel.state.collectAsState().value
@@ -17,9 +17,8 @@ fun FullscreenMapRoute(
         viewModel.onIntent(FullscreenMapIntent.LoadMap)
     }
 
-    if (state.selectedAmrId != null) {
-        navigateToAmrDetail(state.selectedAmrId)
-        viewModel.onIntent(FullscreenMapIntent.ClearSelectedAmr)
+    if (state.selectedAmrSerial != null) {
+        navigateToAmrDetail(state.selectedAmrSerial)
     }
 
     FullscreenMapScreen(

@@ -134,7 +134,7 @@ fun FactoryMapSection(
 @Composable
 fun AmrStatusSection(
     amrs: List<DashboardAmr>,
-    onClick: (Long) -> Unit,
+    onClick: (String) -> Unit,
     onViewAllClick: () -> Unit
 ) {
     Card(
@@ -157,7 +157,7 @@ fun AmrStatusSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFFF4F6FA), shape = RoundedCornerShape(12.dp))
-                        .clickable { onClick(amr.id) }
+                        .clickable { onClick(amr.serial) }
                         .padding(vertical = 12.dp, horizontal = 12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -202,9 +202,9 @@ fun PreviewFactoryMapSection() {
 @Composable
 fun PreviewAmrStatusSection() {
     val dummyList = listOf(
-        DashboardAmr(1L, "AMR-001", DashboardAmrStatus.RUNNING, "Zone A"),
-        DashboardAmr(2L, "AMR-002", DashboardAmrStatus.CHARGING, "Zone B"),
-        DashboardAmr(3L, "AMR-003", DashboardAmrStatus.CHECKING, "Zone C")
+        DashboardAmr(1L, "AMR001", "AMR-001", DashboardAmrStatus.RUNNING, "Zone A"),
+        DashboardAmr(2L, "AMR001", "AMR-002", DashboardAmrStatus.CHARGING, "Zone B"),
+        DashboardAmr(3L, "AMR001", "AMR-003", DashboardAmrStatus.CHECKING, "Zone C")
     )
     SSAMRTheme {
         AmrStatusSection(

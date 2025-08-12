@@ -8,12 +8,12 @@ data class FullscreenMapState(
     val amrPositions: List<AmrMapPosition> = emptyList(),
     val mapImage: ImageBitmap? = null, // SLAM이 이미지면
     val error: String? = null,
-    val selectedAmrId: Long? = null,
+    val selectedAmrSerial: String? = null,
 )
 
 sealed interface FullscreenMapIntent {
     data object LoadMap : FullscreenMapIntent
-    data class ClickAmr(val id: Long) : FullscreenMapIntent
+    data class ClickAmr(val serial: String) : FullscreenMapIntent
     data object Close : FullscreenMapIntent
     data object ClearSelectedAmr : FullscreenMapIntent //selectedAmrId 선택 해제를 위한
 }

@@ -33,7 +33,7 @@ class DashboardViewModel @Inject constructor(
         when (intent) {
             is DashboardIntent.LoadDashboard,
             is DashboardIntent.Refresh -> loadDashboard()
-            is DashboardIntent.ClickAmrItem -> emitEffect(DashboardEffect.NavigateToAmrDetail(intent.id))
+            is DashboardIntent.ClickAmrItem -> emitEffect(DashboardEffect.NavigateToAmrDetail(intent.serial))
             is DashboardIntent.ClickMapExpand -> emitEffect(DashboardEffect.NavigateToMapFullScreen)
             is DashboardIntent.ClickViewAllAmr -> emitEffect(DashboardEffect.NavigateToAmrList)
         }
@@ -46,9 +46,9 @@ class DashboardViewModel @Inject constructor(
             runCatching {
                 val amrStatuses: List<AmrStatus> = if (USE_DUMMY_DATA) {
                     listOf(
-                        AmrStatus(1L, "AMR-001", AmrAction.RUNNING, 1.0, 2.0, "1.2m/s", "A라인"),
-                        AmrStatus(2L, "AMR-002", AmrAction.CHARGING, 3.0, 4.0, "0.0m/s", "충전소"),
-                        AmrStatus(3L, "AMR-003", AmrAction.CHECKING, 5.0, 6.0, "0.0m/s", "B라인")
+                        AmrStatus(1L, "AMR-001", AmrAction.RUNNING, 1.0, 2.0, "1.2m/s", "A라인", "AMR001"),
+                        AmrStatus(2L, "AMR-002", AmrAction.CHARGING, 3.0, 4.0, "0.0m/s", "충전소", "AMR001"),
+                        AmrStatus(3L, "AMR-003", AmrAction.CHECKING, 5.0, 6.0, "0.0m/s", "B라인", "AMR001")
                     )
                 } else {
                     amrRepository.getAmrList()
@@ -79,8 +79,9 @@ class DashboardViewModel @Inject constructor(
     fun AmrStatus.toDashboardAmr(): DashboardAmr {
         return DashboardAmr(
             id = this.id,
+            serial = this.serial,
             name = this.name,
-            status = when (this.status) {
+            status = when (this.state) {
                 AmrAction.RUNNING -> DashboardAmrStatus.RUNNING
                 AmrAction.CHARGING -> DashboardAmrStatus.CHARGING
                 AmrAction.CHECKING -> DashboardAmrStatus.CHECKING

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SSAMR</string>
+    <string name="default_notification_channel_id">amr_alerts</string>
+    <string name="default_notification_channel_name">AMR Alerts</string>
 </resources>

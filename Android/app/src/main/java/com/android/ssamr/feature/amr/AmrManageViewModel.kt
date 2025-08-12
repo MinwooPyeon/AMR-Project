@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.ssamr.core.domain.model.AmrCategory
 import com.android.ssamr.core.domain.model.AmrAction
-import com.android.ssamr.core.domain.model.AmrDetailAction
 import com.android.ssamr.core.domain.model.AmrStatus
 import com.android.ssamr.core.domain.usecase.amr.GetAmrListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -51,7 +50,7 @@ class AmrManageViewModel @Inject constructor(
             }
 
             is AmrIntent.ClickAmrManageCard -> {
-                viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.amrId)) }
+                viewModelScope.launch { _effect.emit(AmrEffect.NavigateToAmrDetail(intent.serial)) }
             }
         }
     }
@@ -66,9 +65,9 @@ class AmrManageViewModel @Inject constructor(
                     val counts = AmrCategory.values().associateWith { cat ->
                         when (cat) {
                             AmrCategory.ALL -> list.size
-                            AmrCategory.RUNNING -> list.count { it.status == AmrAction.RUNNING }
-                            AmrCategory.CHARGING -> list.count { it.status == AmrAction.CHARGING }
-                            AmrCategory.CHECKING -> list.count { it.status == AmrAction.CHECKING }
+                            AmrCategory.RUNNING -> list.count { it.state == AmrAction.RUNNING }
+                            AmrCategory.CHARGING -> list.count { it.state == AmrAction.CHARGING }
+                            AmrCategory.CHECKING -> list.count { it.state == AmrAction.CHECKING }
                         }
                     }
                     _state.value = _state.value.copy(
@@ -98,9 +97,9 @@ class AmrManageViewModel @Inject constructor(
                 val counts = AmrCategory.values().associateWith { cat ->
                     when (cat) {
                         AmrCategory.ALL -> list.size
-                        AmrCategory.RUNNING -> list.count { it.status == AmrAction.RUNNING }
-                        AmrCategory.CHARGING -> list.count { it.status == AmrAction.CHARGING }
-                        AmrCategory.CHECKING -> list.count { it.status == AmrAction.CHECKING }
+                        AmrCategory.RUNNING -> list.count { it.state == AmrAction.RUNNING }
+                        AmrCategory.CHARGING -> list.count { it.state == AmrAction.CHARGING }
+                        AmrCategory.CHECKING -> list.count { it.state == AmrAction.CHECKING }
                     }
                 }
                 _state.value = _state.value.copy(
@@ -120,9 +119,9 @@ class AmrManageViewModel @Inject constructor(
     private fun filterList(list: List<AmrStatus>, category: AmrCategory): List<AmrStatus> {
         return when (category) {
             AmrCategory.ALL -> list
-            AmrCategory.RUNNING -> list.filter { it.status == AmrAction.RUNNING }
-            AmrCategory.CHARGING -> list.filter { it.status == AmrAction.CHARGING }
-            AmrCategory.CHECKING -> list.filter { it.status == AmrAction.CHECKING }
+            AmrCategory.RUNNING -> list.filter { it.state == AmrAction.RUNNING }
+            AmrCategory.CHARGING -> list.filter { it.state == AmrAction.CHARGING }
+            AmrCategory.CHECKING -> list.filter { it.state == AmrAction.CHECKING }
         }
 
     }

@@ -127,7 +127,7 @@ val sampleAmrDetail =
     AmrDetailStatus(
         id = 1,
         name = "AMR-001",
-        status = AmrDetailAction.RUNNING,
+        state = AmrDetailAction.RUNNING,
         locationX = 0.0,
         locationY = 1.0,
         speed = "1.2m/s",

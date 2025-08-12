@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252898831393",
+    "project_id": "sars-50307",
+    "storage_bucket": "sars-50307.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252898831393:android:2a752a48190ec01e8cc760",
+        "android_client_info": {
+          "package_name": "com.android.ssamr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD7Esy0D-8tEBLJKfkUc0yEp-dX_5PyKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

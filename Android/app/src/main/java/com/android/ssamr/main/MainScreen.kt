@@ -1,6 +1,8 @@
 package com.android.ssamr.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -9,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,17 +27,23 @@ import com.android.ssamr.feature.dashboard.DashboardRoute
 import com.android.ssamr.feature.dashboard.fullscreenmap.FullscreenMapRoute
 import com.android.ssamr.feature.more.MorescreenRoute
 import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
+import com.android.ssamr.feature.notification.NotificationRoute
+import com.android.ssamr.feature.notificationDetail.NotificationDetailRoute
+import com.android.ssamr.feature.notificationDetail.fullscreenPhoto.FullscreenPhotoRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
 import com.android.ssamr.main.navigation.DashboardScreen
 import com.android.ssamr.main.navigation.getBaseRoute
 import com.android.ssamr.main.navigation.FullmapRoute
+import com.android.ssamr.main.navigation.FullscreenPhotoScreen
 import com.android.ssamr.main.navigation.topBarPolicies
 import com.android.ssamr.main.navigation.MoreScreen
+import com.android.ssamr.main.navigation.NotificationDetailScreen
 import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
+import com.android.ssamr.ui.theme.BackgroundColor
 
 @Composable
 fun MainScreen() {
@@ -62,6 +71,7 @@ fun MainScreen() {
         currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction) }
 
     Scaffold(
+        containerColor = BackgroundColor,
         topBar = {
             if (showTopBar && topBarConfig != null) {
                 if (topBarConfig.isCustom) {
@@ -102,11 +112,12 @@ fun MainScreen() {
         NavHost(
             navController = navController,
             startDestination = DashboardScreen.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .padding(innerPadding)
         ) {
             composable(DashboardScreen.route) {
                 DashboardRoute(
-                    navigateToAmrDetail = { amrId -> navController.navigate("amr_detail/$amrId") },
+                    navigateToAmrDetail = { serial -> navController.navigate("amr_detail/$serial") },
                     navigateToMapFullScreen = { navController.navigate("full_map") },
                     navigateToAmrList = {
                         navController.navigate("amr") {
@@ -119,13 +130,19 @@ fun MainScreen() {
             }
             composable(AmrScreen.route) {
                 AmrManageRoute(
-                    navigateToAmrDetail = { amrId ->
-                        navController.navigate("amr_detail/$amrId")
+                    navigateToAmrDetail = { serial ->
+                        navController.navigate("amr_detail/$serial")
                     },
                     onRefresh = { onCallbackAction = it }
                 )
             }
-            composable(AlarmScreen.route) { /* AlarmScreen() */ }
+            composable(AlarmScreen.route) {
+                NotificationRoute(
+                    navigateToNotificationDetail = { notificationId ->
+                        navController.navigate("notification_detail/$notificationId")
+                    }
+                )
+            }
             composable(MoreScreen.route) {
                 MorescreenRoute(
                     navController = navController, // 상위 NavController
@@ -138,28 +155,30 @@ fun MainScreen() {
             }
             composable(FullmapRoute.route) {
                 FullscreenMapRoute(
-                    navigateToAmrDetail = { amrId ->
-                        navController.navigate(AmrDetailScreen.routeWithArgs(amrId))
+                    navigateToAmrDetail = { serial ->
+                        navController.navigate(AmrDetailScreen.routeWithArgs(serial))
                     },
                     onBack = { navController.popBackStack() }
                 )
             }
             composable(
-                route = "${AmrDetailScreen.route}/{amrId}",
-                arguments = listOf(navArgument("amrId") { type = NavType.LongType })
+                route = "${AmrDetailScreen.route}/{serial}",
+                arguments = listOf(
+                    navArgument("serial") { type = NavType.StringType },
+                )
             ) { backStackEntry ->
-                val amrId = backStackEntry.arguments?.getLong("amrId") ?: 0L
+                val serial = backStackEntry.arguments?.getString("serial") ?: ""
                 AmrDetailRoute(
                     onBack = { navController.popBackStack() },
                     navigateToWebcam = { ipAddress ->
-                        navController.navigate("amr_webcam/$amrId/$ipAddress")
+                        navController.navigate("amr_webcam/$serial/$ipAddress")
                     }
                 )
             }
             composable(
-                route = "${WebcamScreen.route}/{amrId}/{ipAddress}",
+                route = "${WebcamScreen.route}/{serial}/{ipAddress}",
                 arguments = listOf(
-                    navArgument("amrId") { type = NavType.LongType },
+                    navArgument("serial") { type = NavType.StringType },
                     navArgument("ipAddress") { type = NavType.StringType }
                 )
             ) {
@@ -167,6 +186,28 @@ fun MainScreen() {
                     onFullScreenChanged = { isFullScreen ->
                         isWebcamFullScreen = isFullScreen
                     }
+                )
+            }
+
+            composable(
+                route = "${NotificationDetailScreen.route}/{notificationId}",
+                arguments = listOf(navArgument("notificationId") { type = NavType.LongType })
+            ) {
+                NotificationDetailRoute(
+                    navigateToPhotoView = { url ->
+                        navController.navigate(FullscreenPhotoScreen.routeWithArgs(url))
+                    },
+                    onBack = { navController.popBackStack() })
+            }
+
+            composable(
+                route = "${FullscreenPhotoScreen.route}/{imageUrl}",
+                arguments = listOf(navArgument("imageUrl") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString("imageUrl") ?: ""
+                FullscreenPhotoRoute(
+                    imageUrl = url,
+                    onBack = { navController.popBackStack() }
                 )
             }
         }

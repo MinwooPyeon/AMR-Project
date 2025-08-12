@@ -28,10 +28,10 @@ class FullscreenMapViewModel @Inject constructor(
         when (intent) {
             is FullscreenMapIntent.LoadMap -> loadMapFromRepository()
             is FullscreenMapIntent.ClickAmr -> {
-                _state.update { it.copy(selectedAmrId = intent.id) }
+                _state.update { it.copy(selectedAmrSerial = intent.serial) }
             }
             is FullscreenMapIntent.ClearSelectedAmr -> {
-                _state.update { it.copy(selectedAmrId = null) }
+                _state.update { it.copy(selectedAmrSerial = null) }
             }
             is FullscreenMapIntent.Close -> {
                 // 필요 시 처리
@@ -76,10 +76,11 @@ class FullscreenMapViewModel @Inject constructor(
     private fun AmrStatus.toMapPosition(): AmrMapPosition {
         return AmrMapPosition(
             id = id,
+            serial = serial,
             name = name,
             x = locationX.toFloat(),
             y = locationY.toFloat(),
-            status = when (status) {
+            status = when (state) {
                 com.android.ssamr.core.domain.model.AmrAction.RUNNING -> DashboardAmrStatus.RUNNING
                 com.android.ssamr.core.domain.model.AmrAction.CHARGING -> DashboardAmrStatus.CHARGING
                 com.android.ssamr.core.domain.model.AmrAction.CHECKING -> DashboardAmrStatus.CHECKING

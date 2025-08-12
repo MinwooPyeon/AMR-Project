@@ -37,7 +37,7 @@ fun AmrDetailInfoCard(
     modifier: Modifier = Modifier
 ) {
 //    val amrStatus = AmrDetailAction.fromStatus(amr.status)
-    val amrStatus = amr.status
+    val amrStatus = amr.state
     val statusColor = amrStatus.color
 
     Surface(
@@ -67,7 +67,7 @@ fun AmrDetailInfoCard(
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        amr.status.display,
+                        amr.state.display,
                         style = MaterialTheme.typography.bodyLarge,
                         color = statusColor,
                     )

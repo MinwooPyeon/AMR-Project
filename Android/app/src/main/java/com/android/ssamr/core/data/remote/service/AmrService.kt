@@ -8,17 +8,16 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Query
 
 interface AmrService {
-    @GET("api/v1/amrs/latest-statuses")
+    @GET("amrs/latest-statuses")
     suspend fun getAmrList(): List<AmrDto>
 
-    @GET("api/v1/amrs/{id}/detail")
-    suspend fun getAmrDetail(@Path("id") amrId: Long): AmrDetailDto
+    @GET("amrs/{serial}/detail")
+    suspend fun getAmrDetail(@Path("serial") serial: String): AmrDetailDto
 
-    @POST("api/v1/amrs/{id}/control")
-    suspend fun requestControl( @Path("id") id: Long,
-        @Body request: ManualControlRequest): Response<Unit>
+
+    @POST("amrs/control")
+    suspend fun requestControl(@Body request: ManualControlRequest): Response<Unit>
 
 }
