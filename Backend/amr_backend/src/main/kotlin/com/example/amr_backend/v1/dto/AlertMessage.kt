@@ -1,5 +1,6 @@
 package com.example.amr_backend.v1.dto
 
+import com.example.amr_backend.v1.entity.Notification
 import java.time.LocalDateTime
 
 data class AlertInboundMessage(
@@ -45,3 +46,12 @@ data class AlertOutboundMessage(
 enum class Case {
     COLLAPSE, SMOKE, EQUIPMENT
 }
+
+fun AlertOutboundMessage.toEntity() = Notification(
+    title = title,
+    content = summary,
+    area = area,
+    image = image,
+    isRead = false,
+    readAt = null,
+)
