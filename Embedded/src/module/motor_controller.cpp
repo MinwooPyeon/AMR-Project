@@ -175,6 +175,98 @@ bool MotorController::rotateRight(int speed) {
     }
 }
 
+bool MotorController::rotateLeftSingleWheel(int speed) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    
+    if (status_ != RobotStatus::OK) {
+        std::cerr << name_ << ": 휠 1개 좌회전 실패 - " << getStatusString() << std::endl;
+        return false;
+    }
+    
+    // 왼쪽 휠만 사용하여 좌회전: 왼쪽 휠은 정지, 오른쪽 휠은 전진
+    bool success = leftMotor_->setSpeed(0, speed);
+    
+    if (success) {
+        leftSpeed_ = 0;
+        rightSpeed_ = speed;
+        currentMovement_ = RobotMovement::SINGLE_WHEEL_ROTATE_LEFT;
+        logMovement(RobotMovement::SINGLE_WHEEL_ROTATE_LEFT, speed);
+        return true;
+    } else {
+        updateStatus();
+        return false;
+    }
+}
+
+bool MotorController::rotateRightSingleWheel(int speed) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    
+    if (status_ != RobotStatus::OK) {
+        std::cerr << name_ << ": 휠 1개 우회전 실패 - " << getStatusString() << std::endl;
+        return false;
+    }
+    
+    // 오른쪽 휠만 사용하여 우회전: 왼쪽 휠은 전진, 오른쪽 휠은 정지
+    bool success = leftMotor_->setSpeed(speed, 0);
+    
+    if (success) {
+        leftSpeed_ = speed;
+        rightSpeed_ = 0;
+        currentMovement_ = RobotMovement::SINGLE_WHEEL_ROTATE_RIGHT;
+        logMovement(RobotMovement::SINGLE_WHEEL_ROTATE_RIGHT, speed);
+        return true;
+    } else {
+        updateStatus();
+        return false;
+    }
+}
+
+bool MotorController::rotateLeftSingleWheelLeft(int speed) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    
+    if (status_ != RobotStatus::OK) {
+        std::cerr << name_ << ": 왼쪽 휠 좌회전 실패 - " << getStatusString() << std::endl;
+        return false;
+    }
+    
+    // 왼쪽 휠만 사용하여 좌회전: 왼쪽 휠은 후진, 오른쪽 휠은 정지
+    bool success = leftMotor_->setSpeed(-speed, 0);
+    
+    if (success) {
+        leftSpeed_ = -speed;
+        rightSpeed_ = 0;
+        currentMovement_ = RobotMovement::SINGLE_WHEEL_ROTATE_LEFT;
+        logMovement(RobotMovement::SINGLE_WHEEL_ROTATE_LEFT, speed);
+        return true;
+    } else {
+        updateStatus();
+        return false;
+    }
+}
+
+bool MotorController::rotateRightSingleWheelRight(int speed) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    
+    if (status_ != RobotStatus::OK) {
+        std::cerr << name_ << ": 오른쪽 휠 우회전 실패 - " << getStatusString() << std::endl;
+        return false;
+    }
+    
+    // 오른쪽 휠만 사용하여 우회전: 왼쪽 휠은 정지, 오른쪽 휠은 후진
+    bool success = leftMotor_->setSpeed(0, -speed);
+    
+    if (success) {
+        leftSpeed_ = 0;
+        rightSpeed_ = -speed;
+        currentMovement_ = RobotMovement::SINGLE_WHEEL_ROTATE_RIGHT;
+        logMovement(RobotMovement::SINGLE_WHEEL_ROTATE_RIGHT, speed);
+        return true;
+    } else {
+        updateStatus();
+        return false;
+    }
+}
+
 bool MotorController::stop() {
     std::lock_guard<std::mutex> lock(mutex_);
     
@@ -416,8 +508,10 @@ std::string MotorController::movementToString(RobotMovement movement) const {
         case RobotMovement::BACKWARD: return "후진";
         case RobotMovement::TURN_LEFT: return "좌회전";
         case RobotMovement::TURN_RIGHT: return "우회전";
-        case RobotMovement::ROTATE_LEFT: return "좌회전";
-        case RobotMovement::ROTATE_RIGHT: return "우회전";
+        case RobotMovement::ROTATE_LEFT: return "좌회전(양쪽 휠)";
+        case RobotMovement::ROTATE_RIGHT: return "우회전(양쪽 휠)";
+        case RobotMovement::SINGLE_WHEEL_ROTATE_LEFT: return "좌회전(휠 1개)";
+        case RobotMovement::SINGLE_WHEEL_ROTATE_RIGHT: return "우회전(휠 1개)";
         default: return "알 수 없음";
     }
 }

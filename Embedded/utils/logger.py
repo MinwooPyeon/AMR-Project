@@ -51,9 +51,10 @@ class AMRLogger:
         self.logger.info(log_msg)
     
     def mqtt_send_success(self, topic: str, data: Optional[dict] = None):
-        log_msg = f"[MQTT_SEND] MQTT 송신 성공: {topic}"
-        if data: log_msg += f" | 데이터: {data}"
-        self.logger.info(log_msg)
+        if data:
+            self.logger.info(f"{data}")
+        else:
+            self.logger.info(f"[MQTT_SEND] MQTT 송신 성공: {topic}")
     
     def mqtt_receive_success(self, topic: str, data: Optional[dict] = None):
         log_msg = f"[MQTT_RECEIVE] MQTT 수신 성공: {topic}"
@@ -68,4 +69,4 @@ mqtt_logger = get_logger("AMR_MQTT")
 ros2_logger = get_logger("AMR_ROS2")
 motor_logger = get_logger("AMR_MOTOR")
 sensor_logger = get_logger("AMR_SENSOR")
-display_logger = get_logger("AMR_DISPLAY") 
+ 

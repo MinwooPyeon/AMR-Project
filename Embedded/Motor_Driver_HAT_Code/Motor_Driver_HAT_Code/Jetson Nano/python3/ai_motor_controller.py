@@ -13,8 +13,11 @@ import sys
 import os
 from datetime import datetime
 from PCA9685 import PCA9685
+<<<<<<< HEAD
 
 # 프로젝트 루트를 Python 경로에 추가
+=======
+>>>>>>> c63d83b (merge: Resolve conflicts)
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 sys.path.insert(0, project_root)
 
@@ -68,18 +71,31 @@ class AIMotorController:
         
         # 모터 속도 설정
         self.motor_speeds = {
+<<<<<<< HEAD
             'forward': 50,    # 전진 속도
             'backward': 50,   # 후진 속도
             'left': 50,       # 좌회전 속도
             'right': 50,      # 우회전 속도
             'stop': 0,        # 정지 속도
             'custom': 50      # 커스텀 기본 속도
+=======
+            'forward': 50,    # 전진 속도 (50%)
+            'backward': 50,   # 후진 속도 (50%)
+            'left': 50,       # 좌회전 속도 (50%)
+            'right': 50,      # 우회전 속도 (50%)
+            'stop': 0,        # 정지 속도
+            'custom': 50      # 커스텀 기본 속도 (50%)
+>>>>>>> c63d83b (merge: Resolve conflicts)
         }
         
         try:
             # PCA9685 초기화
             self.pwm = PCA9685(i2c_address, debug=debug)
+<<<<<<< HEAD
             self.pwm.setPWMFreq(50) 
+=======
+            self.pwm.setPWMFreq(20)  # 20Hz PWM 주파수 (더 강한 토크)
+>>>>>>> c63d83b (merge: Resolve conflicts)
             
             # 모든 모터 정지
             self.stop_all()
@@ -87,7 +103,11 @@ class AIMotorController:
             if self.debug:
                 print(f"   I2C 주소: 0x{i2c_address:02X}")
                 print(f"   I2C 버스: {i2c_bus}")
+<<<<<<< HEAD
                 print(f"   PWM 주파수: 50Hz")
+=======
+                print(f"   PWM 주파수: 20Hz")
+>>>>>>> c63d83b (merge: Resolve conflicts)
                 if api_url:
                     print(f"   AI API URL: {api_url}")
                 print(f"   Backend MQTT: {backend_broker}:{backend_port}")
@@ -152,7 +172,11 @@ class AIMotorController:
             state = "RUNNING"
             x = 0.0
             y = 0.0
+<<<<<<< HEAD
             speed = 40.0
+=======
+            speed = 40.0  # 기본 속도 40%
+>>>>>>> c63d83b (merge: Resolve conflicts)
             angle = 0.0
             
             if ai_data:
@@ -177,7 +201,13 @@ class AIMotorController:
             if motor_status:
                 motor_a_speed = motor_status.get('motor_a', {}).get('speed', 0)
                 motor_b_speed = motor_status.get('motor_b', {}).get('speed', 0)
+<<<<<<< HEAD
                 speed = max(motor_a_speed, motor_b_speed)
+=======
+                # 모터 상태에서 속도가 0보다 크면 그 값을 사용, 아니면 계산된 speed 유지
+                if motor_a_speed > 0 or motor_b_speed > 0:
+                    speed = max(motor_a_speed, motor_b_speed)
+>>>>>>> c63d83b (merge: Resolve conflicts)
             
             if self.debug:
                 print(f"전송할 데이터: state={state}, x={x}, y={y}, speed={speed}, angle={angle}")
@@ -306,6 +336,7 @@ class AIMotorController:
             if self.debug:
                 print(f"후진 명령 실행: 속도 {speed}%")
                 
+<<<<<<< HEAD
         elif case == 'left' or case == '좌회전':
             # 좌회전: 양쪽 모터 모두 speed%
             self.differential_drive(speed, -speed)
@@ -318,11 +349,28 @@ class AIMotorController:
             if self.debug:
                 print(f"우회전 명령 실행: 양쪽 모터 모두 {speed}%")
                 
+=======
+>>>>>>> c63d83b (merge: Resolve conflicts)
         elif case == 'stop' or case == '정지':
             self.stop_all()
             if self.debug:
                 print("정지 명령 실행")
                 
+<<<<<<< HEAD
+=======
+        elif case == 'left' or case == '좌회전':
+            # 좌회전: 왼쪽 모터 후진, 오른쪽 모터 전진
+            self.differential_drive(-speed, speed)
+            if self.debug:
+                print(f"좌회전 명령 실행: 속도 {speed}%")
+                
+        elif case == 'right' or case == '우회전':
+            # 우회전: 왼쪽 모터 전진, 오른쪽 모터 후진
+            self.differential_drive(speed, -speed)
+            if self.debug:
+                print(f"우회전 명령 실행: 속도 {speed}%")
+                
+>>>>>>> c63d83b (merge: Resolve conflicts)
         elif case == 'custom' or case == '커스텀':
             left_speed = int(y * 100)  
             right_speed = int(x * 100) 
@@ -461,6 +509,7 @@ class AIMotorController:
         }
     
     def test_motors(self):
+<<<<<<< HEAD
         """모터 테스트 - 모터 A와 B 동시 제어"""
         print("\n모터 테스트 시작")
         
@@ -473,6 +522,28 @@ class AIMotorController:
         time.sleep(2)
         
         print("\n모터 A와 B 동시 정지")
+=======
+        """모터 테스트 - 10초 전진, 1초 정지, 10초 후진"""
+        print("\n모터 테스트 시작")
+        
+        # 1. 전진 10초
+        print("\n1. 전진 시작 (10초)")
+        self.differential_drive(30, 30)
+        time.sleep(10)
+        
+        # 2. 정지 1초
+        print("\n2. 정지 시작 (1초)")
+        self.stop_all()
+        time.sleep(1)
+        
+        # 3. 후진 10초
+        print("\n3. 후진 시작 (10초)")
+        self.differential_drive(-30, -30)
+        time.sleep(10)
+        
+        # 4. 최종 정지
+        print("\n4. 최종 정지")
+>>>>>>> c63d83b (merge: Resolve conflicts)
         self.stop_all()
         
         print("모터 테스트 완료")
@@ -485,6 +556,13 @@ class AIMotorController:
             left_speed (int): 왼쪽 모터 속도 (-100 ~ 100)
             right_speed (int): 오른쪽 모터 속도 (-100 ~ 100)
         """
+<<<<<<< HEAD
+=======
+        # 속도 제한 (100%까지 허용)
+        left_speed = max(-100, min(100, left_speed))
+        right_speed = max(-100, min(100, right_speed))
+        
+>>>>>>> c63d83b (merge: Resolve conflicts)
         # 모터 A (왼쪽 모터) 설정
         if left_speed > 0:
             # 모터 A 전진

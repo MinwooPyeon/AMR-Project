@@ -14,7 +14,9 @@ enum class RobotMovement {
     TURN_LEFT = 3,
     TURN_RIGHT = 4,
     ROTATE_LEFT = 5,
-    ROTATE_RIGHT = 6
+    ROTATE_RIGHT = 6,
+    SINGLE_WHEEL_ROTATE_LEFT = 7,   // 휠 1개만 사용한 좌회전
+    SINGLE_WHEEL_ROTATE_RIGHT = 8   // 휠 1개만 사용한 우회전
 };
 
 enum class RobotStatus {
@@ -41,6 +43,12 @@ public:
     bool rotateRight(int speed);
     bool stop();
     bool emergencyStop();
+
+    // 휠 1개만 사용한 회전 명령
+    bool rotateLeftSingleWheel(int speed);    // 왼쪽 휠만 사용하여 좌회전
+    bool rotateRightSingleWheel(int speed);   // 오른쪽 휠만 사용하여 우회전
+    bool rotateLeftSingleWheelLeft(int speed);   // 왼쪽 휠만 사용하여 좌회전
+    bool rotateRightSingleWheelRight(int speed); // 오른쪽 휠만 사용하여 우회전
 
     // 고급 이동 명령
     bool moveWithDifferential(int leftSpeed, int rightSpeed);

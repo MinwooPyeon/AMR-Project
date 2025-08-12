@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
@@ -52,16 +50,17 @@ class AIPositionSubscriber(Node):
         self.mqtt_client.on_message = self.on_mqtt_message
         
         try:
-            self.mqtt_client.connect("192.168.100.141", 1883, 60)
+            self.mqtt_client.connect("localhost", 1883, 60)
             self.mqtt_client.subscribe("position")
             self.mqtt_client.loop_start()
         except Exception as e:
-            self.get_logger().error(f"MQTT 연결 실패: {e}")
+            self.get_logger().error(f"AI MQTT 연결 실패: {e}")
         
         self.get_logger().info("AI Position Subscriber 초기화 완료")
+        self.get_logger().info("AI -> Embedded 연결: localhost:1883")
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
-        self.get_logger().info(f"MQTT 연결 성공: {rc}")
+        self.get_logger().info(f"AI MQTT 연결 성공: {rc}")
 
     def on_mqtt_message(self, client, userdata, msg):
         try:
