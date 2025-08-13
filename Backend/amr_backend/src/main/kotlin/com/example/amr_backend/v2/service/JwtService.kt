@@ -1,4 +1,4 @@
-package com.example.amr_backend.v1.service
+package com.example.amr_backend.v2.service
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts

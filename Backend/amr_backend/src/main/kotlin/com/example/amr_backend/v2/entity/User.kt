@@ -1,4 +1,4 @@
-package com.example.amr_backend.v1.entity
+package com.example.amr_backend.v2.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

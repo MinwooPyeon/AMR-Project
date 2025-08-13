@@ -1,4 +1,4 @@
-package com.example.amr_backend.v1.config
+package com.example.amr_backend.v2.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
