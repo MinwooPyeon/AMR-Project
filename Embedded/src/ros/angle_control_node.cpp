@@ -43,8 +43,8 @@ AngleControlNode::~AngleControlNode() {
 
 bool AngleControlNode::loadParameters() {
     // IMU 센서 파라미터
-    this->declare_parameter("imu_type", "MPU9250");
-    this->declare_parameter("imu_i2c_address", 0x68);
+    this->declare_parameter("imu_type", "BNO08X");
+    this->declare_parameter("imu_i2c_address", 0x4B);
     this->declare_parameter("imu_sample_rate", 100);
     
     // 모터 컨트롤러 파라미터

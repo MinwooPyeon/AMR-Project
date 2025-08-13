@@ -107,14 +107,14 @@ class AMRMotorController:
         self.prev_error = 0.0
         self.integral = 0.0
         
-        # 모터 속도 설정
+        # 모터 속도 설정 (절대 최대 모드)
         self.motor_speeds = {
-            'forward': 100,
-            'backward': 100,
-            'left': 100,
-            'right': 100,
-            'stop': 0,
-            'custom': 100
+            'forward': 300,    # 전진 속도 (300% - 절대 최대 모드)
+            'backward': 300,   # 후진 속도 (300% - 절대 최대 모드)
+            'left': 300,       # 좌회전 속도 (300% - 절대 최대 모드)
+            'right': 300,      # 우회전 속도 (300% - 절대 최대 모드)
+            'stop': 0,         # 정지 속도
+            'custom': 300      # 커스텀 기본 속도 (300% - 절대 최대 모드)
         }
         
         # 스레드 제어
@@ -130,7 +130,7 @@ class AMRMotorController:
         try:
             # PCA9685 모터 드라이버 초기화
             self.pwm = PCA9685(self.motor_i2c_address, debug=self.debug, i2c_bus=self.i2c_bus)
-            self.pwm.setPWMFreq(20)  # 20Hz PWM 주파수
+            self.pwm.setPWMFreq(20)  # 20Hz PWM 주파수 (안정 모드)
             
             # PCA9685 서보 모터 드라이버 초기화
             try:
@@ -436,10 +436,10 @@ class AMRMotorController:
         
     def differential_drive(self, left_speed, right_speed):
         """차동 구동"""
-        left_speed = max(-100, min(100, left_speed))
-        right_speed = max(-100, min(100, right_speed))
+        left_speed = max(-300, min(300, left_speed))
+        right_speed = max(-300, min(300, right_speed))
         
-        # 모터 A (왼쪽 모터)
+        # 모터 A (왼쪽 앞+뒤 모터 그룹)
         if left_speed > 0:
             self.pwm.setDutycycle(self.PWMA, abs(left_speed))
             self.pwm.setLevel(self.AIN1, 0)
@@ -456,17 +456,17 @@ class AMRMotorController:
             self.pwm.setDutycycle(self.PWMA, 0)
             self.motor_a_speed = 0
         
-        # 모터 B (오른쪽 모터)
+        # 모터 B (오른쪽 앞+뒤 모터 그룹) - 방향 반전
         if right_speed > 0:
             self.pwm.setDutycycle(self.PWMB, abs(right_speed))
-            self.pwm.setLevel(self.BIN1, 0)
-            self.pwm.setLevel(self.BIN2, 1)
+            self.pwm.setLevel(self.BIN1, 1)  # 반전: 0→1
+            self.pwm.setLevel(self.BIN2, 0)  # 반전: 1→0
             self.motor_b_speed = abs(right_speed)
             self.motor_b_direction = self.FORWARD
         elif right_speed < 0:
             self.pwm.setDutycycle(self.PWMB, abs(right_speed))
-            self.pwm.setLevel(self.BIN1, 1)
-            self.pwm.setLevel(self.BIN2, 0)
+            self.pwm.setLevel(self.BIN1, 0)  # 반전: 1→0
+            self.pwm.setLevel(self.BIN2, 1)  # 반전: 0→1
             self.motor_b_speed = abs(right_speed)
             self.motor_b_direction = self.BACKWARD
         else:

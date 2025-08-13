@@ -56,3 +56,25 @@ uint8_t MyI2CImplementation::readRegister(uint8_t devAddr, uint8_t regAddr)
     }
     return value;
 }
+
+void MyI2CImplementation::writeBytes(uint8_t devAddr, const uint8_t* data, size_t length)
+{
+    setSlaveAddress(devAddr);
+    if (length == 0) return;
+    ssize_t written = write(fd_, data, static_cast<unsigned int>(length));
+    if (written < 0 || static_cast<size_t>(written) != length) {
+        perror("Failed to write raw bytes to I2C device");
+        throw std::runtime_error("Failed to write raw bytes to I2C device");
+    }
+}
+
+void MyI2CImplementation::readBytes(uint8_t devAddr, uint8_t* buffer, size_t length)
+{
+    setSlaveAddress(devAddr);
+    if (length == 0) return;
+    ssize_t readLen = read(fd_, buffer, static_cast<unsigned int>(length));
+    if (readLen < 0 || static_cast<size_t>(readLen) != length) {
+        perror("Failed to read raw bytes from I2C device");
+        throw std::runtime_error("Failed to read raw bytes from I2C device");
+    }
+}

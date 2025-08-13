@@ -15,8 +15,8 @@ IMUDataPublisher::IMUDataPublisher(
     this->declare_parameter("frame_id", "imu_link");
     this->declare_parameter("publish_rate", 50.0);
     this->declare_parameter("enable_temperature", true);
-    this->declare_parameter("imu_type", 0); // 0: MPU6050, 1: MPU9250, 2: BNO055, 3: LSM9DS1
-    this->declare_parameter("i2c_address", 0x68);
+    this->declare_parameter("imu_type", 4); // 0: MPU6050, 1: MPU9250, 2: BNO055, 3: LSM9DS1, 4: BNO08X
+    this->declare_parameter("i2c_address", 0x4B);
     
     frame_id_ = this->get_parameter("frame_id").as_string();
     publish_rate_ = this->get_parameter("publish_rate").as_double();

@@ -33,6 +33,8 @@ def test_common_i2c_devices():
         0x53: "EEPROM",
         0x68: "DS3231 (RTC)",
         0x69: "MPU6050 (IMU)",
+        0x4A: "BNO08x (IMU)",
+        0x4B: "BNO08x (IMU)",
         0x76: "BME280 (센서)",
         0x77: "BME280 (센서)",
     }

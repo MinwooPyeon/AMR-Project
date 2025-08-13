@@ -58,8 +58,35 @@ class IMUAIMotorController:
         self.backend_broker = backend_broker
         self.backend_port = backend_port
         
+        # 환경 변수로 IMU 버스/주소 강제 설정 가능
+        try:
+            env_bus = os.getenv('IMU_BUS')
+            if env_bus is not None:
+                self.imu_bus = int(env_bus)
+        except Exception:
+            pass
+        try:
+            env_addr = os.getenv('IMU_ADDR')
+            if env_addr is not None:
+                self.imu_address = int(env_addr, 16) if isinstance(env_addr, str) else int(env_addr)
+        except Exception:
+            pass
+
         # 서보 모터 주소 설정
         self.servo_address = 0x60  # 서보 모터용 PCA9685 주소
+        # 서보 3채널 구성 (MG996R): 50Hz, 퍼센트/펄스 기반 제어
+        self.servo_channels = [0, 1, 2]
+        self.servo_center_us = 1500  # 중립(정지/중앙)
+        self.servo_min_us = 1000     # 안전 최소 펄스
+        self.servo_max_us = 2000     # 안전 최대 펄스 (MG996R은 2400us까지도 동작 가능, 필요 시 조정)
+        self.servo_trim_us = {0: 0, 1: 0, 2: 0}  # 채널별 트림(미세 오프셋)
+        # 90도 펄스 기반 제어 설정
+        self.use_servo_pulse_turn = True
+        self.steering_servo_channel = 0
+        self.servo_turn_hold_time = 0.4  # 초, 서보가 목표 위치에 도달할 시간
+        self.servo_up_us = 2000     # UP 명령 시 펄스 (90도 위치)
+        self.servo_down_us = 1000   # DOWN 명령 시 펄스 (90도 아래 위치)
+        self.servo_is_up = False    # 현재 서보 상태 (UP/DOWN)
         
         # 모터 핀 정의
         self.PWMA = 0  # 모터 A PWM
@@ -84,8 +111,10 @@ class IMUAIMotorController:
         self.backend_connected = False
         
         # IMU 관련 변수
-        self.imu_bus = None  # 초기화 시점에 설정
-        self.imu_address = 0x68  # MPU6050 주소
+        self.imu_bus = 1  # 기본 IMU 버스: 1
+        self.imu_address = 0x4B  # 기본값: BNO08x ADR=HIGH
+        self.imu_type = 'AUTO'   # AUTO | MPU6050 | BNO08X
+        self.bno = None          # BNO08x 인스턴스 (Adafruit 라이브러리)
         self.initial_angle = 0.0
         self.current_angle = 0.0
         self.target_angle = 0.0
@@ -101,15 +130,21 @@ class IMUAIMotorController:
         self.prev_error = 0.0
         self.integral = 0.0
         
-        # 모터 속도 설정
+        # 모터 속도 설정 (무거운 무게 대응 - 높은 토크)
         self.motor_speeds = {
-            'forward': 100,    # 전진 속도 (100%)
-            'backward': 100,   # 후진 속도 (100%)
-            'left': 100,       # 좌회전 속도 (100%)
-            'right': 100,      # 우회전 속도 (100%)
+            'forward': 300,    # 전진 속도 (300% - 절대 최대 모드)
+            'backward': 300,   # 후진 속도 (300% - 절대 최대 모드)
+            'left': 300,       # 좌회전 속도 (300% - 절대 최대 모드)
+            'right': 300,      # 우회전 속도 (300% - 절대 최대 모드)
             'stop': 0,         # 정지 속도
-            'custom': 100      # 커스텀 기본 속도 (100%)
+            'custom': 300      # 커스텀 기본 속도 (300% - 절대 최대 모드)
         }
+        # 주행 부스트 설정: 절대 최대 모드
+        self.boost_speed = 300    # 부스트 속도 (300% - 절대 최대 모드)
+        self.cruise_speed = 300   # 크루즈 속도 (300% - 절대 최대 모드)
+        self.move_boost_duration = 5.0  # 부스트 시간 5.0초로 극대화 (극한 짐 옮기기용)
+        self.move_boost_timer = None
+        self.current_motion = 'stop'  # 'stop' | 'forward' | 'backward' | 'turn' | 'custom'
         
         # 스레드 제어
         self.control_thread = None
@@ -119,14 +154,14 @@ class IMUAIMotorController:
         try:
             # PCA9685 모터 드라이버 초기화
             self.pwm = PCA9685(i2c_address, debug=debug)
-            self.pwm.setPWMFreq(20)  # 20Hz PWM 주파수 (더 강한 토크)
+            self.pwm.setPWMFreq(20)  # 20Hz PWM 주파수 (안정 모드)
             
             # PCA9685 서보 모터 드라이버 초기화 (선택사항)
             try:
-                self.servo_pwm = PCA9685(servo_address, debug=debug)
+                self.servo_pwm = PCA9685(self.servo_address, debug=debug)
                 self.servo_pwm.setPWMFreq(50)  # 50Hz PWM 주파수 (서보용)
                 if self.debug:
-                    print(f"   서보 모터 드라이버 초기화 성공 - 주소: 0x{servo_address:02X}")
+                    print(f"   서보 모터 드라이버 초기화 성공 - 주소: 0x{self.servo_address:02X}")
             except Exception as e:
                 if self.debug:
                     print(f"   서보 모터 드라이버 초기화 실패: {e}")
@@ -139,11 +174,13 @@ class IMUAIMotorController:
             self.stop_all()
             
             if self.debug:
+                imu_addr_str = f"0x{self.imu_address:02X}" if isinstance(self.imu_address, int) else "N/A"
                 print(f"   모터 드라이버 주소: 0x{i2c_address:02X}")
-                print(f"   서보 드라이버 주소: 0x{servo_address:02X}")
-                print(f"   I2C 버스: {i2c_bus}")
+                print(f"   서보 드라이버 주소: 0x{self.servo_address:02X}")
+                print(f"   I2C 버스(모터): {self.i2c_bus}")
+                print(f"   I2C 버스(IMU): {self.imu_bus if self.imu_bus is not None else 'N/A'}")
                 print(f"   PWM 주파수: 20Hz (모터), 50Hz (서보)")
-                print(f"   IMU 주소: 0x{self.imu_address:02X}")
+                print(f"   IMU 주소: {imu_addr_str}")
                 print(f"   IMU 사용 가능: {self.imu_available}")
                 if api_url:
                     print(f"   AI API URL: {api_url}")
@@ -158,24 +195,45 @@ class IMUAIMotorController:
     def initialize_imu(self):
         """IMU 초기화 및 캘리브레이션"""
         try:
-            # I2C 버스 자동 감지
-            self.imu_bus = self._find_imu_bus()
-            if not self.imu_bus:
-                raise Exception("사용 가능한 I2C 버스를 찾을 수 없습니다")
+            # I2C 버스 자동 감지 (이미 설정된 경우 유지)
+            if self.imu_bus is None:
+                self.imu_bus = self._find_imu_bus()
+                if self.imu_bus is None:
+                    raise Exception("사용 가능한 I2C 버스를 찾을 수 없습니다")
             
             # IMU 주소 자동 감지
             self.imu_address = self._find_imu_address()
-            if not self.imu_address:
+            if self.imu_address is None:
                 raise Exception("IMU 센서를 찾을 수 없습니다")
             
-            # MPU6050 초기화
-            self.imu_bus.write_byte_data(self.imu_address, 0x6B, 0)  # PWR_MGMT_1 레지스터
+            # 센서 타입에 따른 초기화
+            if self.imu_type == 'BNO08X':
+                # BNO08x: Adafruit CircuitPython 라이브러리로 간단 연동
+                try:
+                    # 버스 번호 지정이 필요하므로 ExtendedI2C 우선 사용
+                    from adafruit_extended_bus import ExtendedI2C  # pip3 install adafruit-extended-bus
+                    from adafruit_bno08x.i2c import BNO08X_I2C
+                    from adafruit_bno08x import BNO_REPORT_GAME_ROTATION_VECTOR
+                    i2c = ExtendedI2C(self.imu_bus)
+                    self.bno = BNO08X_I2C(i2c, address=self.imu_address)
+                    # 20Hz = 50,000us (안정성을 위해 더 느리게)
+                    self.bno.enable_feature(BNO_REPORT_GAME_ROTATION_VECTOR, report_interval_us=50000)
+                    self.imu_available = True
+                    if self.debug:
+                        print("BNO08x 초기화 성공 (게임 회전벡터 활성화, 20Hz)")
+                except Exception as e:
+                    print(f"BNO08x 초기화 실패: {e}")
+                    print("pip3 install adafruit-circuitpython-bno08x adafruit-blinka adafruit-extended-bus 로 설치 후 재시도하세요.")
+                    self.imu_available = False
+            else:
+                # MPU6050 초기화
+                self.imu_bus.write_byte_data(self.imu_address, 0x6B, 0)  # PWR_MGMT_1 레지스터
             
             # 초기 각도 캘리브레이션
             print("IMU 캘리브레이션 중...")
             angles = []
             for i in range(100):
-                angle = self.read_imu_yaw()
+                angle = self.read_imu_yaw() if self.imu_available else 0.0
                 angles.append(angle)
                 time.sleep(0.01)
             
@@ -188,12 +246,17 @@ class IMUAIMotorController:
             self.target_angle = 0.0
             self.angle_offset = raw_initial_angle  # 오프셋 저장
             
-            self.imu_available = True
+            # BNO08x는 현재 각도 읽기가 없으므로 IMU 사용 불가로 둠
+            if self.imu_type == 'BNO08X':
+                self.imu_available = False
+            else:
+                self.imu_available = True
             
             if self.debug:
                 print(f"IMU 초기화 완료")
                 print(f"  - I2C 버스: {self.imu_bus}")
                 print(f"  - IMU 주소: 0x{self.imu_address:02X}")
+                print(f"  - IMU 타입: {self.imu_type}")
                 print(f"  - 원시 초기 각도: {raw_initial_angle:.2f}도")
                 print(f"  - 보정된 초기 각도: {self.initial_angle:.2f}도 (정중앙)")
                 print(f"  - 각도 오프셋: {self.angle_offset:.2f}도")
@@ -206,97 +269,173 @@ class IMUAIMotorController:
     def _find_imu_bus(self):
         """사용 가능한 I2C 버스 찾기"""
         import os
-        
-        # 사용 가능한 I2C 버스 확인
+        import subprocess
+        # 우선 버스 1이 존재하면 그대로 사용 (일반적 기본 버스)
+        if os.path.exists("/dev/i2c-1"):
+            return 1
+        # 1) i2cdetect 결과로 BNO08x(0x4A/0x4B)가 보이는 버스 우선 선택
         for bus_num in range(10):
             bus_path = f"/dev/i2c-{bus_num}"
-            if os.path.exists(bus_path):
-                try:
-                    bus = smbus.SMBus(bus_num)
-                    # 간단한 테스트로 버스가 작동하는지 확인
-                    bus.close()
+            if not os.path.exists(bus_path):
+                continue
+            try:
+                out = subprocess.run(["i2cdetect", "-y", "-r", str(bus_num)], capture_output=True, text=True, timeout=3)
+                txt = out.stdout.lower()
+                if " 4b" in txt or " 4a" in txt:
                     if self.debug:
-                        print(f"사용 가능한 I2C 버스 발견: {bus_num}")
+                        print(f"사용 가능한 I2C 버스 발견: {bus_num} (i2cdetect에 BNO08x 표시)")
                     return bus_num
-                except Exception as e:
-                    if self.debug:
-                        print(f"버스 {bus_num} 테스트 실패: {e}")
-                    continue
-        
-        return None
+            except Exception:
+                pass
+        # 2) 그 외에는 첫 번째로 열리는 버스를 후보로
+        candidate_bus = None
+        for bus_num in range(10):
+            bus_path = f"/dev/i2c-{bus_num}"
+            if not os.path.exists(bus_path):
+                continue
+            try:
+                bus = smbus.SMBus(bus_num)
+                bus.close()
+                candidate_bus = bus_num
+                if self.debug:
+                    print(f"사용 가능한 I2C 버스 발견: {bus_num}")
+                break
+            except Exception:
+                continue
+        return candidate_bus
 
     def _find_imu_address(self):
-        """IMU 센서 주소 찾기"""
-        imu_addresses = [0x68, 0x69]  # MPU6050 가능한 주소들
-        
-        for addr in imu_addresses:
+        """IMU 센서 주소 찾기 (BNO08x 우선, 그 다음 MPU6050)"""
+        import subprocess
+        bus = None
+        try:
+            bus = smbus.SMBus(self.imu_bus)
+            # 0) i2cdetect 결과로 주소 우선 파악
             try:
-                # PWR_MGMT_1 레지스터 초기화
-                self.imu_bus.write_byte_data(addr, 0x6B, 0)
-                time.sleep(0.1)
-                
-                # WHO_AM_I 레지스터 읽기
-                who_am_i = self.imu_bus.read_byte_data(addr, 0x75)
-                
-                if who_am_i == 0x68:  # MPU6050 WHO_AM_I 값
+                out = subprocess.run(["i2cdetect", "-y", "-r", str(self.imu_bus)], capture_output=True, text=True, timeout=3)
+                txt = out.stdout.lower()
+                if " 4b" in txt:
+                    self.imu_type = 'BNO08X'
+                    return 0x4B
+                if " 4a" in txt:
+                    self.imu_type = 'BNO08X'
+                    return 0x4A
+            except Exception:
+                pass
+            # 1) BNO08x 후보 먼저 확인
+            for addr in [0x4B, 0x4A]:
+                try:
+                    bus.read_byte_data(addr, 0x00)
                     if self.debug:
-                        print(f"IMU 센서 발견: 주소 0x{addr:02X}")
+                        print(f"BNO08x 추정 장치 발견: 0x{addr:02X}")
+                    self.imu_type = 'BNO08X'
                     return addr
-                else:
-                    if self.debug:
-                        print(f"주소 0x{addr:02X} WHO_AM_I: 0x{who_am_i:02X} (예상: 0x68)")
-                        
-            except Exception as e:
-                if self.debug:
-                    print(f"주소 0x{addr:02X} 접근 실패: {e}")
-                continue
-        
+                except Exception:
+                    continue
+            # 2) MPU6050 후보 확인
+            for addr in [0x68, 0x69]:
+                try:
+                    bus.write_byte_data(addr, 0x6B, 0)
+                    time.sleep(0.05)
+                    who_am_i = bus.read_byte_data(addr, 0x75)
+                    if who_am_i == 0x68:
+                        if self.debug:
+                            print(f"MPU6050 발견: 0x{addr:02X}")
+                        self.imu_type = 'MPU6050'
+                        return addr
+                except Exception:
+                    continue
+        except Exception as e:
+            if self.debug:
+                print(f"IMU 주소 탐지 중 오류: {e}")
+        finally:
+            try:
+                if bus is not None:
+                    bus.close()
+            except Exception:
+                pass
         return None
 
     def read_imu_yaw(self):
         """IMU에서 Yaw 각도 읽기 (정중앙 기준)"""
-        if not self.imu_available or not self.imu_bus:
+        if not self.imu_available or self.imu_bus is None:
             return 0.0
             
         try:
-            # SMBus 객체 생성 (버스 번호로)
+            # BNO08x 우선
+            if self.imu_type == 'BNO08X' and self.bno is not None:
+                # 게임 회전벡터(쿼터니언) 읽기 → yaw 추출
+                q = self.bno.quaternion  # (w, x, y, z)
+                if q is None:
+                    # 연결이 흔들릴 수 있으므로 1회 재초기화 후 재시도
+                    if self._reinit_bno08x():
+                        q = self.bno.quaternion
+                        if q is None:
+                            return 0.0
+                    else:
+                        return 0.0
+                w, x, y, z = q
+                # yaw = atan2(2(wz+xy), 1-2(y^2+z^2)) (Tait-Bryan ZYX)
+                siny_cosp = 2.0 * (w * z + x * y)
+                cosy_cosp = 1.0 - 2.0 * (y * y + z * z)
+                yaw_rad = math.atan2(siny_cosp, cosy_cosp)
+                yaw_deg = yaw_rad * 180.0 / math.pi
+                self.current_angle = self.normalize_angle(yaw_deg)
+                corrected_angle = self.current_angle - self.angle_offset
+                return self.normalize_angle(corrected_angle)
+
+            # MPU6050 경로(이전 로직 유지)
             bus = smbus.SMBus(self.imu_bus)
-            
-            # 자이로스코프 데이터 읽기
             gyro_x = bus.read_word_data(self.imu_address, 0x43)
             gyro_y = bus.read_word_data(self.imu_address, 0x45)
             gyro_z = bus.read_word_data(self.imu_address, 0x47)
-            
-            # 16비트 값을 부호 있는 정수로 변환
             gyro_x = self.convert_to_signed(gyro_x)
             gyro_y = self.convert_to_signed(gyro_y)
             gyro_z = self.convert_to_signed(gyro_z)
-            
-            # 자이로스코프 스케일 팩터 (250도/초 기준)
             gyro_scale = 250.0 / 32768.0
-            
-            # Yaw 각도 계산 (Z축 회전)
             yaw_rate = gyro_z * gyro_scale
-            
-            # 간단한 적분 (실제로는 더 정교한 필터링 필요)
-            self.current_angle += yaw_rate * 0.01  # 10ms 간격 가정
-            
-            # 각도 정규화 (-180 ~ 180도)
+            self.current_angle += yaw_rate * 0.01
             self.current_angle = self.normalize_angle(self.current_angle)
-            
-            # 정중앙 기준으로 보정된 각도 반환
             corrected_angle = self.current_angle - self.angle_offset
             result = self.normalize_angle(corrected_angle)
-            
-            # SMBus 객체 닫기
             bus.close()
-            
             return result
             
         except Exception as e:
             if self.debug:
                 print(f"IMU 읽기 오류: {e}")
             return 0.0
+
+    def _reinit_bno08x(self):
+        """BNO08x를 재초기화하고 성공 여부 반환"""
+        try:
+            # 기존 연결 정리
+            if hasattr(self, 'bno') and self.bno is not None:
+                try:
+                    del self.bno
+                except:
+                    pass
+            
+            # 잠시 대기 후 재초기화
+            time.sleep(0.1)
+            
+            from adafruit_extended_bus import ExtendedI2C
+            from adafruit_bno08x.i2c import BNO08X_I2C
+            from adafruit_bno08x import BNO_REPORT_GAME_ROTATION_VECTOR
+            i2c = ExtendedI2C(self.imu_bus)
+            self.bno = BNO08X_I2C(i2c, address=self.imu_address)
+            
+            # 더 느린 속도로 재설정 (안정성 향상)
+            self.bno.enable_feature(BNO_REPORT_GAME_ROTATION_VECTOR, report_interval_us=50000)  # 20Hz로 낮춤
+            
+            if self.debug:
+                print("BNO08x 재초기화 완료 (20Hz)")
+            return True
+        except Exception as e:
+            if self.debug:
+                print(f"BNO08x 재초기화 실패: {e}")
+            self.bno = None
+            return False
 
     def center_robot(self):
         """로봇을 정중앙(0도)으로 맞추기"""
@@ -419,12 +558,12 @@ class IMUAIMotorController:
                     # PID 제어
                     motor_speed = self.pid_control(error)
                     
-                    # 회전 방향에 따른 모터 제어
+                    # 회전 방향에 따른 모터 제어 (좌우 방향 수정)
                     if abs(error) > 1.0:  # 1도 이상 오차가 있을 때만 회전
-                        if self.turn_direction == 1:  # 좌회전
-                            self.differential_drive(-abs(motor_speed), abs(motor_speed))
-                        elif self.turn_direction == -1:  # 우회전
+                        if self.turn_direction == 1:  # 좌회전 (방향 수정)
                             self.differential_drive(abs(motor_speed), -abs(motor_speed))
+                        elif self.turn_direction == -1:  # 우회전 (방향 수정)
+                            self.differential_drive(-abs(motor_speed), abs(motor_speed))
                     else:
                         # 목표 각도에 도달
                         self.stop_all()
@@ -432,7 +571,7 @@ class IMUAIMotorController:
                         if self.debug:
                             print(f"목표 각도 도달: {current_angle:.2f}도")
                 
-                time.sleep(0.01)  # 10ms 간격
+                time.sleep(0.02)  # 20ms 간격 (50Hz)
                 
             except Exception as e:
                 if self.debug:
@@ -446,6 +585,10 @@ class IMUAIMotorController:
                 print("이미 회전 중입니다.")
             return False
             
+        if self.use_servo_pulse_turn and hasattr(self, 'servo_pwm') and self.servo_pwm is not None:
+            # 서보를 90도 올렸다가(최대 펄스) 다시 90도 내리는(중립 복귀) 동작
+            return self._servo_pulse_90_cycle()
+
         if self.imu_available:
             # IMU 기반 정확한 회전
             self.target_angle = self.normalize_angle(self.current_angle + 90)
@@ -477,6 +620,59 @@ class IMUAIMotorController:
                 print("이미 회전 중입니다.")
             return False
             
+        if self.use_servo_pulse_turn and hasattr(self, 'servo_pwm') and self.servo_pwm is not None:
+            # 좌/우 구분 없이 동일하게 90도 올렸다가 내리는 동작
+            return self._servo_pulse_90_cycle()
+
+        if self.imu_available:
+            # IMU 기반 정확한 회전
+            self.target_angle = self.normalize_angle(self.current_angle - 90)
+            self.turn_direction = -1
+            self.is_turning = True
+            self.integral = 0.0  # 적분 항 리셋
+            
+            if self.debug:
+                print(f"90도 우회전 시작 (IMU 기반): 현재 {self.current_angle:.2f}도 -> 목표 {self.target_angle:.2f}도")
+        else:
+            # IMU 없이 시간 기반 회전
+            if self.debug:
+                print("90도 우회전 시작 (시간 기반)")
+            
+            # 우회전: 왼쪽 모터 전진, 오른쪽 모터 후진
+            self.differential_drive(40, -40)
+            time.sleep(1.5)  # 약 1.5초 회전 (실제 테스트로 조정 필요)
+            self.stop_all()
+            
+            if self.debug:
+                print("90도 우회전 완료 (시간 기반)")
+        
+        return True
+
+    def servo_up(self):
+        """서보 모터를 UP 위치(90도)로 이동"""
+        if hasattr(self, 'servo_pwm') and self.servo_pwm is not None:
+            self.set_servo_us(self.steering_servo_channel, self.servo_up_us)
+            self.servo_is_up = True
+            if self.debug:
+                print(f"서보 UP: ch={self.steering_servo_channel}, us={self.servo_up_us}")
+            return True
+        return False
+
+    def servo_down(self):
+        """서보 모터를 DOWN 위치(90도 아래)로 이동"""
+        if hasattr(self, 'servo_pwm') and self.servo_pwm is not None:
+            self.set_servo_us(self.steering_servo_channel, self.servo_down_us)
+            self.servo_is_up = False
+            if self.debug:
+                print(f"서보 DOWN: ch={self.steering_servo_channel}, us={self.servo_down_us}")
+            return True
+        return False
+
+    def _servo_pulse_90_cycle(self):
+        """기존 90도 회전용 (현재는 서보 UP/DOWN으로 대체)"""
+        # 좌/우회전에서 서보 기반이 활성화된 경우 UP으로 처리
+        return self.servo_up()
+
         if self.imu_available:
             # IMU 기반 정확한 회전
             self.target_angle = self.normalize_angle(self.current_angle - 90)
@@ -648,8 +844,8 @@ class IMUAIMotorController:
             return None
             
         try:
-            # AI 명령 API 엔드포인트로 변경
-            command_url = self.api_url.replace('/pose', '/command')
+            # AI 명령 API 엔드포인트 사용
+            command_url = self.api_url
             response = requests.get(command_url, timeout=5)
             if response.status_code == 200:
                 data = response.json()
@@ -698,23 +894,25 @@ class IMUAIMotorController:
         if command_code == 0 or command_name == 'STOP':
             # 정지
             self.stop_all()
+            self._cancel_move_boost()
             if self.debug:
                 print(f"정지 명령 실행")
                 
         elif command_code == 1 or command_name == 'MOVING_FORWARD':
             # 전진
-            self.differential_drive(speed, speed)
+            self.activate_move_boost(forward=True)
             if self.debug:
                 print(f"전진 명령 실행: 속도 {speed}%")
                 
         elif command_code == 2 or command_name == 'MOVING_BACKWARD':
             # 후진
-            self.differential_drive(-speed, -speed)
+            self.activate_move_boost(forward=False)
             if self.debug:
                 print(f"후진 명령 실행: 속도 {speed}%")
                 
         elif command_code == 3 or command_name == 'ROTATE_LEFT':
             # IMU를 이용한 정확한 90도 좌회전
+            self._cancel_move_boost()
             if not self.is_turning:
                 self.turn_left_90()
             if self.debug:
@@ -722,6 +920,7 @@ class IMUAIMotorController:
                 
         elif command_code == 4 or command_name == 'ROTATE_RIGHT':
             # IMU를 이용한 정확한 90도 우회전
+            self._cancel_move_boost()
             if not self.is_turning:
                 self.turn_right_90()
             if self.debug:
@@ -762,18 +961,19 @@ class IMUAIMotorController:
         
         if case == 'forward' or case == '전진':
             # 전진: 양쪽 모터 동일 속도
-            self.differential_drive(speed, speed)
+            self.activate_move_boost(forward=True)
             if self.debug:
                 print(f"전진 명령 실행: 속도 {speed}%")
                 
         elif case == 'backward' or case == '후진':
             # 후진: 양쪽 모터 동일 속도
-            self.differential_drive(-speed, -speed)
+            self.activate_move_boost(forward=False)
             if self.debug:
                 print(f"후진 명령 실행: 속도 {speed}%")
                 
         elif case == 'stop' or case == '정지':
             self.stop_all()
+            self._cancel_move_boost()
             if self.debug:
                 print("정지 명령 실행")
                 
@@ -810,6 +1010,10 @@ class IMUAIMotorController:
     def send_status_to_ai(self, status_data=None):
         if not self.api_url:
             return
+        
+        # 테스트 시 상태 전송 비활성화 옵션 (로그 줄이기)
+        if hasattr(self, 'disable_status_send') and self.disable_status_send:
+            return
             
         try:
             status = {
@@ -826,17 +1030,17 @@ class IMUAIMotorController:
             if status_data:
                 status.update(status_data)
                 
-            response = requests.post(self.api_url, json=status, timeout=5)
+            # 임베디드 장치는 상태 전송하지 않음 (AI 서버 단순화)
+            # 필요시 MQTT나 별도 엔드포인트로 전송
+            if self.debug and hasattr(self, '_status_debug_counter'):
+                self._status_debug_counter = getattr(self, '_status_debug_counter', 0) + 1
+                if self._status_debug_counter % 10 == 0:  # 10번마다 한 번만 출력
+                    print(f"[DEBUG] 로봇 상태: 속도=({status['motor_a_speed']}, {status['motor_b_speed']}), 각도={status['current_angle']:.1f}°")
+            return  # 상태 전송 비활성화
             
-            if self.debug:
-                if response.status_code == 200:
-                    print("상태 전송 성공")
-                else:
-                    print(f"상태 전송 실패: {response.status_code}")
-                    
         except Exception as e:
             if self.debug:
-                print(f"상태 전송 오류: {e}")
+                print(f"상태 처리 오류: {e}")
 
     def run_ai_control_loop(self, interval=1.0):
         if not self.api_url:
@@ -873,7 +1077,7 @@ class IMUAIMotorController:
         elif speed < 0:
             speed = 0
             
-        if motor == 0:  # 모터 A
+        if motor == 0:  # 모터 A (왼쪽 앞+뒤 모터 그룹)
             self.pwm.setDutycycle(self.PWMA, speed)
             if direction == self.FORWARD:
                 self.pwm.setLevel(self.AIN1, 0)
@@ -891,11 +1095,11 @@ class IMUAIMotorController:
         elif motor == 1:  # 모터 B
             self.pwm.setDutycycle(self.PWMB, speed)
             if direction == self.FORWARD:
-                self.pwm.setLevel(self.BIN1, 0)
-                self.pwm.setLevel(self.BIN2, 1)
+                self.pwm.setLevel(self.BIN1, 1)  # 반전: 0→1
+                self.pwm.setLevel(self.BIN2, 0)  # 반전: 1→0
             else:  # backward
-                self.pwm.setLevel(self.BIN1, 1)
-                self.pwm.setLevel(self.BIN2, 0)
+                self.pwm.setLevel(self.BIN1, 0)  # 반전: 1→0
+                self.pwm.setLevel(self.BIN2, 1)  # 반전: 0→1
             
             self.motor_b_speed = speed
             self.motor_b_direction = direction
@@ -922,6 +1126,53 @@ class IMUAIMotorController:
         self.motor_b_speed = 0
         if self.debug:
             print("모든 모터 정지")
+
+    # --- 부스트 주행 로직 ---
+    def activate_move_boost(self, forward=True):
+        """극한 부스트: 진동 모드로 정적 마찰력 극복"""
+        # 진동 주행으로 정적 마찰력 극복
+        self._vibration_start(forward)
+        
+        # 방향 설정  
+        left = self.boost_speed if forward else -self.boost_speed
+        right = self.boost_speed if forward else -self.boost_speed
+        self.differential_drive(left, right)
+        self.current_motion = 'forward' if forward else 'backward'
+        # 타이머 재설정
+        self._cancel_move_boost()
+    
+    def _vibration_start(self, forward=True):
+        """진동 모드: 짧은 펄스로 정적 마찰력 극복"""
+        direction = 1 if forward else -1
+        
+        # 3번의 절대 최대 강도 펄스로 시작
+        for i in range(3):
+            # 300% 절대 최대 펄스 (극한 정적 마찰력 극복)
+            self.differential_drive(300 * direction, 300 * direction)
+            time.sleep(0.1)
+            # 잠깐 정지
+            self.differential_drive(0, 0)
+            time.sleep(0.05)
+            
+        if self.debug:
+            print(f"안정 진동 모드 완료: {'전진' if forward else '후진'}")
+        self.move_boost_timer = threading.Timer(self.move_boost_duration, self._switch_to_cruise)
+        self.move_boost_timer.daemon = True
+        self.move_boost_timer.start()
+
+    def _switch_to_cruise(self):
+        if self.current_motion in ['forward', 'backward']:
+            speed = self.cruise_speed if self.current_motion == 'forward' else -self.cruise_speed
+            self.differential_drive(speed, speed)
+
+    def _cancel_move_boost(self):
+        if self.move_boost_timer is not None:
+            try:
+                self.move_boost_timer.cancel()
+            except Exception:
+                pass
+            self.move_boost_timer = None
+        self.current_motion = 'stop'
     
     def get_motor_status(self):
         return {
@@ -1054,14 +1305,14 @@ class IMUAIMotorController:
         차동 구동 (로봇 이동) - 모터 A와 B 동시 제어
         
         Args:
-            left_speed (int): 왼쪽 모터 속도 (-100 ~ 100)
-            right_speed (int): 오른쪽 모터 속도 (-100 ~ 100)
+            left_speed (int): 왼쪽 모터 속도 (-300 ~ 300)
+            right_speed (int): 오른쪽 모터 속도 (-300 ~ 300)
         """
-        # 속도 제한 (100%까지 허용)
-        left_speed = max(-100, min(100, left_speed))
-        right_speed = max(-100, min(100, right_speed))
+        # 속도 제한 (300%까지 허용 - 절대 최대 모드)
+        left_speed = max(-300, min(300, left_speed))
+        right_speed = max(-300, min(300, right_speed))
         
-        # 모터 A (왼쪽 모터) 설정
+        # 모터 A (왼쪽 앞+뒤 모터 그룹) 설정
         if left_speed > 0:
             # 모터 A 전진
             self.pwm.setDutycycle(self.PWMA, abs(left_speed))
@@ -1081,19 +1332,19 @@ class IMUAIMotorController:
             self.pwm.setDutycycle(self.PWMA, 0)
             self.motor_a_speed = 0
         
-        # 모터 B (오른쪽 모터) 설정
+        # 모터 B (오른쪽 앞+뒤 모터 그룹) 설정 - 방향 반전
         if right_speed > 0:
-            # 모터 B 전진
+            # 모터 B 전진 (방향 반전)
             self.pwm.setDutycycle(self.PWMB, abs(right_speed))
-            self.pwm.setLevel(self.BIN1, 0)
-            self.pwm.setLevel(self.BIN2, 1)
+            self.pwm.setLevel(self.BIN1, 1)  # 반전: 0→1
+            self.pwm.setLevel(self.BIN2, 0)  # 반전: 1→0
             self.motor_b_speed = abs(right_speed)
             self.motor_b_direction = self.FORWARD
         elif right_speed < 0:
-            # 모터 B 후진
+            # 모터 B 후진 (방향 반전)
             self.pwm.setDutycycle(self.PWMB, abs(right_speed))
-            self.pwm.setLevel(self.BIN1, 1)
-            self.pwm.setLevel(self.BIN2, 0)
+            self.pwm.setLevel(self.BIN1, 0)  # 반전: 1→0
+            self.pwm.setLevel(self.BIN2, 1)  # 반전: 0→1
             self.motor_b_speed = abs(right_speed)
             self.motor_b_direction = self.BACKWARD
         else:
@@ -1163,6 +1414,41 @@ class IMUAIMotorController:
         except Exception as e:
             if self.debug:
                 print(f"서보 모터 제어 실패: {e}")
+            return False
+
+    def set_servo_us(self, channel, microseconds):
+        """서보 모터를 펄스 폭(마이크로초)으로 제어"""
+        if not hasattr(self, 'servo_pwm') or self.servo_pwm is None:
+            if self.debug:
+                print("서보 모터 드라이버가 초기화되지 않았습니다.")
+            return False
+        try:
+            # 트림 반영 및 안전 클램프
+            microseconds = int(microseconds) + int(self.servo_trim_us.get(channel, 0))
+            microseconds = max(self.servo_min_us, min(self.servo_max_us, microseconds))
+            # 50Hz → 20,000us 주기, 12-bit(4096) 분해능
+            counts = int(microseconds * 4096 / 20000)
+            counts = max(0, min(4095, counts))
+            self.servo_pwm.setPWM(channel, 0, counts)
+            if self.debug:
+                print(f"서보 {channel}: {microseconds}us -> {counts}cnt")
+            return True
+        except Exception as e:
+            if self.debug:
+                print(f"서보 us 제어 실패: {e}")
+            return False
+
+    def set_servo_percent(self, channel, percent):
+        """서보 모터를 퍼센트(-100~100)로 제어 (중립 0%)"""
+        try:
+            percent = max(-100, min(100, float(percent)))
+            span = self.servo_max_us - self.servo_min_us
+            half = span / 2.0
+            microseconds = int(self.servo_center_us + (percent / 100.0) * half)
+            return self.set_servo_us(channel, microseconds)
+        except Exception as e:
+            if self.debug:
+                print(f"서보 percent 제어 실패: {e}")
             return False
 
     def stop_servo(self, channel):
@@ -1237,7 +1523,7 @@ def main():
     print("IMU AI 모터 컨트롤러 테스트")
     print("=" * 60)
     
-    ai_api_url = "http://localhost:5001/pose"
+    ai_api_url = "http://localhost:5001/command"  # AI 서버 주소
     controller = None
     
     try:
@@ -1255,12 +1541,12 @@ def main():
         else:
             print("Backend 연결 실패")
         
-        print("\n테스트 옵션을 선택하세요:")
+        print("\n임베디드 장치 모드를 선택하세요:")
         print("1. 전체 IMU 모터 통합 테스트 (정중앙 맞추기 포함)")
         print("2. 정중앙 맞추기만 실행")
-        print("3. AI 제어 루프 실행")
+        print("3. AI 제어 루프 실행 (AI 서버에서 명령 수신)")
         print("4. 모터 전용 테스트 (IMU 없이)")
-        print("5. Flask 웹 서버 + 명령 처리 시작")
+        print("5. Flask 웹 서버 + 명령 처리 시작 (사용 안 함)")
         print("6. 서보 모터 테스트")
         
         choice = input("\n선택 (1-6): ").strip()
@@ -1294,34 +1580,11 @@ def main():
             # 모터 전용 테스트 (IMU 없이)
             controller.test_motors_only()
         elif choice == "5":
-            # Flask 웹 서버 + 명령 처리 시작
-            print("\n=== Flask 웹 서버 + 명령 처리 시작 ===")
-            controller.start_command_processor()
-            
-            # Flask 서버 시작 (별도 스레드에서)
-            def run_flask():
-                app.run(host='0.0.0.0', port=5000, debug=False)
-            
-            flask_thread = threading.Thread(target=run_flask)
-            flask_thread.daemon = True
-            flask_thread.start()
-            
-            print("Flask 서버가 http://localhost:5000 에서 실행 중입니다.")
-            print("명령 API:")
-            print("  GET  /command - 현재 명령 조회")
-            print("  POST /command - 명령 설정 (JSON: {\"code\": 0-4})")
-            print("  GET  /status  - 서버 상태 조회")
-            print("\n명령 코드:")
-            for code, name in COMMAND_TABLE.items():
-                print(f"  {code}: {name}")
-            
-            try:
-                while True:
-                    current_cmd = controller.get_current_command()
-                    print(f"\r현재 명령: {current_cmd['code']} - {current_cmd['name']}", end='', flush=True)
-                    time.sleep(1)
-            except KeyboardInterrupt:
-                print("\n사용자에 의해 중단")
+            # Flask 웹 서버 기능은 제거됨 (AI 서버로 분리)
+            print("\n⚠️  옵션 5는 더 이상 사용되지 않습니다.")
+            print("AI 서버는 별도로 실행하세요:")
+            print("  python3 ai_client.py")
+            print("\n현재 장치는 임베디드 모드로만 동작합니다.")
         elif choice == "6":
             # 서보 모터 테스트
             controller.test_servos()

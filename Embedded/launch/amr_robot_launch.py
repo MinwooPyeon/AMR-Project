@@ -40,8 +40,8 @@ def generate_launch_description():
                 'frame_id': 'imu_link',
                 'publish_rate': 50.0,
                 'enable_temperature': True,
-                'imu_type': 0,  # 0: MPU6050
-                'i2c_address': 0x68
+                'imu_type': 4,  # 4: BNO08X (추가)
+                'i2c_address': 0x4B
             }]
         ),
 
@@ -56,8 +56,8 @@ def generate_launch_description():
             executable='angle_control_node',
             name='angle_control_node',
             parameters=[{
-                'imu_type': 'MPU9250',
-                'imu_i2c_address': 0x68,
+                'imu_type': 'BNO08X',
+                'imu_i2c_address': 0x4B,
                 'motor_i2c_address': 0x40,
                 'angle_tolerance': 2.0,
                 'turn_speed': 50.0,

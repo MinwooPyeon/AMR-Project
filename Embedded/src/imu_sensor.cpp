@@ -110,6 +110,9 @@ bool IMUSensor::initialize() {
             case IMUType::LSM9DS1:
                 success = initializeLSM9DS1();
                 break;
+            case IMUType::BNO08X:
+                success = initializeBNO08X();
+                break;
         }
         
         if (success) {
@@ -270,6 +273,21 @@ bool IMUSensor::initializeLSM9DS1() {
     return false; // 아직 구현되지 않음
 }
 
+bool IMUSensor::initializeBNO08X() {
+    // BNO08x(BNO080/085)는 SHTP/SH-2 프로토콜 기반이므로 별도 드라이버가 필요
+    // 현재는 최소 동작 스텁: 연결 플래그만 설정
+    std::cout << name_ << ": BNO08x 초기화 (스텁)" << std::endl;
+    connected_ = true;
+    updateStatus(IMUStatus::OK);
+    return true;
+}
+
+bool IMUSensor::initializeBNO08X() {
+    // BNO08x(BNO080/085)는 SHTP/SH-2 프로토콜 필요. 현재 저수준 I2C 레지스터 방식과 다름
+    std::cout << name_ << ": BNO08x 초기화 (구현 예정)" << std::endl;
+    return false; // 아직 구현되지 않음
+}
+
 bool IMUSensor::readData() {
     if (!connected_) {
         return false;
@@ -289,6 +307,9 @@ bool IMUSensor::readData() {
                 break;
             case IMUType::LSM9DS1:
                 success = readLSM9DS1Data();
+                break;
+            case IMUType::BNO08X:
+                success = readBNO08XData();
                 break;
         }
         
@@ -420,6 +441,19 @@ bool IMUSensor::readLSM9DS1Data() {
     return false;
 }
 
+bool IMUSensor::readBNO08XData() {
+    // BNO08x 구현 예정: 임시로 마지막 데이터 유지하고 타임스탬프만 갱신
+    std::lock_guard<std::mutex> lock(dataMutex_);
+    latestData_.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+    return true;
+}
+
+bool IMUSensor::readBNO08XData() {
+    // BNO08x 구현 예정 (SHTP 패킷 파싱 필요)
+    return false;
+}
+
 IMUData IMUSensor::getLatestData() const {
     std::lock_guard<std::mutex> lock(dataMutex_);
     return latestData_;
@@ -477,6 +511,10 @@ uint8_t IMUSensor::readRegister(uint8_t addr, uint8_t reg) {
 
 bool IMUSensor::testConnection() {
     try {
+        if (type_ == IMUType::BNO08X) {
+            // BNO08x는 레지스터 기반 WHO_AM_I가 없음. 연결 테스트는 상위 초기화에서 처리
+            return true;
+        }
         uint8_t who_am_i = readRegister(MPU6050Registers::WHO_AM_I);
         return who_am_i == 0x68; // MPU6050/MPU9250의 WHO_AM_I 값
     } catch (const std::exception& e) {

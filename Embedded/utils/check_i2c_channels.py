@@ -75,6 +75,15 @@ def test_i2c_access():
                 print(f"✓ 버스 {bus_num}: PCA9685 (0x60) 서보 모터 드라이버 접근 성공")
             except Exception as e:
                 print(f"✗ 버스 {bus_num}: PCA9685 (0x60) 서보 모터 드라이버 접근 실패 - {e}")
+
+            # BNO08x 주소 0x4A/0x4B 테스트 (간단 접근 시도)
+            for bno_addr in [0x4A, 0x4B]:
+                try:
+                    # SHTP 프로토콜 장치이므로 단순 레지스터 없음, 바이트 읽기 시도
+                    bus.read_byte_data(bno_addr, 0x00)
+                    print(f"✓ 버스 {bus_num}: BNO08x 추정 (0x{bno_addr:02X}) 응답 확인")
+                except Exception as e:
+                    print(f"✗ 버스 {bus_num}: BNO08x 추정 (0x{bno_addr:02X}) 접근 실패 - {e}")
             
             bus.close()
             

@@ -9,6 +9,8 @@ public:
 
     void writeRegister(uint8_t devAddr, uint8_t regAddr, uint8_t value) override;
     uint8_t readRegister(uint8_t devAddr, uint8_t regAddr) override;
+    void writeBytes(uint8_t devAddr, const uint8_t* data, size_t length) override;
+    void readBytes(uint8_t devAddr, uint8_t* buffer, size_t length) override;
 
 private:
     int fd_;

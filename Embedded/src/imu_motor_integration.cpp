@@ -33,8 +33,8 @@ public:
             // I2C 인터페이스 초기화
             i2cInterface_ = std::make_shared<MyI2CImplementation>(i2cDevice_);
             
-            // GY-BN008x IMU 초기화 (MPU6050 기반)
-            imuSensor_ = std::make_shared<IMUSensor>(i2cInterface_, IMUType::MPU6050, 0x68, "GY-BN008x");
+            // BNO08x IMU 초기화 (임시 스텁)
+            imuSensor_ = std::make_shared<IMUSensor>(i2cInterface_, IMUType::BNO08X, 0x4B, "BNO08x");
             
             if (!imuSensor_->initialize()) {
                 std::cerr << "IMU 센서 초기화 실패" << std::endl;

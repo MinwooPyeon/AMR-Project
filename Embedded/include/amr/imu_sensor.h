@@ -14,7 +14,8 @@ enum class IMUType {
     MPU6050,
     MPU9250,
     BNO055,
-    LSM9DS1
+    LSM9DS1,
+    BNO08X
 };
 
 // IMU 데이터 구조체
@@ -123,12 +124,14 @@ private:
     bool initializeAK8963();
     bool initializeBNO055();
     bool initializeLSM9DS1();
+    bool initializeBNO08X();
     
     bool readMPU6050Data();
     bool readMPU9250Data();
     bool readAK8963Data();
     bool readBNO055Data();
     bool readLSM9DS1Data();
+    bool readBNO08XData();
     
     bool writeRegister(uint8_t reg, uint8_t value);
     bool writeRegister(uint8_t addr, uint8_t reg, uint8_t value);
