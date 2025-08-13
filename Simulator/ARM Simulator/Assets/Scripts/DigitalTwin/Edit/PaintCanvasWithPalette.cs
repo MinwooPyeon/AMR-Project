@@ -99,6 +99,7 @@ public class PaintCanvasWithPalette : MonoBehaviour
             case BrushColor.Blue: brushColor = Color.blue; break;
             case BrushColor.Green: brushColor = Color.green; break;
             case BrushColor.Yellow: brushColor = Color.yellow; break;
+            case BrushColor.Gray: brushColor = Color.gray; break;
         }
     }
     public void SaveCanvas(string fileName = "canvas.png")

@@ -13,9 +13,9 @@ public class StateData : MonoBehaviour
         set { _serial = value; }
     }
     
-    public Vector2 GridPosition
+    public Vector2Int GridPosition
     {
-        get { return new Vector2(transform.position.x, transform.position.z); }
+        get { return CoordinateCalc.WorldToGrid(transform.position, Managers.Map.Resolution); }
     }
 
     public Vector3 WorldPosition

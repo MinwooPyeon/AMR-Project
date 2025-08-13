@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
     public void OnMapLoaded(ImageFile img)
     {
         // 맵 로드 완료 시 초기 위치 세팅
-        transform.position = new Vector3(img.width / 2, (img.height + img.width) / 3f, img.height / 2);
+        transform.position = new Vector3(img.width / 2 * Managers.Map.Resolution, (img.height + img.width) / 3f * Managers.Map.Resolution, img.height / 2 * Managers.Map.Resolution);
         is_loaded = true;
     }
 

@@ -40,23 +40,7 @@ public class ModuleSyncManager : MonoBehaviour
                 .OrderBy(id => lastProcessTime[id]) // 가장 오래된 순
                 .ToList();
 
-            // 2) 예산이 남으면 라운드로빈으로 나머지 채우기
-            if (Time.realtimeSinceStartup - startTime < frameBudget)
-            {
-                var fillCount = sortedDeviceIds.Count - dueModules.Count;
-                if (fillCount > 0)
-                {
-                    // lastProcessTime 기준으로 가장 최근 처리된 순서 뒤부터
-                    var other = sortedDeviceIds
-                        .Except(dueModules)
-                        .OrderBy(id => lastProcessTime[id])
-                        .ToList();
-                    dueModules.AddRange(other);
-                }
-            }
-
             // 3) 예산 초과할 때까지 순차 실행
-            int processed = 0;
             foreach (var moduleId in dueModules)
             {
                 // 요청만 던짐
@@ -66,7 +50,6 @@ public class ModuleSyncManager : MonoBehaviour
 
                 // 처리 시간 기록
                 lastProcessTime[moduleId] = now;
-                processed++;
 
                 if (Time.realtimeSinceStartup - startTime > frameBudget)
                     break;

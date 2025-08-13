@@ -32,10 +32,13 @@ public class MapSpawner : MonoBehaviour
         imgData = imageParser.LoadPNG(imageFileName);
         Debug.Log($"IMAGE : {imgData.width}  {imgData.height}  YAML : {yamlData.resolution}");
         Managers.Map.ClearPoses();
+        Managers.Map.Resolution = yamlData.resolution;
         Managers.Map.Grid.SetSize(imgData.width, imgData.height);
         SpawnByProbRanges();
-        
+
         MainCamera.OnMapLoaded(imgData);
+
+        Managers.Map.isLoaded = true;
     }
 
     void SpawnByProbRanges()
@@ -51,52 +54,51 @@ public class MapSpawner : MonoBehaviour
         loadGroup.transform.parent = transform;
         dropGroup.transform.parent = transform;
         chargerGroup.transform.parent = transform;
-        
-        
 
         for (int x = 0; x < imgData.width; x++)
         {
             for (int y = 0; y < imgData.height; y++)
             {
                 float p = imgData.probGrid[x, y];
-                Vector3 pos = new Vector3(x, 0, y);
-
+                Vector2Int gridPos = new Vector2Int(x, y);
+                Vector3 worldPos = CoordinateCalc.GridToWorld(gridPos, 0, yamlData.resolution);
                 if (p > 0.9f)
                 {
-                    Instantiate(freePrefab, pos, Quaternion.identity, freeGroup.transform);
-                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.FREE);
-                    //Debug.Log($"{pos}, {NODE_TYPE.FREE}");
+                    GameObject go = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
+                    Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.FREE);
                 }
                 else if (p < 0.1f)
                 {
-                    Instantiate(obstaclePrefab, pos, Quaternion.identity, obstacleGroup.transform);
-                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.OBSTACLE);
-                    //Debug.Log($"{pos}, {NODE_TYPE.OBSTACLE}");
+                    GameObject go = Instantiate(obstaclePrefab, worldPos + Vector3.up, Quaternion.identity, obstacleGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(go, yamlData.resolution);
+                    Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.OBSTACLE);
                 }
                 else if (p >= 0.55f && p < 0.7f)
                 {
-                    Instantiate(loadPrefab, pos, Quaternion.identity, loadGroup.transform);
-                    Managers.Map.AddLoaderPos(pos);
-                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.LOADER);
-                    //Debug.Log($"{pos}, {NODE_TYPE.LOADER}");
+                    GameObject go = Instantiate(loadPrefab, worldPos + Vector3.up, Quaternion.identity, loadGroup.transform);
+                    GameObject tile = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(tile, yamlData.resolution);
+                    Managers.Map.AddLoaderPos(worldPos);
+                    Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.LOADER);
                 }
-
                 else if (p >= 0.48f && p < 0.52f)
                 {
-                    Instantiate(chargerPrefab, pos, Quaternion.identity, chargerGroup.transform);
-                    Managers.Map.AddChargerPos(pos);
-                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.CHARGER);
-                    //Debug.Log($"{pos}, {NODE_TYPE.CHARGER}");
+                    GameObject go = Instantiate(chargerPrefab, worldPos + Vector3.up, Quaternion.identity, chargerGroup.transform);
+                    GameObject tile = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(tile, yamlData.resolution);
+                    Managers.Map.AddChargerPos(worldPos);
+                    Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.CHARGER);
                 }
-
                 else if (p >= 0.3f && p < 0.37f)
                 {
-                    Instantiate(dropPrefab, pos, Quaternion.identity, dropGroup.transform);
-                    Managers.Map.AddDroperPos(pos);
-                    Managers.Map.Grid.SetNode(pos, NODE_TYPE.DROPER);
-                    //Debug.Log($"{pos}, {NODE_TYPE.DROPER}");
+                    GameObject go = Instantiate(dropPrefab, worldPos + Vector3.up, Quaternion.identity, dropGroup.transform);
+                    GameObject tile = Instantiate(freePrefab, worldPos, Quaternion.identity, freeGroup.transform);
+                    SizeScaler.ChangeScaleWithoutHeight(tile, yamlData.resolution);
+                    Managers.Map.AddDroperPos(worldPos);
+                    Managers.Map.Grid.SetNode(worldPos, gridPos, NODE_TYPE.DROPER);
                 }
-                
+
             }
         }
     }

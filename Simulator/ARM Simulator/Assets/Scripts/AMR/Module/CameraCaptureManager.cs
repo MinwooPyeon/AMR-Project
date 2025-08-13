@@ -60,15 +60,6 @@ public class CameraCaptureManager : MonoBehaviour
         renderTextures[id] = rt;
     }
 
-    /// <summary>
-    /// 캡처 요청: 비동기 렌더 → CPU 복사
-    /// </summary>
-    public void RequestCapture(string id, long timestamp)
-    {
-        if (!cameras.ContainsKey(id)) return;
-        StartCoroutine(CaptureCameraAsync(id, cameras[id], timestamp));
-    }
-
     private IEnumerator CaptureCameraAsync(string id, Camera cam, long timestamp)
     {
         yield return FrameEnd;
@@ -78,9 +69,23 @@ public class CameraCaptureManager : MonoBehaviour
         cam.Render();
         cam.targetTexture = null;
 
-        AsyncGPUReadback.Request(rt, 0, TextureFormat.RGB24,
-            req => OnCompleteReadback(req, id, timestamp)
-        );
+        // ★ RGBA32로 요청하고 Color32로 받기
+        AsyncGPUReadback.Request(rt, 0, TextureFormat.RGBA32,
+            req => {
+                if (req.hasError) { Debug.LogWarning($"Readback Error {id}"); return; }
+                Color32[] pixels = req.GetData<Color32>().ToArray(); // len = w*h
+                var state = Managers.Device.VirtualDevices[id].GetComponent<StateData>();
+                Managers.Data.OnCameraCaptured(id, pixels, timestamp, state);
+            });
+    }
+
+    /// <summary>
+    /// 캡처 요청: 비동기 렌더 → CPU 복사
+    /// </summary>
+    public void RequestCapture(string id, long timestamp)
+    {
+        if (!cameras.ContainsKey(id)) return;
+        StartCoroutine(CaptureCameraAsync(id, cameras[id], timestamp));
     }
 
     private void OnCompleteReadback(AsyncGPUReadbackRequest request, string id, long timestamp)

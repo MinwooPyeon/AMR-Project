@@ -13,6 +13,7 @@ public class DeviceDetailUI : MonoBehaviour
     {
         _frames = Managers.Data.GetFrameHistory(serialNumber);
         devicePanel.SetData(serialNumber, _frames[_frames.Count - 1]);
+        Debug.Log(_frames.Count);
         frameListPanel.setData(_frames);
     }
 
