@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.R
 import com.android.ssamr.core.common.time.formatMonthDayTimeKorean
+import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.model.Report
 import com.android.ssamr.core.domain.model.ReportAction
 import com.android.ssamr.core.domain.model.ReportCategory
@@ -52,7 +53,7 @@ fun ReportStatCard(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = modifier
     ) {
         Column(
@@ -128,17 +129,34 @@ fun ReportCard(
     report: Report,
     onClick: (Long) -> Unit
 ) {
-    val primaryTagColor = when (report.riskLevel) {
+    val action = try {
+        ReportAction.valueOf(report.case) // 문자열 -> enum 변환
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+
+    val primaryTagColor = when (action) {
         ReportAction.COLLAPSE  -> Color(0xFFFFE9B0) // 연노랑
-        ReportAction.SMOKE     -> Color(0xFFFFD1D1) // 연분홍
+        ReportAction.SMOKE     -> Color(0xFFF3E8FF) // 연분홍
         ReportAction.EQUIPMENT -> Color(0xFFD7E6FF) // 연파랑
         ReportAction.DANGER    -> Color(0xFFFFD1D1) // 연분홍
+        null                   -> Color.Gray
     }
-    val primaryTagText = when (report.riskLevel) {
+
+    val primaryTextColor = when (action) {
+        ReportAction.COLLAPSE  -> Color(0xFFB4812E)
+        ReportAction.SMOKE     -> Color(0xFF9C44EC)
+        ReportAction.EQUIPMENT -> Color(0xFF5184A0)
+        ReportAction.DANGER    -> Color(0xFFDC2626)
+        null                   -> Color.DarkGray
+    }
+
+    val primaryTagText = when (action) {
         ReportAction.COLLAPSE  -> "적재불안정"
         ReportAction.SMOKE     -> "흡연"
         ReportAction.EQUIPMENT -> "장비고장"
         ReportAction.DANGER    -> "안전사고"
+        null                   -> "기타"
     }
 
     Card(
@@ -154,7 +172,7 @@ fun ReportCard(
 
             // 상단: 태그 칩들 + 해결여부
             Row(verticalAlignment = Alignment.CenterVertically) {
-                TagChip(label = primaryTagText, bg = primaryTagColor, fg = Color(0xFF5B5B5B))
+                TagChip(label = primaryTagText, bg = primaryTagColor, fg = primaryTextColor)
 
                 Spacer(Modifier.width(6.dp))
                 // 스샷처럼 추가 칩들
@@ -167,7 +185,7 @@ fun ReportCard(
             // 제목
             Text(
                 text = report.title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color(0xFF111322)
             )
@@ -185,7 +203,7 @@ fun ReportCard(
                 Spacer(Modifier.width(6.dp))
                 Text(
                     text = "${report.area} 구역",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color(0xFF4E5968)
                 )
 
@@ -200,7 +218,7 @@ fun ReportCard(
                 Spacer(Modifier.width(6.dp))
                 Text(
                     text = report.serial,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = Color(0xFF4E5968)
                 )
             }
@@ -300,9 +318,9 @@ fun ReportCardPreview() {
                 id = 1L,
                 title = "창고 A구역 화재 위험 감지",
                 content = "…",
-                riskLevel = ReportAction.DANGER,
+                riskLevel = NotificationAction.DANGER,
                 area = "A-12",
-                case = "화재",
+                case = "SMOKE",
                 image = null,
                 serial = "AMR-001",
                 createAt = "2024-01-15 14:30",

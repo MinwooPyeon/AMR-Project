@@ -4,7 +4,7 @@ data class Report(
     val id: Long,
     val title: String,
     val content: String,
-    val riskLevel: ReportAction,
+    val riskLevel: NotificationAction,
     val area: String,
     val case: String,
     val image: String?,

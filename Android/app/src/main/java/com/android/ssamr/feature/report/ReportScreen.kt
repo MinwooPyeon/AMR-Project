@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.model.Report
 import com.android.ssamr.core.domain.model.ReportAction
 import com.android.ssamr.core.domain.model.ReportCategory
@@ -85,7 +86,7 @@ val sampleReports = listOf(
         id = 1L,
         title = "창고 A구역 화재 위험 감지",
         content = "…",
-        riskLevel = ReportAction.DANGER,
+        riskLevel = NotificationAction.DANGER,
         area = "A-12",
         case = "화재",
         image = null,
@@ -96,7 +97,7 @@ val sampleReports = listOf(
         id = 1L,
         title = "창고 A구역 화재 위험 감지",
         content = "…",
-        riskLevel = ReportAction.DANGER,
+        riskLevel = NotificationAction.DANGER,
         area = "A-12",
         case = "화재",
         image = null,
@@ -107,7 +108,7 @@ val sampleReports = listOf(
         id = 1L,
         title = "창고 A구역 화재 위험 감지",
         content = "…",
-        riskLevel = ReportAction.DANGER,
+        riskLevel = NotificationAction.DANGER,
         area = "A-12",
         case = "화재",
         image = null,
@@ -118,7 +119,7 @@ val sampleReports = listOf(
         id = 1L,
         title = "창고 A구역 화재 위험 감지",
         content = "…",
-        riskLevel = ReportAction.DANGER,
+        riskLevel = NotificationAction.DANGER,
         area = "A-12",
         case = "화재",
         image = null,
@@ -129,7 +130,7 @@ val sampleReports = listOf(
         id = 1L,
         title = "창고 A구역 화재 위험 감지",
         content = "…",
-        riskLevel = ReportAction.DANGER,
+        riskLevel = NotificationAction.DANGER,
         area = "A-12",
         case = "화재",
         image = null,
@@ -139,7 +140,7 @@ val sampleReports = listOf(
         id = 1L,
         title = "창고 A구역 화재 위험 감지",
         content = "…",
-        riskLevel = ReportAction.DANGER,
+        riskLevel = NotificationAction.DANGER,
         area = "A-12",
         case = "화재",
         image = null,
