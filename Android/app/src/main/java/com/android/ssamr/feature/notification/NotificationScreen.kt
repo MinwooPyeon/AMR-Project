@@ -1,5 +1,7 @@
 package com.android.ssamr.feature.notification
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,7 @@ import com.android.ssamr.core.domain.model.Notification
 import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.model.NotificationCategory
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotificationScreen(
     state: NotificationState,
@@ -39,6 +42,7 @@ fun NotificationScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun NotificationScreenPreview() {
@@ -69,7 +73,8 @@ val sampleNotifications = listOf(
         area = "A구역-1",
         createAt = "3분전",
         image = "",
-        isRead = false
+        isRead = false,
+        serial = "AMR001"
     ),
     Notification(
         id = 1L,
@@ -80,7 +85,8 @@ val sampleNotifications = listOf(
         area = "A구역-1",
         createAt = "3분전",
         image = "",
-        isRead = true
+        isRead = true,
+        serial = "AMR001"
     ),
     Notification(
         id = 1L,
@@ -91,7 +97,8 @@ val sampleNotifications = listOf(
         area = "A구역-1",
         createAt = "3분전",
         image = "",
-        isRead = true
+        isRead = true,
+        serial = "AMR001"
     ),
     Notification(
         id = 1L,
@@ -102,7 +109,8 @@ val sampleNotifications = listOf(
         area = "A구역-1",
         createAt = "3분전",
         image = "",
-        isRead = false
+        isRead = false,
+        serial = "AMR001"
     ),
     Notification(
         id = 1L,
@@ -113,6 +121,7 @@ val sampleNotifications = listOf(
         area = "A구역-1",
         createAt = "3분전",
         image = "",
-        isRead = true
+        isRead = true,
+        serial = "AMR001"
     )
 )

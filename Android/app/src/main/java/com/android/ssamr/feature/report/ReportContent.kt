@@ -28,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.ssamr.core.domain.model.NotificationCategory
+import com.android.ssamr.core.domain.model.ReportCategory
+import com.android.ssamr.feature.notification.NotificationCategoryTabRow
 import com.android.ssamr.feature.notification.NotificationIntent
 import com.android.ssamr.feature.notification.NotificationState
 import com.android.ssamr.ui.theme.SSAMRTheme
@@ -137,5 +139,16 @@ fun ReportStatsGrid() {
             ReportStatCard(count = 2, label = "위험 이벤트", countColor = Color(0xFFD32F2F), modifier = Modifier.weight(1f))
             ReportStatCard(count = 2, label = "경고 이벤트", countColor = Color(0xFFF57C00), modifier = Modifier.weight(1f))
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ReportCategoryTabRowPreview() {
+    SSAMRTheme {
+        ReportCategoryTabRow(
+            ReportState()
+        ) {}
+
     }
 }

@@ -5,10 +5,10 @@ data class Report(
     val title: String,
     val content: String,
     val riskLevel: ReportAction,
-    val date: String,
+    val area: String,
+    val case: String,
     val image: String?,
-    val location: String,
-    val isRead: Boolean = false
+    val serial: String
 )
 
 

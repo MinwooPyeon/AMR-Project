@@ -10,6 +10,7 @@ data class Notification(
     val image: String?,
     val isRead: Boolean = false,
     val createAt: String,
+    val serial: String
     )
 
 

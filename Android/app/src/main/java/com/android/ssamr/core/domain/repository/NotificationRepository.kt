@@ -17,7 +17,7 @@ interface NotificationRepository {
     suspend fun markReadLocal(id: Long)
 
     /** Server: 읽음 동기화(베스트에포트) */
-    suspend fun markReadRemote(id: Long)
+    suspend fun markReadRemote(id: Long, isRead: Boolean)
 
     // ✅ 상세용 (추가)
     suspend fun observeNotification(id: Long): Flow<Notification?>

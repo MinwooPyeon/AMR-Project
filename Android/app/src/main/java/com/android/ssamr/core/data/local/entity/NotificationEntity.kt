@@ -13,6 +13,7 @@ data class NotificationEntity(
     val case: String,
     val image: String?,
     val isRead: Boolean,
-    val readAt: Long? = null,
+    val readAt: String? = null,
     val createAt: String,
+    val serial: String
     )

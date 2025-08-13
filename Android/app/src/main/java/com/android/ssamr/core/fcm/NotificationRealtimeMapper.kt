@@ -15,6 +15,7 @@ class NotificationRealtimeMapper @Inject constructor() {
         val date = data["date"].orEmpty()
         val image = data["image"]
         val location = data["location"].orEmpty()
+        val serial = data["serial"].orEmpty()
 
         val riskLevel = when (risk) {
             "DANGER" -> NotificationAction.DANGER
@@ -32,7 +33,8 @@ class NotificationRealtimeMapper @Inject constructor() {
             createAt = date,
             image = image,
             area = location,
-            isRead = false
+            isRead = false,
+            serial = serial
         )
     }
 }

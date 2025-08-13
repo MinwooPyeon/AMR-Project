@@ -1,5 +1,7 @@
 package com.android.ssamr.feature.notification
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +43,7 @@ import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.model.NotificationCategory
 import com.android.ssamr.ui.theme.SSAMRTheme
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotificationList(
     notification: List<Notification>,
@@ -99,6 +102,7 @@ fun NotificationCategoryTabRow(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NotificationCard(
     notification: Notification,
@@ -233,6 +237,7 @@ fun NotificationCategoryTabRowPreview() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun NotificationListPreview() {
@@ -247,7 +252,8 @@ fun NotificationListPreview() {
                 area = "A구역-1",
                 createAt = "3분전",
                 image = "",
-                isRead = false
+                isRead = false,
+                serial = "AMR001"
                 ),
             Notification(
                 id = 1L,
@@ -258,7 +264,8 @@ fun NotificationListPreview() {
                 area = "A구역-1",
                 createAt = "3분전",
                 image = "",
-                isRead = true
+                isRead = true,
+                serial = "AMR001"
             ),
             Notification(
                 id = 1L,
@@ -269,7 +276,8 @@ fun NotificationListPreview() {
                 area = "A구역-1",
                 createAt = "3분전",
                 image = "",
-                isRead = true
+                isRead = true,
+                serial = "AMR001"
             ),
             Notification(
                 id = 1L,
@@ -280,7 +288,8 @@ fun NotificationListPreview() {
                 area = "A구역-1",
                 createAt = "3분전",
                 image = "",
-                isRead = false
+                isRead = false,
+                serial = "AMR001"
             ),
             Notification(
                 id = 1L,
@@ -291,7 +300,8 @@ fun NotificationListPreview() {
                 area = "A구역-1",
                 createAt = "3분전",
                 image = "",
-                isRead = true
+                isRead = true,
+                serial = "AMR001"
             )
         )
 
