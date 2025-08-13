@@ -20,8 +20,10 @@ class MorescreenViewModel : ViewModel() {
             is MorescreenIntent.OnNoticeClick -> navigate(MorescreenDestination.NOTICE)
             is MorescreenIntent.OnVersionInfoClick -> navigate(MorescreenDestination.VERSION_INFO)
             is MorescreenIntent.OnProfileClick -> navigate(MorescreenDestination.PROFILE)
+            is MorescreenIntent.OnReportClick -> navigate(MorescreenDestination.REPORT)
 
             is MorescreenIntent.OnProfileEdited -> updateUserProfile(intent.newProfile)
+
         }
     }
 

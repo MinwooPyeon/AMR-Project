@@ -10,6 +10,8 @@ sealed interface MorescreenIntent {
     data object OnVersionInfoClick : MorescreenIntent
     data object OnProfileClick : MorescreenIntent
 
+    data object OnReportClick : MorescreenIntent
+
     data class OnProfileEdited(val newProfile: UserProfileUiModel) : MorescreenIntent
 }
 
@@ -50,5 +52,6 @@ enum class MorescreenDestination {
     HELP,
     NOTICE,
     VERSION_INFO,
-    PROFILE
+    PROFILE,
+    REPORT
 }

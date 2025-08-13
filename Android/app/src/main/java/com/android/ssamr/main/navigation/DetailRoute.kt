@@ -40,3 +40,8 @@ data object FullscreenPhotoScreen : DetailRoute {
     }
 
 }
+
+data object ReportScreen : DetailRoute {
+    override val route = "report"
+    override val label = "이벤트 리포트"
+}

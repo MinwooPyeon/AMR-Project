@@ -8,7 +8,8 @@ data class Report(
     val area: String,
     val case: String,
     val image: String?,
-    val serial: String
+    val serial: String,
+    val createAt: String,
 )
 
 
