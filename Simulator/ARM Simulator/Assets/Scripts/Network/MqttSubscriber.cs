@@ -1,5 +1,6 @@
-using System;
+ï»¿using System;
 using System.Text;
+using System.Collections.Concurrent;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
 using uPLibrary.Networking.M2Mqtt.Messages;
@@ -7,14 +8,17 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 public class MqttSubscriber : MonoBehaviour
 {
     private MqttClient client;
-    private ReceiveMessageParser parser;
-    // ºê·ÎÄ¿ Á¤º¸
-    private readonly string brokerAddress = "192.168.100.141";
-    private readonly int brokerPort = 1883;
+    private ReceiveMessageParser parser = new();
 
-    // ±¸µ¶ÇÒ ÅäÇÈ ¸ñ·Ï
+    // ë©”ì¸ ìŠ¤ë ˆë“œ ì²˜ë¦¬ìš© í (topic, payload)
+    private readonly ConcurrentQueue<(string topic, string payload)> _queue = new();
+
+    // ë¸Œë¡œì»¤ ì •ë³´
+    [SerializeField] private string brokerAddress = "192.168.100.141";
+    [SerializeField] private int brokerPort = 1883;
+
+    // êµ¬ë… í† í”½/QoS
     private readonly string[] topics = { "map", "status" };
-    // °¢ ÅäÇÈÀÇ QoS ·¹º§ (ÅäÇÈ ¹è¿­ ¼ø¼­¿Í ´ëÀÀ)
     private readonly byte[] qosLevels = {
         MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE,
         MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE
@@ -22,65 +26,88 @@ public class MqttSubscriber : MonoBehaviour
 
     private void Start()
     {
-        // 1) Å¬¶óÀÌ¾ğÆ® »ı¼º
-        client = new MqttClient(brokerAddress, brokerPort, false, null, null, MqttSslProtocols.None);
-        // 2) ¸Ş½ÃÁö ¼ö½Å ÀÌº¥Æ® µî·Ï
-        client.MqttMsgPublishReceived += MsgReceived;
+        Application.runInBackground = true; // (ì˜µì…˜) í¬ì»¤ìŠ¤ ì—†ì–´ë„ í†µì‹  ìœ ì§€
 
-        // 3) ºê·ÎÄ¿ ¿¬°á
+        client = new MqttClient(brokerAddress, brokerPort, false, null, null, MqttSslProtocols.None);
+        client.MqttMsgPublishReceived += OnMsgReceived_BackgroundThread;
+
         string clientId = Guid.NewGuid().ToString();
         client.Connect(clientId);
-
-        // 4) º¹¼ö ÅäÇÈ ±¸µ¶
         client.Subscribe(topics, qosLevels);
-        //Debug.Log($"Subscribed to: {string.Join(", ", topics)}");
     }
 
-    // 5) ¸Ş½ÃÁö µµÂø ½Ã È£Ãâ
-    private void MsgReceived(object sender, MqttMsgPublishEventArgs e)
+    // MQTT ë¼ì´ë¸ŒëŸ¬ë¦¬ì˜ ì½œë°±: **ë°±ê·¸ë¼ìš´ë“œ ìŠ¤ë ˆë“œ**
+    private void OnMsgReceived_BackgroundThread(object sender, MqttMsgPublishEventArgs e)
     {
         string topic = e.Topic;
         string payload = Encoding.UTF8.GetString(e.Message);
 
-        switch (topic)
+        // â— ì—¬ê¸°ì„œëŠ” Unity API ì ˆëŒ€ í˜¸ì¶œ ê¸ˆì§€
+        // ë©”ì¸ ìŠ¤ë ˆë“œ íì— ë„£ê¸°ë§Œ í•œë‹¤
+        _queue.Enqueue((topic, payload));
+    }
+
+    // ë©”ì¸ ìŠ¤ë ˆë“œì—ì„œ í˜¸ì¶œë¨
+    private void Update()
+    {
+        // ëˆ„ì ëœ ë©”ì‹œì§€ë¥¼ ë©”ì¸ ìŠ¤ë ˆë“œì—ì„œ ì•ˆì „í•˜ê²Œ ì²˜ë¦¬
+        while (_queue.TryDequeue(out var item))
         {
-            case "map":
-                HandleMap(payload);
-                break;
-            case "status":
-                HandleStatus(payload);
-                break;
-            default:
-                Debug.LogWarning($"Unknown topic '{topic}': {payload}");
-                break;
+            switch (item.topic)
+            {
+                case "map":
+                    HandleMap_MainThread(item.payload);
+                    break;
+                case "status":
+                    HandleStatus_MainThread(item.payload);
+                    break;
+                default:
+                    Debug.LogWarning($"Unknown topic '{item.topic}': {item.payload}");
+                    break;
+            }
         }
     }
 
-    //TOOD Map Psrsing & Save
-    private void HandleMap(string json)
+    // â¬‡ï¸ ì•„ë˜ ë‘ í•¨ìˆ˜ëŠ” **ë©”ì¸ ìŠ¤ë ˆë“œì—ì„œë§Œ** í˜¸ì¶œë¨
+    private void HandleMap_MainThread(string json)
     {
-        Debug.Log($"Map µ¥ÀÌÅÍ ¼ö½Å: {json}");
+        // íŒŒì‹±ì€ ì–´ë””ì„œë“  ê°€ëŠ¥í•˜ì§€ë§Œ, Unity ì˜¤ë¸Œì íŠ¸ ì ‘ê·¼ì€ ì—¬ê¸°ì„œë§Œ
         MapMsg msg = parser.ParseMapMessage(json);
-        
-        
+        Debug.Log($"Map ë°ì´í„° ìˆ˜ì‹ : {json}");
+        // TODO: msgë¡œ ë§µ ë¡œë“œ/í‘œì‹œ ë¡œì§ (Unity API OK)
     }
 
-    private void HandleStatus(string json)
+    private void HandleStatus_MainThread(string json)
     {
-        Debug.Log($"Velocity µ¥ÀÌÅÍ ¼ö½Å: {json}");
         StatusMsg msg = parser.ParseStatusMessage(json);
+        // Debug.Log($"Status ë°ì´í„° ìˆ˜ì‹ : {json}");
 
         if (Managers.Map.isLoaded)
         {
+            // Unity APIë¥¼ í˜¸ì¶œí•´ë„ ì•ˆì „ (ë©”ì¸ ìŠ¤ë ˆë“œ)
             Managers.Device.RegistRealDevice(msg);
             Managers.Device.DeviceActor(msg.serialNumber, msg);
         }
     }
 
-    private void OnDestroy()
+    private void OnApplicationQuit()
     {
-        if (client != null && client.IsConnected)
-            client.Disconnect();
+        // ì¢…ë£Œ ì²˜ë¦¬
+        try
+        {
+            if (client != null && client.IsConnected)
+                client.Disconnect();
+        }
+        catch { /* ë¬´ì‹œ */ }
     }
 
+    private void OnDestroy()
+    {
+        try
+        {
+            if (client != null && client.IsConnected)
+                client.Disconnect();
+        }
+        catch { /* ë¬´ì‹œ */ }
+    }
 }

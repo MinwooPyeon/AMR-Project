@@ -5,7 +5,7 @@ public class DeviceNumberPanel : MonoBehaviour
 {
     public InputField inputField;
     public Slider slider;
-    private int _deviceNum = 1;
+    private int _deviceNum = 2;
 
     public void SetSliderValue()
     {

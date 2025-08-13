@@ -61,4 +61,6 @@ public class MapManager
         Vector3 droper = _dropers[idx];
         return Grid.GetLocateNode(droper);
     }
+
+    
 }

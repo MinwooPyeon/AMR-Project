@@ -62,7 +62,6 @@ public class WalkableMaskBuilder
                 {
                     _dist[nx, ny] = nd;
                     grid[nx, ny].Walkable = false;
-                    Debug.Log("Walkable Changed False");
                     _que.Enqueue((nx, ny));
                 }
             }

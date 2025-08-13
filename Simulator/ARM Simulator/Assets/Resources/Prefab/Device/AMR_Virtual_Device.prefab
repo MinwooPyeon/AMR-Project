@@ -481,6 +481,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 180
   moveSpeed: 5
+  detectRadius: 0.35
+  forwardBias: 0.5
+  safeDistance: 0.6
+  amrLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  blockRadius: 0.35
+  blockDuration: 1.2
+  replanCooldown: 0.8
 --- !u!114 &3119593388044345967
 MonoBehaviour:
   m_ObjectHideFlags: 0

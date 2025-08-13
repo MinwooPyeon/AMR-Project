@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -78,9 +78,9 @@ public class DeviceManager
 
     public void RegistRealDevice(StatusMsg msg)
     {
-        if (_devices[msg.serialNumber] != null) return;
+        if (_devices.ContainsKey(msg.serialNumber)) return;
 
-        GameObject obj = Managers.Resource.Instantiate("Prefab/Device/AMR_Real_Device");
+        GameObject obj = Managers.Resource.Instantiate("Device/AMR_Real_Device");
         obj.transform.position = new Vector3(msg.position.x, 0, msg.position.y);
         _devices.Add(msg.serialNumber, obj.GetComponent<DeviceController>());
         _deviceState.Add(msg.serialNumber, obj.GetComponent<StateData>());
