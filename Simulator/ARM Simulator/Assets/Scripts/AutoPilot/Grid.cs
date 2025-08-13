@@ -15,7 +15,9 @@ public class Grid
         {NODE_TYPE.LOADER, ()=>new LoaderNode() },
         {NODE_TYPE.DROPER, ()=>new DroperNode() },
     };
-    Node[,] grid;
+
+    public Node[,] grid;
+
     int _width, _height;
 
     public void SetSize(int width, int height)
