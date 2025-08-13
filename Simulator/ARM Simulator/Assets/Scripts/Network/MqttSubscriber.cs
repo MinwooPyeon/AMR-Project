@@ -59,7 +59,7 @@ public class MqttSubscriber : MonoBehaviour
     //TOOD Map Psrsing & Save
     private void HandleMap(string json)
     {
-        Debug.Log($"Position 데이터 수신: {json}");
+        Debug.Log($"Map 데이터 수신: {json}");
         MapMsg msg = parser.ParseMapMessage(json);
         
         
