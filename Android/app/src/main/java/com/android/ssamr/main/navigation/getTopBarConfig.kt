@@ -96,6 +96,11 @@ fun getTopBarConfig(
             showBack = true,
             onBackClick = { navController.popBackStack() }
         )
+        route.startsWith("report_detail") -> TopBarConfig(
+            title = "이벤트 상세",
+            showBack = true,
+            onBackClick = { navController.popBackStack() }
+        )
         else -> null
     }
 }

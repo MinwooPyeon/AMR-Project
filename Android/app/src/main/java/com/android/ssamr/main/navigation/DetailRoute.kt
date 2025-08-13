@@ -45,3 +45,8 @@ data object ReportScreen : DetailRoute {
     override val route = "report"
     override val label = "이벤트 리포트"
 }
+
+data object ReportDetailScreen : DetailRoute {
+    override val route = "report_detail"
+    override val label = "이벤트 상세"
+}
