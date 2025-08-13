@@ -2,6 +2,9 @@ package com.android.ssamr.feature.report
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +30,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,6 +52,17 @@ import com.android.ssamr.core.domain.model.Report
 import com.android.ssamr.core.domain.model.ReportAction
 import com.android.ssamr.core.domain.model.ReportCategory
 import com.android.ssamr.ui.theme.SSAMRTheme
+import ir.ehsannarmani.compose_charts.ColumnChart
+import ir.ehsannarmani.compose_charts.PieChart
+import ir.ehsannarmani.compose_charts.RowChart
+import ir.ehsannarmani.compose_charts.models.BarProperties
+import ir.ehsannarmani.compose_charts.models.Bars
+import ir.ehsannarmani.compose_charts.models.Pie
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import kotlin.collections.listOf
 
 @Composable
 fun ReportStatCard(
@@ -162,7 +182,7 @@ fun ReportCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 6.dp)
+            .padding(horizontal = 12.dp)
             .clickable { onClick(report.id) },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -243,6 +263,200 @@ fun ReportCard(
         }
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun ReportChartsSection(
+    state: ReportState,
+    sendIntent: (ReportIntent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "이벤트 발생 현황",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(Modifier.height(16.dp))
+                CategoryDonutChart(
+                    counts = state.startCardCounts,
+                    onSliceClick = { category ->
+                        sendIntent(ReportIntent.ClickReportCategory(category))
+                    }
+                )
+
+                Spacer(Modifier.height(32.dp))
+
+                RiskRowChart(
+                    danger = state.fullReportList.count { it.riskLevel == NotificationAction.DANGER },
+                    warning = state.fullReportList.count { it.riskLevel == NotificationAction.WARNING },
+                    info = state.fullReportList.count { it.riskLevel == NotificationAction.INFORMATION }
+                )
+
+                Spacer(Modifier.height(32.dp))
+
+                WeeklyColumnChart(dateStrings = state.fullReportList.map { it.createAt })
+            }
+        }
+
+    }
+}
+@Composable
+fun CategoryDonutChart(
+    counts: Map<ReportCategory, Int>,
+    onSliceClick: (ReportCategory) -> Unit,
+) {
+    val labelToCategory = ReportCategory.values().associateBy { it.label }
+
+    val pieData by remember(counts) {
+        mutableStateOf(
+            listOf(
+                Pie(ReportCategory.COLLAPSE.label, (counts[ReportCategory.COLLAPSE] ?: 0).toDouble(),
+                    color = Color(0xFFB4812E), selectedColor = Color(0xFFE9C789)),
+                Pie(ReportCategory.SMOKE.label, (counts[ReportCategory.SMOKE] ?: 0).toDouble(),
+                    color = Color(0xFF9C44EC), selectedColor = Color(0xFFD8B5FF)),
+                Pie(ReportCategory.EQUIPMENT.label, (counts[ReportCategory.EQUIPMENT] ?: 0).toDouble(),
+                    color = Color(0xFF5184A0), selectedColor = Color(0xFFA6C4D2)),
+                Pie(ReportCategory.DANGER.label, (counts[ReportCategory.DANGER] ?: 0).toDouble(),
+                    color = Color(0xFFDC2626), selectedColor = Color(0xFFFF9C9C)),
+            )
+        )
+    }
+
+    PieChart(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .padding(horizontal = 12.dp),
+        data = pieData,
+        style = Pie.Style.Stroke(width = 28.dp), // ✅ Float
+        spaceDegree = 6f,
+        selectedPaddingDegree = 4f,
+        onPieClick = { pie ->
+            labelToCategory[pie.label]?.let { onSliceClick(it) } // ✅ 콜백 실제 호출
+        },
+        scaleAnimEnterSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        colorAnimEnterSpec = tween(300),
+        colorAnimExitSpec = tween(300),
+        scaleAnimExitSpec = tween(300),
+        spaceDegreeAnimExitSpec = tween(300),
+    )
+}
+
+@Composable
+private fun RiskRowChart(
+    danger: Int,
+    warning: Int,
+    info: Int
+) {
+    val bars = listOf(
+        Bars(
+            label = "위험도",
+            values = listOf(
+                Bars.Data(label = "위험", value = danger.toDouble(), color = SolidColor(Color(0xFFDC2626))),
+                Bars.Data(label = "경고", value = warning.toDouble(), color = SolidColor(Color(0xFFF57C00))),
+                Bars.Data(label = "정보", value = info.toDouble(), color = SolidColor(Color(0xFF4C65E2))),
+            )
+        )
+    )
+
+    RowChart(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp)
+            .padding(horizontal = 12.dp),
+        data = bars,
+        barProperties = BarProperties(
+            thickness = 22.dp,                                   // ✅ was strokeWidth
+            spacing = 6.dp,
+            cornerRadius = Bars.Data.Radius.Circular(8.dp),      // ✅ was radius=Rectangle(...)
+            style = ir.ehsannarmani.compose_charts.models.DrawStyle.Fill                               // 선택사항
+        ),
+    )
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun WeeklyColumnChart(
+    dateStrings: List<String>,
+    days: Int = 7,
+    alignToLatestEvent: Boolean = true,      // ✅ 핵심 옵션
+) {
+    val zone = remember { ZoneId.systemDefault() }
+
+    // 1) 문자열 → LocalDate 변환 (네 유틸 활용)
+    val dates: List<LocalDate> = remember(dateStrings) {
+        dateStrings.mapNotNull { com.android.ssamr.core.common.time.parseToLocalDateOrNull(it, zone) }
+    }
+
+    // 2) 기준일: 데이터가 있으면 가장 최근 날짜, 없으면 오늘
+    val anchor: LocalDate = remember(dates) {
+        if (alignToLatestEvent && dates.isNotEmpty()) dates.maxOrNull()!!
+        else LocalDate.now(zone)
+    }
+
+    // 3) 윈도우(최근 N일)
+    val windowDays: List<LocalDate> = remember(anchor, days) {
+        (0 until days).map { anchor.minusDays((days - 1 - it).toLong()) }
+    }
+
+    // 4) 카운팅
+    val counts: Map<LocalDate, Int> = remember(dates, windowDays) {
+        val base = windowDays.associateWith { 0 }.toMutableMap()
+        for (d in dates) if (d in base) base[d] = base.getValue(d) + 1
+        base.toMap()
+    }
+
+    val total = counts.values.sum()
+
+    // 5) Bars 데이터로 변환
+    val bars = counts.map { (day, cnt) ->
+        Bars(
+            label = "${day.monthValue}/${day.dayOfMonth}",
+            values = listOf(Bars.Data(value = cnt.toDouble(), color = SolidColor(Color(0xFF4C65E2))))
+        )
+    }
+
+    Column {
+        if (total == 0) {
+            Text(
+                text = "선택 기간에 이벤트가 없습니다.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
+            )
+        }
+
+        ColumnChart(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(horizontal = 12.dp),
+            data = bars,
+            barProperties = BarProperties(
+                thickness = 18.dp,
+                spacing = 4.dp,
+                cornerRadius = Bars.Data.Radius.Circular(8.dp)
+            )
+        )
+    }
+}
+
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
