@@ -28,6 +28,11 @@ public class EditButtonAction : MonoBehaviour
     {
         paintCanvas.ChangeColor(BrushColor.Blue);
     }
+
+    public void ChangeColorGray()
+    {
+        paintCanvas.ChangeColor(BrushColor.Gray);
+    }
     public void SaveMap()
     {
         paintCanvas.SaveCanvas("map.png");

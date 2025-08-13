@@ -23,7 +23,7 @@ public enum DangerCase
 }
 public enum BrushColor
 {
-    White, Black, Red, Blue, Green, Yellow
+    White, Black, Red, Blue, Green, Yellow, Gray
 }
 
 public enum NODE_TYPE

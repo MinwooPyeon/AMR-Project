@@ -31,9 +31,6 @@ public class DeviceController : MonoBehaviour
             { ACTION_STATE.ROTATE_LEFT, _ => _moveController.RotateLeft() },
             { ACTION_STATE.ROTATE_RIGHT, _ => _moveController.RotateRight() }
         };
-
-        // DeviceManager¿¡ µî·Ï
-        //Managers.Device.RegistVirtualDevice(this.gameObject.GetInstanceID().ToString(), this);
     }
 
     private void OnDestroy()

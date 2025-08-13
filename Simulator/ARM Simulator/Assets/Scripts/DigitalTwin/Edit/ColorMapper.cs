@@ -7,8 +7,8 @@ public static class ColorMapper
     /// </summary>
     public static float ConvertColorToProb(Color color)
     {
-        if (color == Color.black) return 1.0f;
-        if (color == Color.white) return 0.0f;
+        if (color == Color.white) return 1.0f;
+        if (color == Color.black) return 0.0f;
         if (color == Color.red) return 0.66f;
         if (color == Color.blue) return 0.33f;
         if (color == Color.green) return 0.5f;

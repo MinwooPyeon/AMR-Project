@@ -11,6 +11,7 @@ public class MapManager
     float _resolution = 0f;
     int _width;
     int _height;
+    public bool isLoaded = false;
     public List<Vector3> Chargers {  get { return _chargers; } }
     public List<Vector3> Loaders { get {return _loaders; } }
     public List<Vector3> Dropers { get {return _dropers; } }

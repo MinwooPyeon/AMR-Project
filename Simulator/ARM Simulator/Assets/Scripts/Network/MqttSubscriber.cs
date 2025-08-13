@@ -56,6 +56,7 @@ public class MqttSubscriber : MonoBehaviour
         }
     }
 
+    //TOOD Map Psrsing & Save
     private void HandlePosition(string json)
     {
         Debug.Log($"Position 데이터 수신: {json}");
@@ -68,8 +69,9 @@ public class MqttSubscriber : MonoBehaviour
     {
         Debug.Log($"Velocity 데이터 수신: {json}");
         StatusMsg msg = parser.ParseStatusMessage(json);
-
-        //Managers.Device.RegistRealDevice(msg);
+        
+        if(Managers.Map.isLoaded)
+            Managers.Device.RegistRealDevice(msg);
     }
 
     private void OnDestroy()

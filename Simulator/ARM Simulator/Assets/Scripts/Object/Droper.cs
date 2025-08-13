@@ -8,7 +8,6 @@ public class Droper : MonoBehaviour
         //Debug.Log(other.gameObject);
         if (stateData != null && stateData.AmrState == AMR_STATE.LOAD)
         {
-            
             stateData.AmrState = AMR_STATE.DROP;
             //TODO AMR LIFTING
         }

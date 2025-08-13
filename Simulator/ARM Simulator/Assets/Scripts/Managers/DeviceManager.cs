@@ -78,7 +78,11 @@ public class DeviceManager
 
     public void RegistRealDevice(StatusMsg msg)
     {
-        if (_devices[msg.serialNumber] != null) return;
+        if (_devices[msg.serialNumber] != null)
+        {
+            //TODO
+            return;
+        }
 
         GameObject obj = Managers.Resource.Instantiate("Prefab/Device/AMR_Real_Device");
         obj.transform.position = new Vector3(msg.position.x, 0, msg.position.y);

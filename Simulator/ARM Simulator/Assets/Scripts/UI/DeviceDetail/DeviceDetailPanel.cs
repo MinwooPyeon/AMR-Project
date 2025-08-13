@@ -27,8 +27,6 @@ public class DeviceDetailPanel : MonoBehaviour
         positionText.text = $"X: {frame.position.x}, Y: {frame.position.y}";
         amrStateText.text = frame.amrState.ToString();
         actionStateText.text = frame.actionState.ToString();
-        //TODO Error Case
-        //TODO Image
         SetImage(frame);
 
     }

@@ -37,6 +37,8 @@ public class MapSpawner : MonoBehaviour
         SpawnByProbRanges();
 
         MainCamera.OnMapLoaded(imgData);
+
+        Managers.Map.isLoaded = true;
     }
 
     void SpawnByProbRanges()
