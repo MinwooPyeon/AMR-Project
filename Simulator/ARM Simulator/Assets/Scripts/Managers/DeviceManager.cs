@@ -73,7 +73,7 @@ public class DeviceManager
         DeviceController device = _devices[id];
         if (device == null) return;
 
-        device.ExcuteOrder(order);
+        device.EnqueueOrder(order);
     }
 
     public void RegistRealDevice(StatusMsg msg)
@@ -84,6 +84,7 @@ public class DeviceManager
         obj.transform.position = new Vector3(msg.position.x, 0, msg.position.y);
         _devices.Add(msg.serialNumber, obj.GetComponent<DeviceController>());
         _deviceState.Add(msg.serialNumber, obj.GetComponent<StateData>());
+        obj.GetComponent<StateData>().SerialNumber = msg.serialNumber;
     }
     
     #endregion

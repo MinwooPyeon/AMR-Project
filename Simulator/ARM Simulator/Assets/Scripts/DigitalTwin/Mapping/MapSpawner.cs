@@ -20,6 +20,7 @@ public class MapSpawner : MonoBehaviour
     private YamlFile yamlData;
     private ImageFile imgData;
 
+
     void Awake()
     {
         yamlParser = new YAMLParser();
