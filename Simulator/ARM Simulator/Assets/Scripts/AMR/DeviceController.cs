@@ -9,12 +9,9 @@ public class DeviceController : MonoBehaviour
     Dictionary<ACTION_STATE, Action<float>> _commands;
     #endregion
     #region Methods
-    public void ExcuteOrder(ActionOrder order)
+    public void ExcuteOrder(StatusMsg msg)
     {
-        if (_commands.TryGetValue(order.Order, out var action))
-        {
-            action(order.Param);
-        }
+        
     }
     #endregion
     #region Unity Methods

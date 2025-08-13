@@ -44,8 +44,8 @@ public class MqttSubscriber : MonoBehaviour
 
         switch (topic)
         {
-            case "position":
-                HandlePosition(payload);
+            case "map":
+                HandleMap(payload);
                 break;
             case "status":
                 HandleStatus(payload);
@@ -57,21 +57,24 @@ public class MqttSubscriber : MonoBehaviour
     }
 
     //TOOD Map Psrsing & Save
-    private void HandlePosition(string json)
+    private void HandleMap(string json)
     {
         Debug.Log($"Position 데이터 수신: {json}");
-        PositionMsg msg = parser.ParsePositionMessage(json);
+        MapMsg msg = parser.ParseMapMessage(json);
         
-        Managers.Device.DeviceActor(msg.serialNumber, MakeActionOrder(msg));
+        
     }
 
     private void HandleStatus(string json)
     {
         Debug.Log($"Velocity 데이터 수신: {json}");
         StatusMsg msg = parser.ParseStatusMessage(json);
-        
-        if(Managers.Map.isLoaded)
+
+        if (Managers.Map.isLoaded)
+        {
             Managers.Device.RegistRealDevice(msg);
+            Managers.Device.DeviceActor(msg.serialNumber, msg);
+        }
     }
 
     private void OnDestroy()
@@ -80,11 +83,4 @@ public class MqttSubscriber : MonoBehaviour
             client.Disconnect();
     }
 
-    private ActionOrder MakeActionOrder(PositionMsg msg)
-    {
-        ActionOrder order = new();
-        order.Order = msg.actionState;
-        order.Param = 10f;
-        return order;
-    }
 }
