@@ -17,5 +17,5 @@ class AmrService(
     fun findLatestStatusBySerial(serial: String): AmrStatus = amrStatusRepository.findLatestStatusBySerial(serial)
 
     fun sendManualControlMessage(serial: String, message: TopicMessage.AmrManualControlMessage) =
-        topicPublisher.publish("control/$serial", message)
+        topicPublisher.publish("control", message)
 }
