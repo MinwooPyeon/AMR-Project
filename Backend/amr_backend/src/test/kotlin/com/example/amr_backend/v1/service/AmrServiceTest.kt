@@ -100,7 +100,7 @@ class AmrServiceTest {
             area = "Area A"
         )
         verify(exactly = 1) {
-            topicPublisher.publish("control/AMR001", expected)
+            topicPublisher.publish("control", expected)
         }
     }
 
