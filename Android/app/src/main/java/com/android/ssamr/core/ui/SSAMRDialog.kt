@@ -96,7 +96,9 @@ fun SSAMRDialog(
                         onClick = btn.onClick,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(56.dp)
                             .padding(top = if (idx > 0) 8.dp else 0.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = btn.bgColor)
                     ) {
                         btn.iconRes?.let {

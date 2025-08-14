@@ -2,6 +2,7 @@ package com.android.ssamr.main.navigation
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.android.ssamr.R
@@ -45,8 +46,8 @@ fun getTopBarConfig(
         route == AlarmScreen.route -> TopBarConfig(
             title = "알림",
             actions = {
-                IconButton(onClick = {}) {
-                    Icon(painterResource(R.drawable.ic_call), null)
+                IconButton(onClick = { onCallback?.invoke() }) {
+                    Icon(painterResource(R.drawable.ic_call), null, tint = Color.Red)
                 }
             },
             showBack = true,

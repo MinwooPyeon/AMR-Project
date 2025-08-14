@@ -16,6 +16,7 @@ import com.android.ssamr.R
 import com.android.ssamr.core.domain.model.Notification
 import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.repository.NotificationRepository
+import com.android.ssamr.core.domain.usecase.push.EnqueueRegisterFcmTokenUseCase
 import com.android.ssamr.main.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -32,10 +33,14 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
     @Inject lateinit var notificationRepository: NotificationRepository
     @Inject lateinit var notificationMapper: NotificationRealtimeMapper
 
+    @Inject lateinit var enqueueRegisterFcmToken: EnqueueRegisterFcmTokenUseCase
+
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onNewToken(token: String) {
-        // TODO: 서버에 토큰 등록 (선택)
+        Log.d("FCM", "onNewToken token=$token")
+        super.onNewToken(token)
+        enqueueRegisterFcmToken(token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

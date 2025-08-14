@@ -1,5 +1,7 @@
 package com.android.ssamr.feature.notification
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import com.android.ssamr.core.domain.model.NotificationCategory
 fun NotificationRoute(
     navigateToNotificationDetail: (Long) -> Unit,
     viewModel: NotificationViewModel = hiltViewModel(),
+    onCallClick: ((() -> Unit) -> Unit)? = null
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
@@ -37,9 +40,16 @@ fun NotificationRoute(
                     ).show()
                     Log.d("TAG", "NotificationRoute: ${state.error}")
                 }
+
+                is NotificationEffect.LaunchDialer -> {
+                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${effect.phone}"))
+                    context.startActivity(intent)
+                }
             }
         }
     }
+
+    onCallClick?.invoke { viewModel.openCallDialog() }
 
 
     NotificationScreen(

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.android.ssamr.core.domain.model.Notification
 import com.android.ssamr.core.domain.model.NotificationAction
 import com.android.ssamr.core.domain.model.NotificationCategory
+import com.android.ssamr.core.ui.EmergencyCallSSAMRDialog
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -39,6 +40,15 @@ fun NotificationScreen(
 
 
         }
+    }
+
+    if (state.isCallDialogVisible) {
+        EmergencyCallSSAMRDialog(
+            onCallManager = { sendIntent(NotificationIntent.CallManager) },
+            onCallFire = { sendIntent(NotificationIntent.CallFire) },
+            onCancel = { sendIntent(NotificationIntent.DismissCallDialog) },
+            onDismiss = { sendIntent(NotificationIntent.DismissCallDialog) }
+        )
     }
 }
 

@@ -2,6 +2,7 @@ package com.android.ssamr.core.data.di
 
 import com.android.ssamr.core.data.remote.service.AmrService
 import com.android.ssamr.core.data.remote.service.DashboardService
+import com.android.ssamr.core.data.remote.service.FcmService
 import com.android.ssamr.core.data.remote.service.NotificationService
 import dagger.Module
 import dagger.Provides
@@ -31,5 +32,8 @@ object ServiceModule {
     fun provideNotificationService(retrofit: Retrofit): NotificationService =
         retrofit.create(NotificationService::class.java)
 
-
+    @Provides
+    @Singleton
+    fun provideFcmService(retrofit: Retrofit): FcmService =
+        retrofit.create(FcmService::class.java)
 }

@@ -5,8 +5,10 @@ import com.android.ssamr.core.data.local.datasource.NotificationLocalDataSource
 import com.android.ssamr.core.data.remote.datasource.AmrRemoteDataSource
 import com.android.ssamr.core.data.remote.service.AmrService
 import com.android.ssamr.core.data.remote.datasource.DashboardRemoteDataSource
+import com.android.ssamr.core.data.remote.datasource.FcmRemoteDataSource
 import com.android.ssamr.core.data.remote.datasource.NotificationRemoteDataSource
 import com.android.ssamr.core.data.remote.service.DashboardService
+import com.android.ssamr.core.data.remote.service.FcmService
 import com.android.ssamr.core.data.remote.service.NotificationService
 import dagger.Module
 import dagger.Provides
@@ -42,4 +44,9 @@ object DataSourceModule {
         dao: NotificationDao
     ): NotificationLocalDataSource = NotificationLocalDataSource(dao)
 
+    @Provides
+    @Singleton
+    fun provideFcmRemoteDataSource(
+        service: FcmService
+    ): FcmRemoteDataSource = FcmRemoteDataSource(service)
 }
