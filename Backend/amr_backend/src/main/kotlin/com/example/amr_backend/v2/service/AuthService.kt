@@ -1,5 +1,6 @@
 package com.example.amr_backend.v2.service
 
+import com.example.amr_backend.v2.entity.RefreshToken
 import com.example.amr_backend.v2.model.Token
 import com.example.amr_backend.v2.repository.RefreshTokenRepository
 import com.example.amr_backend.v2.repository.UserRepository
@@ -23,6 +24,7 @@ class AuthService(
     private val refreshTokenRepository: RefreshTokenRepository,
     @Value("\${jwt.refresh-token.expiry}") private val refreshTokenExpiryInMins: Long,
 ) {
+    @Transactional
     fun login(username: String, password: String): Token {
         val user = userRepository.findByUsername(username) ?: throw BadCredentialsException(CHECK_ID_AND_PASSWORD_AGAIN)
 
@@ -32,6 +34,14 @@ class AuthService(
 
         val accessToken = jwtService.buildJwtToken(user.id.toString(), TokenType.ACCESS)
         val refreshToken = jwtService.buildJwtToken(user.id.toString(), TokenType.REFRESH)
+
+        val refreshTokenEntity = RefreshToken(
+            user = user,
+            token = refreshToken,
+            expiresAt = LocalDateTime.now().plusMinutes(refreshTokenExpiryInMins)
+        )
+        refreshTokenRepository.save(refreshTokenEntity)
+
         return Token(
             accessToken = accessToken,
             refreshToken = refreshToken,

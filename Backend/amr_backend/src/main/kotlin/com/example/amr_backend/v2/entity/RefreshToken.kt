@@ -28,10 +28,11 @@ class RefreshToken(
     var token: String,
     @Column(name = "expires_at")
     var expiresAt: LocalDateTime,
+) {
     @Column(name = "created_at")
     @CreatedDate
-    var createdAt: LocalDateTime,
-) {
+    lateinit var createdAt: LocalDateTime
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is RefreshToken) return false
