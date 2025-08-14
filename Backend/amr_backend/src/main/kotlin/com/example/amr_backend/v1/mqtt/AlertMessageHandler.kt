@@ -59,6 +59,7 @@ class AlertMessageHandler(
         val area = areaMapper.convertCoordinateToArea(x, y)
 
         return AlertOutboundMessage(
+            serial = serial,
             title = "$caseMessage 감지",
             content = "${area}에 ${caseMessage}감지",
             area = area,

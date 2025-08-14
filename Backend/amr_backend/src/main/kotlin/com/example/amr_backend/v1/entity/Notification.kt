@@ -22,6 +22,8 @@ class Notification(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     var id: Long = 0L,
+    @Column(name = "serial")
+    var serial: String,
     @Column(name = "title")
     var title: String,
     @Column(name = "content")
@@ -33,12 +35,12 @@ class Notification(
     var case: Case,
     @Column(name = "image")
     var image: String? = null,
-    @Column(name = "isRead")
+    @Column(name = "is_read")
     var isRead: Boolean = false,
-    @Column(name = "readAt", nullable = true)
+    @Column(name = "read_at", nullable = true)
     var readAt: LocalDateTime? = null,
 ) {
-    @Column(name = "createAt")
+    @Column(name = "create_at")
     @CreatedDate
     lateinit var createAt: LocalDateTime
 
