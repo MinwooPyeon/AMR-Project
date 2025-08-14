@@ -25,7 +25,7 @@ class SecurityConfig(
         .httpBasic { it.disable() }
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         .authorizeHttpRequests {
-            it.requestMatchers("/api/v2/auth/**", "/api/v1/**")
+            it.requestMatchers("/api/v2/auth/**", "/api/v1/**", "/images/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
