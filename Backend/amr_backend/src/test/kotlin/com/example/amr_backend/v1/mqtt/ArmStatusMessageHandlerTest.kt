@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.context.ApplicationEventPublisher
 import java.time.LocalDateTime
 
 @ExtendWith(MockKExtension::class)
@@ -35,6 +36,9 @@ class ArmStatusMessageHandlerTest {
     @RelaxedMockK
     private lateinit var amrRepository: AmrRepository
 
+    @RelaxedMockK
+    private lateinit var eventPublisher: ApplicationEventPublisher
+
     private val objectMapper = jacksonObjectMapper()
 
     @BeforeEach
@@ -43,7 +47,8 @@ class ArmStatusMessageHandlerTest {
             amrStatusRepository = amrStatusRepository,
             mqttClient = mqttClient,
             amrRepository = amrRepository,
-            objectMapper = objectMapper
+            objectMapper = objectMapper,
+            eventPublisher = eventPublisher,
         )
     }
 

@@ -7,6 +7,7 @@ import com.example.amr_backend.v1.entity.AmrStatus
 import com.example.amr_backend.v1.entity.State
 import com.example.amr_backend.v1.exception.NoSuchAmr
 import com.example.amr_backend.v1.service.AmrService
+import com.example.amr_backend.v2.service.JwtService
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.Runs
@@ -36,6 +37,9 @@ class AmrControllerTest {
 
     @MockkBean
     private lateinit var amrService: AmrService
+
+    @MockkBean
+    private lateinit var jwtService: JwtService
 
     private val objectMapper = jacksonObjectMapper()
 
@@ -78,16 +82,16 @@ class AmrControllerTest {
     }
 
     @Test
-    fun `returns amr detail by id`() {
+    fun `returns amr detail by serial`() {
         // given
-        every { amrService.findAmrDetail(123) } returns ValidAmrStatus.copy(
+        every { amrService.findLatestStatusBySerial("AMR001") } returns ValidAmrStatus.copy(
             id = 123,
             amr = ValidAmrStatus.amr.copy(name = "sample name")
         )
 
         // when
         // then
-        mockMvc.perform(get("/api/v1/amrs/123/detail"))
+        mockMvc.perform(get("/api/v1/amrs/AMR001/detail"))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.id").value(123))
@@ -97,11 +101,11 @@ class AmrControllerTest {
     @Test
     fun `given id, no amr info exists, then not found error`() {
         // given
-        every { amrService.findAmrDetail(123) } throws NoSuchAmr()
+        every { amrService.findLatestStatusBySerial("AMR123") } throws NoSuchAmr()
 
         // when
         // then
-        mockMvc.perform(get("/api/v1/amrs/123/detail"))
+        mockMvc.perform(get("/api/v1/amrs/AMR123/detail"))
             .andExpect(status().isNotFound)
     }
 
