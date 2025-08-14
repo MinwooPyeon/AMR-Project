@@ -74,7 +74,7 @@ class NotificationDetailViewModel @Inject constructor(
                 // 로컬 즉시 반영
                 markAsReadLocal(notifId)
                 // 서버 동기화 (베스트 에포트)
-                runCatching { markAsReadRemote(notifId) }
+                runCatching { markAsReadRemote(notifId, true) }
             } catch (e: Exception) {
                 _effect.emit(NotificationDetailEffect.ShowError("읽음 처리 실패: ${e.message}"))
             }

@@ -38,6 +38,9 @@ fun MorescreenScreen(
                         MorescreenDestination.VERSION_INFO -> {
                             navController.navigate("versionInfo")
                         }
+                        MorescreenDestination.REPORT -> {
+                            navController.navigate("report")
+                        }
                     }
                 }
             }

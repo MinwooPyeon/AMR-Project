@@ -33,8 +33,8 @@ class NotificationRepositoryImpl @Inject constructor(
         local.markRead(id)
     }
 
-    override suspend fun markReadRemote(id: Long) {
-        remote.markRead(id)
+    override suspend fun markReadRemote(id: Long, isRead: Boolean) {
+        remote.markRead(id, isRead)
     }
 
     override suspend fun observeNotification(id: Long): Flow<Notification?> =

@@ -213,7 +213,9 @@ fun NotificationDetailInfoCardPreview() {
         case = "화재",
         area = "A구역-1",
         createAt = "3분전",
-        image = "",)
+        image = "",
+        serial = "AMR001"
+    )
 
     SSAMRTheme {
         NotificationDetailInfoCard(

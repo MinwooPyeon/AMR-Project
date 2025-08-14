@@ -42,6 +42,12 @@ fun MorescreenContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         SettingItemCard(
+            icon = ImageVector.vectorResource(id = R.drawable.ic_report),
+            title = "이벤트 리포트",
+            onClick = { onIntent(MorescreenIntent.OnReportClick) }
+        )
+
+        SettingItemCard(
             icon = Icons.Default.Settings,
             title = "설정",
             onClick = { onIntent(MorescreenIntent.OnSettingClick) }

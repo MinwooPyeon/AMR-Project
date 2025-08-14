@@ -7,5 +7,5 @@ class MarkNotificationReadRemoteUseCase @Inject constructor(
     private val repository: NotificationRepository
 ) {
     /** 서버에 읽음 동기화 (실패는 베스트에포트 처리 가능) */
-    suspend operator fun invoke(id: Long) = repository.markReadRemote(id)
+    suspend operator fun invoke(id: Long, isRead: Boolean) = repository.markReadRemote(id, isRead)
 }

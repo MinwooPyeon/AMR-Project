@@ -19,7 +19,8 @@ object NotificationMapper {
             image = d.image,
             area = d.area,
             isRead = d.isRead,
-            readAt = null
+            readAt = null,
+            serial = d.serial
         )
 
     // Entity -> Domain
@@ -34,6 +35,7 @@ object NotificationMapper {
             image = e.image,
             area = e.area,
             isRead = e.isRead,
+            serial = e.serial
             )
 
     // Dto -> Domain
@@ -47,7 +49,8 @@ object NotificationMapper {
             createAt = dto.createAt,
             image = dto.image,
             area = dto.area,
-            isRead = dto.isRead ?: false
+            isRead = dto.isRead ?: false,
+            serial = dto.serial
         )
 
     // Domain -> Entity 리스트 업서트용

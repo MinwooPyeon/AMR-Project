@@ -67,6 +67,15 @@ fun formatMonthDayTimeKorean(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
+fun parseToLocalDateOrNull(
+    createdAt: String,
+    zone: ZoneId = ZoneId.systemDefault()
+): LocalDate? {
+    val instant = parseToInstant(createdAt, zone) ?: return null
+    return instant.atZone(zone).toLocalDate()
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 private fun parseToInstant(raw: String, zone: ZoneId): Instant? {
     // epoch millis 형태도 허용
     raw.toLongOrNull()?.let { return Instant.ofEpochMilli(it) }

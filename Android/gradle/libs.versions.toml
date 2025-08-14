@@ -23,6 +23,8 @@ room = "2.6.1"
 firebase = "33.4.0"
 googleServices = "4.4.2"
 coil = "2.6.0"
+charts = "0.1.9"
+uiGraphics = "1.8.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,6 +62,8 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" }
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+compose-chart = { group = "io.github.ehsannarmani", name = "compose-charts", version.ref = "charts" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

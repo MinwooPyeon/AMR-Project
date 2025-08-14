@@ -58,6 +58,7 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
+    implementation(libs.ui.graphics)
     ksp(libs.hilt.android.compiler)
     ksp(libs.hilt.ext.compiler)
     implementation(libs.hilt.navigation.compose)
@@ -83,8 +84,9 @@ dependencies {
     implementation(libs.media3.exoplayer.rstp)
     implementation(libs.systemuicontroller)
 
-    // coil
+    // coil, chart
     implementation(libs.coil)
+    implementation(libs.compose.chart)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

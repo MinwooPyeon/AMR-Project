@@ -116,13 +116,13 @@ class NotificationViewModel @Inject constructor(
     }
 
     /** 하이브리드 읽음 처리: 로컬 즉시 + 서버 베스트에포트 */
-    private fun markReadHybrid(id: Long) {
+    private fun markReadHybrid(id: Long, isRead: Boolean = true) {
         viewModelScope.launch {
             // 1) 로컬 즉시 반영 → UI 바로 회색 처리
             runCatching { markNotificationReadLocal(id) }
 
             // 2) 서버 동기화(실패해도 UI는 유지; 재시도 큐는 추후 도입 가능)
-            runCatching { markNotificationReadRemote(id) }
+            runCatching { markNotificationReadRemote(id, isRead) }
                 .onFailure {
                     // 필요 시: 로그/스낵바/재시도 등록
                     // _effect.emit(NotificationEffect.ShowError("읽음 동기화 실패"))

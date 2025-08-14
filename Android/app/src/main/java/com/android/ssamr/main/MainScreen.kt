@@ -30,6 +30,8 @@ import com.android.ssamr.feature.amrWebcam.AmrWebcamRoute
 import com.android.ssamr.feature.notification.NotificationRoute
 import com.android.ssamr.feature.notificationDetail.NotificationDetailRoute
 import com.android.ssamr.feature.notificationDetail.fullscreenPhoto.FullscreenPhotoRoute
+import com.android.ssamr.feature.report.ReportRoute
+import com.android.ssamr.feature.reportDetail.ReportDetailRoute
 import com.android.ssamr.main.navigation.AlarmScreen
 import com.android.ssamr.main.navigation.AmrDetailScreen
 import com.android.ssamr.main.navigation.AmrScreen
@@ -40,6 +42,8 @@ import com.android.ssamr.main.navigation.FullscreenPhotoScreen
 import com.android.ssamr.main.navigation.topBarPolicies
 import com.android.ssamr.main.navigation.MoreScreen
 import com.android.ssamr.main.navigation.NotificationDetailScreen
+import com.android.ssamr.main.navigation.ReportDetailScreen
+import com.android.ssamr.main.navigation.ReportScreen
 import com.android.ssamr.main.navigation.WebcamScreen
 import com.android.ssamr.main.navigation.bottomNavScreens
 import com.android.ssamr.main.navigation.getTopBarConfig
@@ -150,7 +154,8 @@ fun MainScreen() {
                     navigateToSetting = { navController.navigate("setting") },
                     navigateToHelp = { navController.navigate("help") },
                     navigateToNotice = { navController.navigate("notice") },
-                    navigateToVersionInfo = { navController.navigate("versionInfo") }
+                    navigateToVersionInfo = { navController.navigate("versionInfo") },
+                    navigateToReport = {navController.navigate("report")}
                 )
             }
             composable(FullmapRoute.route) {
@@ -210,6 +215,23 @@ fun MainScreen() {
                     onBack = { navController.popBackStack() }
                 )
             }
+            composable(ReportScreen.route) {
+                ReportRoute(
+                    navigateToReportDetail = { id ->
+                        navController.navigate("report_detail/$id") },
+                    onBack = { navController.popBackStack() },
+                )
+            }
+            composable(
+                route = "${ReportDetailScreen.route}/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.LongType })
+                ) { backStackEntry ->
+                    val id = backStackEntry.arguments?.getLong("id") ?: 0L
+                    ReportDetailRoute(
+                        id = id,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
         }
     }
 }

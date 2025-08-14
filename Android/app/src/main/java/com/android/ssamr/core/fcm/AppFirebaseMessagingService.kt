@@ -59,7 +59,8 @@ class AppFirebaseMessagingService : FirebaseMessagingService() {
                 createAt = "",
                 image = null,
                 area = "",
-                isRead = false
+                isRead = false,
+                serial = ""
             )
             Log.d("FCM", "onMessageReceived data=${message.data} notif=${message.notification}")
             serviceScope.launch { notificationRepository.upsertNotifications(listOf(notif)) }

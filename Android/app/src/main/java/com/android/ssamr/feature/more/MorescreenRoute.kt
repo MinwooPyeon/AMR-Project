@@ -15,7 +15,8 @@ fun MorescreenRoute(
     navigateToSetting: () -> Unit,
     navigateToHelp: () -> Unit,
     navigateToNotice: () -> Unit,
-    navigateToVersionInfo: () -> Unit
+    navigateToVersionInfo: () -> Unit,
+    navigateToReport: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -31,6 +32,7 @@ fun MorescreenRoute(
                         MorescreenDestination.HELP -> navigateToHelp()
                         MorescreenDestination.NOTICE -> navigateToNotice()
                         MorescreenDestination.VERSION_INFO -> navigateToVersionInfo()
+                        MorescreenDestination.REPORT -> navigateToReport()
                     }
                 }
             }
