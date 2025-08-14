@@ -1,6 +1,7 @@
 package com.example.amr_backend.v2.controller
 
 import com.example.amr_backend.v2.dto.LoginRequest
+import com.example.amr_backend.v2.dto.RefreshRequest
 import com.example.amr_backend.v2.model.Token
 import com.example.amr_backend.v2.service.AuthService
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,4 +18,9 @@ class AuthController(
     fun login(
         @RequestBody loginRequest: LoginRequest
     ): Token = authService.login(loginRequest.username, loginRequest.password)
+
+    @PostMapping("/refresh")
+    fun refresh(
+        @RequestBody refreshRequest: RefreshRequest
+    ): Token = authService.refresh(refreshRequest.refreshToken)
 }
