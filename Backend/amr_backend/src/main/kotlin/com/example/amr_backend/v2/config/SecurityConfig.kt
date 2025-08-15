@@ -1,6 +1,7 @@
 package com.example.amr_backend.v2.config
 
 import com.example.amr_backend.v2.filter.JwtFilter
+import jakarta.servlet.DispatcherType
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
@@ -26,6 +27,11 @@ class SecurityConfig(
         .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         .authorizeHttpRequests {
             it.requestMatchers("/api/v2/auth/**", "/api/v1/**", "/images/**")
+                .permitAll()
+                .dispatcherTypeMatchers(
+                    DispatcherType.ERROR,
+                    DispatcherType.FORWARD
+                )
                 .permitAll()
                 .anyRequest()
                 .authenticated()
