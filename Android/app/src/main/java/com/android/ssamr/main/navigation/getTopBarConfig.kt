@@ -11,7 +11,8 @@ import com.android.ssamr.core.ui.TopBarConfig
 fun getTopBarConfig(
     route: String,
     navController: NavHostController,
-    onCallback: (() -> Unit)? = null
+    onCallback: (() -> Unit)? = null,
+    onRefresh: (() -> Unit)? = null
 ): TopBarConfig? {
     return when {
         route == DashboardScreen.route -> TopBarConfig(
@@ -46,6 +47,9 @@ fun getTopBarConfig(
         route == AlarmScreen.route -> TopBarConfig(
             title = "알림",
             actions = {
+                IconButton(onClick = { onRefresh?.invoke() }) {
+                    Icon(painterResource(R.drawable.ic_refresh), null)
+                }
                 IconButton(onClick = { onCallback?.invoke() }) {
                     Icon(painterResource(R.drawable.ic_call), null, tint = Color.Red)
                 }

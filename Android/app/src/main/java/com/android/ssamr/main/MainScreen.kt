@@ -71,8 +71,10 @@ fun MainScreen() {
     }
     var onCallbackAction: (() -> Unit)? by remember { mutableStateOf(null) }
 
+    var onRefreshAction: (() -> Unit)? by remember { mutableStateOf(null) }
+
     val topBarConfig =
-        currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction) }
+        currentRoute?.let { getTopBarConfig(it, navController, onCallback = onCallbackAction, onRefresh = onRefreshAction) }
 
     Scaffold(
         containerColor = BackgroundColor,
@@ -145,6 +147,7 @@ fun MainScreen() {
                     navigateToNotificationDetail = { notificationId ->
                         navController.navigate("notification_detail/$notificationId")
                     },
+                    onRefresh = { setter -> onRefreshAction = setter },
                     onCallClick = { onCallbackAction = it }
                 )
             }

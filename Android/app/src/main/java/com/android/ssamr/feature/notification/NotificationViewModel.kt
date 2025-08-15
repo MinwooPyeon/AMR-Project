@@ -96,7 +96,7 @@ class NotificationViewModel @Inject constructor(
     fun refresh() = syncFromServer()
 
     /** Room Flow 구독 */
-    private fun observeLocal() {
+    fun observeLocal() {
         viewModelScope.launch {
             getLocalNotificationFlow()
                 .onStart { _state.update { it.copy(isLoading = true, error = null) } }
@@ -119,7 +119,7 @@ class NotificationViewModel @Inject constructor(
     }
 
     /** 서버 동기화: 서버 → 로컬 저장 (로컬 isRead 보존) */
-    private fun syncFromServer() {
+    fun syncFromServer() {
         viewModelScope.launch {
             try {
                 _state.update { it.copy(isLoading = true, error = null) }
