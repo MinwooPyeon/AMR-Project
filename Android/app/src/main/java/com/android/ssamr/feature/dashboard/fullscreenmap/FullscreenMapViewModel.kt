@@ -26,7 +26,7 @@ class FullscreenMapViewModel @Inject constructor(
 
     fun onIntent(intent: FullscreenMapIntent) {
         when (intent) {
-            is FullscreenMapIntent.LoadMap -> loadMapFromRepository()
+//            is FullscreenMapIntent.LoadMap -> loadMapFromRepository()
             is FullscreenMapIntent.ClickAmr -> {
                 _state.update { it.copy(selectedAmrSerial = intent.serial) }
             }
@@ -59,7 +59,7 @@ class FullscreenMapViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         amrPositions = amrPositions,
-                        mapImage = mapImage
+//                        mapImage = mapImage
                     )
                 }
             }.onFailure { e ->

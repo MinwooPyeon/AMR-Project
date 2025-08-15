@@ -24,6 +24,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color as AndroidColor
 import android.graphics.Paint
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.android.ssamr.BuildConfig
+import com.android.ssamr.R
 import com.android.ssamr.core.domain.model.AmrMapPosition
 import com.android.ssamr.core.domain.model.DashboardAmrStatus
 
@@ -50,11 +55,16 @@ fun FullscreenMapContent(
 
 @Composable
 private fun MapImageBackground(state: FullscreenMapState) {
-    Image(
-        painter = BitmapPainter(state.mapImage!!),
-        contentDescription = "공장 지도",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data("${BuildConfig.BASE_URL.dropLast(1)}/images/map.png")
+            .crossfade(true)
+            .placeholder(com.android.ssamr.R.drawable.ic_image_placeholder) // 선택
+            .error(R.drawable.ic_image_placeholder)       // 선택
+            .build(),
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        modifier = Modifier.fillMaxSize()
     )
 }
 
@@ -134,7 +144,6 @@ fun FullscreenMapContentPreview() {
             AmrMapPosition(2L, "AMR001", "AMR-002", x = 200f, y = 300f, status = DashboardAmrStatus.CHARGING),
             AmrMapPosition(3L, "AMR001","AMR-003", x = 120f, y = 400f, status = DashboardAmrStatus.CHECKING),
         ),
-        mapImage = generateDummyMapImage()
     )
 
     MaterialTheme {
