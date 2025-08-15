@@ -12,23 +12,18 @@ public:
     I2CAddressManager(std::shared_ptr<I2CInterface> i2c);
     ~I2CAddressManager() = default;
 
-    // 사용 가능한 I2C 주소 찾기
     uint8_t findAvailableAddress(const std::string& deviceName = "Device");
     std::vector<uint8_t> findAvailableAddresses(int count);
     
-    // 주소 사용 가능성 확인
     bool isAddressAvailable(uint8_t address);
     bool testAddress(uint8_t address);
     
-    // 주소 예약/해제
     bool reserveAddress(uint8_t address, const std::string& deviceName);
     bool releaseAddress(uint8_t address);
     
-    // 사용 중인 주소 확인
     std::set<uint8_t> getReservedAddresses() const;
     std::string getDeviceName(uint8_t address) const;
     
-    // 전체 I2C 버스 스캔
     std::vector<uint8_t> scanBus();
     void printBusStatus();
 
@@ -37,9 +32,8 @@ private:
     std::set<uint8_t> reservedAddresses_;
     std::map<uint8_t, std::string> deviceNames_;
     
-    // 기본 주소 범위 (Waveshare Motor Driver HAT 우선, 그 다음 일반적인 I2C 주소)
     std::vector<uint8_t> defaultAddresses_ = {
-        0x60,  // Waveshare Motor Driver HAT 기본 주소 (우선)
+        0x60,  
         0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
         0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
         0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
@@ -57,4 +51,4 @@ private:
     };
 };
 
-} // namespace amr 
+} 

@@ -20,22 +20,22 @@ enum class AngleControlStatus {
 };
 
 enum class TurnType {
-    LEFT_90 = 0,      // 좌회전 90도
-    RIGHT_90 = 1,     // 우회전 90도
-    TURN_180 = 2      // 회전 180도
+    LEFT_90 = 0,
+    RIGHT_90 = 1,
+    TURN_180 = 2
 };
 
 struct AngleControlConfig {
-    double angleTolerance = 2.0;        // 각도 허용 오차 (도)
-    double turnSpeed = 50.0;            // 회전 속도 (0-100)
-    double maxTurnTime = 10.0;          // 최대 회전 시간 (초)
-    double controlFrequency = 50.0;     // 제어 주파수 (Hz)
-    double pidKp = 2.0;                // PID P 게인
-    double pidKi = 0.1;                // PID I 게인
-    double pidKd = 0.5;                // PID D 게인
-    bool enablePID = true;              // PID 제어 활성화
-    bool enableSmoothing = true;        // 각도 스무딩 활성화
-    double smoothingFactor = 0.8;       // 스무딩 팩터 (0-1)
+    double angleTolerance = 2.0;
+    double turnSpeed = 50.0;
+    double maxTurnTime = 10.0;
+    double controlFrequency = 50.0;
+    double pidKp = 2.0;
+    double pidKi = 0.1;
+    double pidKd = 0.5;
+    bool enablePID = true;
+    bool enableSmoothing = true;
+    double smoothingFactor = 0.8;
 };
 
 struct AngleControlResult {
@@ -44,7 +44,7 @@ struct AngleControlResult {
     double currentAngle = 0.0;
     double targetAngle = 0.0;
     double angleError = 0.0;
-    double turnProgress = 0.0;          // 회전 진행률 (0-1)
+    double turnProgress = 0.0;
     std::string message = "";
     std::chrono::steady_clock::time_point timestamp;
 };
@@ -56,41 +56,34 @@ public:
                    const std::string& name = "AngleController");
     ~AngleController();
 
-    // 초기화 및 설정
     bool initialize();
     bool calibrate();
     void setConfig(const AngleControlConfig& config);
     AngleControlConfig getConfig() const;
 
-    // 회전 제어 명령
-    bool turnLeft90();                  // 좌회전 90도
-    bool turnRight90();                 // 우회전 90도
-    bool turn180();                     // 회전 180도
-    bool turnToAngle(double targetAngle); // 특정 각도로 회전
+    bool turnLeft90();
+    bool turnRight90();
+    bool turn180();
+    bool turnToAngle(double targetAngle);
     bool stop();
 
-    // 상태 확인
     AngleControlStatus getStatus() const;
     bool isActive() const;
     AngleControlResult getCurrentResult() const;
     double getCurrentAngle() const;
     double getTargetAngle() const;
 
-    // 제어 루프
     void startControlLoop();
     void stopControlLoop();
     bool isControlLoopRunning() const;
 
-    // PID 제어
     void setPIDGains(double kp, double ki, double kd);
     void enablePID(bool enable);
     void resetPID();
 
-    // 스무딩 설정
     void enableSmoothing(bool enable);
     void setSmoothingFactor(double factor);
 
-    // 진단 및 테스트
     bool testRotationControl();
     void printStatus() const;
 
@@ -110,20 +103,16 @@ private:
     AngleControlConfig config_;
     AngleControlResult currentResult_;
     
-    // PID 제어 변수
     double pidIntegral_ = 0.0;
     double pidPreviousError_ = 0.0;
     std::chrono::steady_clock::time_point lastPIDTime_;
     
-    // 스무딩 변수
     double smoothedAngle_ = 0.0;
     bool firstSmoothing_ = true;
     
-    // 제어 루프
     std::thread controlLoopThread_;
     std::atomic<bool> shouldStopLoop_{false};
     
-    // 내부 헬퍼 함수
     void controlLoop();
     double calculatePIDOutput(double error, double dt);
     double smoothAngle(double newAngle);
@@ -132,13 +121,11 @@ private:
     void updateCurrentResult();
     void logControl(const std::string& message);
     
-    // 안전 함수
     void emergencyStop();
     bool checkSafetyConditions();
     
-    // 회전 계산 함수
     double calculateTargetAngle(TurnType turnType);
     double calculateTurnProgress();
 };
 
-} // namespace amr 
+} 

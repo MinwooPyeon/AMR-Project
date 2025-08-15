@@ -150,9 +150,9 @@ void BackendWsClient::saveMsgToBackup(const std::string& json) {
     if (ofs.is_open()) {
         ofs << json << std::endl;
         ofs.close();
-        RCLCPP_INFO(rclcpp::get_logger("BackendWsClient"), "백업 메시지 저장 완료");
+        RCLCPP_INFO(rclcpp::get_logger("BackendWsClient"), "Backup message saved successfully");
     } else {
-        RCLCPP_ERROR(rclcpp::get_logger("BackendWsClient"), "백업 파일 저장 실패");
+        RCLCPP_ERROR(rclcpp::get_logger("BackendWsClient"), "Backup file save failed");
     }
 }
 

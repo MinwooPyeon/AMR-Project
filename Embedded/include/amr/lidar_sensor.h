@@ -14,7 +14,7 @@ public:
 
   void laserCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
-  float getDistance();  // 최근 거리값
+  float getDistance();  
   void update();    
 
 private:

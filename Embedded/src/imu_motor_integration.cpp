@@ -21,7 +21,7 @@ public:
         , isTurning_(false)
         , turnDirection_(0) // 0: 정지, 1: 좌회전, -1: 우회전
     {
-        std::cout << "IMU-모터 통합 시스템 초기화 시작" << std::endl;
+        std::cout << "IMU-Motor integration system initialization started" << std::endl;
     }
 
     ~IMUMotorIntegration() {
@@ -37,7 +37,7 @@ public:
             imuSensor_ = std::make_shared<IMUSensor>(i2cInterface_, IMUType::BNO08X, 0x4B, "BNO08x");
             
             if (!imuSensor_->initialize()) {
-                std::cerr << "IMU 센서 초기화 실패" << std::endl;
+                std::cerr << "IMU sensor initialization failed" << std::endl;
                 return false;
             }
             
@@ -51,7 +51,7 @@ public:
             // 모터 컨트롤러 초기화
             motorDriver_ = std::make_shared<MotorDriver>(i2cInterface_, 0x60, "MotorDriver");
             if (!motorDriver_->initialize()) {
-                std::cerr << "모터 드라이버 초기화 실패" << std::endl;
+                std::cerr << "Motor driver initialization failed" << std::endl;
                 return false;
             }
             
@@ -63,11 +63,11 @@ public:
                 return false;
             }
             
-            std::cout << "IMU-모터 통합 시스템 초기화 완료" << std::endl;
+            std::cout << "IMU-Motor integration system initialization completed" << std::endl;
             return true;
             
         } catch (const std::exception& e) {
-            std::cerr << "초기화 중 오류 발생: " << e.what() << std::endl;
+            std::cerr << "Error during initialization: " << e.what() << std::endl;
             return false;
         }
     }
@@ -94,7 +94,7 @@ public:
         if (sampleCount > 0) {
             currentAngle_ = sumAngle / sampleCount;
             targetAngle_ = currentAngle_;
-            std::cout << "초기 각도 캘리브레이션 완료: " << currentAngle_ << "도" << std::endl;
+            std::cout << "Initial angle calibration completed: " << currentAngle_ << " degrees" << std::endl;
             return true;
         }
         
@@ -109,7 +109,7 @@ public:
         
         isRunning_ = true;
         controlThread_ = std::thread(&IMUMotorIntegration::controlLoop, this);
-        std::cout << "IMU-모터 통합 제어 루프 시작" << std::endl;
+        std::cout << "IMU-Motor integration control loop started" << std::endl;
     }
 
     void stop() {
@@ -127,7 +127,7 @@ public:
             motorController_->stop();
         }
         
-        std::cout << "IMU-모터 통합 제어 루프 정지" << std::endl;
+        std::cout << "IMU-Motor integration control loop stopped" << std::endl;
     }
 
     // 좌회전 90도
@@ -175,13 +175,13 @@ public:
 
     // 현재 상태 출력
     void printStatus() const {
-        std::cout << "=== IMU-모터 통합 시스템 상태 ===" << std::endl;
-        std::cout << "실행 상태: " << (isRunning_ ? "실행 중" : "정지") << std::endl;
-        std::cout << "현재 각도: " << currentAngle_ << "도" << std::endl;
-        std::cout << "목표 각도: " << targetAngle_ << "도" << std::endl;
-        std::cout << "회전 상태: " << (isTurning_ ? "회전 중" : "정지") << std::endl;
-        std::cout << "회전 방향: " << turnDirection_ << std::endl;
-        std::cout << "각도 오차: " << (targetAngle_ - currentAngle_) << "도" << std::endl;
+            std::cout << "=== IMU-Motor Integration System Status ===" << std::endl;
+    std::cout << "Running status: " << (isRunning_ ? "Running" : "Stopped") << std::endl;
+            std::cout << "Current angle: " << currentAngle_ << " degrees" << std::endl;
+    std::cout << "Target angle: " << targetAngle_ << " degrees" << std::endl;
+            std::cout << "Turning status: " << (isTurning_ ? "Turning" : "Stopped") << std::endl;
+    std::cout << "Turn direction: " << turnDirection_ << std::endl;
+        std::cout << "Angle error: " << (targetAngle_ - currentAngle_) << " degrees" << std::endl;
         std::cout << "================================" << std::endl;
     }
 

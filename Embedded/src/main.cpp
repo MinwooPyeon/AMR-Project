@@ -5,9 +5,7 @@
 #include <sensor_msgs/msg/battery_state.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
-#include <sensor_msgs/msg/image.hpp>
-#include <cv_bridge/cv_bridge.h>
-#include <opencv2/imgcodecs.hpp>
+
 #include <vector>
 #include <string>
 #include <atomic>
@@ -23,8 +21,7 @@ std::mutex g_motor_mtx;
 std::vector<float> g_lidar_ranges;
 std::mutex g_lidar_mtx;
 
-std::string g_camera_jpeg_base64;
-std::mutex g_camera_mtx;
+
 
 void battery_cb(const sensor_msgs::msg::BatteryState::SharedPtr msg) {
     g_battery_pct = msg->percentage;
@@ -40,17 +37,7 @@ void lidar_cb(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     g_lidar_ranges = msg->ranges;
 }
 
-void camera_cb(const sensor_msgs::msg::Image::ConstSharedPtr msg) {
-    std::lock_guard<std::mutex> lock(g_camera_mtx);
-    try {
-        cv::Mat img = cv_bridge::toCvShare(msg, "bgr8")->image;
-        std::vector<uchar> buf;
-        cv::imencode(".jpg", img, buf);
-        g_camera_jpeg_base64.assign(buf.begin(), buf.end());
-    } catch (...) {
-        g_camera_jpeg_base64.clear();
-    }
-}
+
 
 int main(int argc, char* argv[]) {
     rclcpp::init(argc, argv);
@@ -72,9 +59,9 @@ int main(int argc, char* argv[]) {
         Json::Reader reader;
         if (reader.parse(payload, root) && root.isMember("type") && root["type"].asString() == "cmd") {
             std::string cmd = root["cmd"].asString();
-            RCLCPP_INFO(logger, "[AI CMD] 수신: %s", cmd.c_str());
+            RCLCPP_INFO(logger, "[AI CMD] Received: %s", cmd.c_str());
         } else {
-            RCLCPP_WARN(logger, "알 수 없는 메시지 수신: %s", payload.c_str());
+            RCLCPP_WARN(logger, "Unknown message received: %s", payload.c_str());
         }
     });
 
@@ -84,8 +71,7 @@ int main(int argc, char* argv[]) {
         "/motor_state", 10, motor_cb);
     auto lidar_sub = node->create_subscription<sensor_msgs::msg::LaserScan>(
         "/scan", 10, lidar_cb);
-    auto camera_sub = node->create_subscription<sensor_msgs::msg::Image>(
-        "/camera/image_raw", 10, camera_cb);
+
 
     std::atomic<bool> running{true};
     std::thread sender_thread([&]() {
@@ -101,17 +87,9 @@ int main(int argc, char* argv[]) {
                 std::lock_guard<std::mutex> lock(g_lidar_mtx);
                 lidar = g_lidar_ranges;
             }
-            std::string cam64;
-            {
-                std::lock_guard<std::mutex> lock(g_camera_mtx);
-                cam64 = g_camera_jpeg_base64;
-            }
             ws_client->sendState(battery, motor);
             ws_client->sendLidar(lidar);
-            if (!cam64.empty()) {
-                ws_client->sendCamera(cam64);
-            }
-            ws_client->sendLog("AMR 상태 송신 완료");
+            ws_client->sendLog("AMR status transmission completed");
             
             robot_data_publisher->publishRobotData(
                 "AMR001",

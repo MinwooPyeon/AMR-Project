@@ -4,21 +4,17 @@ project(amr_project)
 set(CMAKE_CXX_STANDARD 17)
 
 set(OpenCV_DIR "/usr/lib/aarch64-linux-gnu/cmake/opencv4")
-# ls /usr/lib/aarch64-linux-gnu/cmake/ 로 위치 확인
 
-# ROS2 환경 확인 및 설정
 if(DEFINED ENV{ROS_DISTRO})
     find_package(ament_cmake REQUIRED)
     set(ROS2_AVAILABLE TRUE)
-    message(STATUS "ROS2 환경이 감지되었습니다: $ENV{ROS_DISTRO}")
+    message(STATUS "ROS2 environment detected: $ENV{ROS_DISTRO}")
 else()
-    message(WARNING "ROS2 환경이 감지되지 않았습니다. ROS2 관련 기능은 비활성화됩니다.")
+    message(WARNING "ROS2 environment not detected. ROS2 features will be disabled.")
     set(ROS2_AVAILABLE FALSE)
-    # ROS2 없이도 빌드할 수 있도록 기본 설정
     set(ament_cmake_FOUND FALSE)
 endif()
 
-# ROS2 관련 패키지들 조건부 처리
 if(ROS2_AVAILABLE)
     find_package(rclcpp REQUIRED)
     find_package(sensor_msgs REQUIRED)
@@ -27,28 +23,24 @@ if(ROS2_AVAILABLE)
     find_package(rclcpp_action REQUIRED)
     find_package(nav2_msgs REQUIRED)
 else()
-    message(STATUS "ROS2 패키지들을 건너뜁니다.")
+    message(STATUS "Skipping ROS2 packages.")
 endif()
 
-# OpenCV 조건부 처리
 find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
-    message(STATUS "OpenCV가 발견되었습니다: ${OpenCV_VERSION}")
+    message(STATUS "OpenCV found: ${OpenCV_VERSION}")
 else()
-    message(WARNING "OpenCV가 발견되지 않았습니다. OpenCV 관련 기능은 비활성화됩니다.")
+    message(WARNING "OpenCV not found. OpenCV features will be disabled.")
     set(OpenCV_LIBS "")
 endif()
 
-# MQTT 관련 패키지 & 시스템 라이브러리
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(MOSQUITTO REQUIRED libmosquitto)
 find_package(nlohmann_json REQUIRED)
 
-# WebSocket 라이브러리
 find_package(websocketpp REQUIRED)
 find_package(jsoncpp REQUIRED)
 
-# libgpiod 라이브러리
 pkg_check_modules(GPIOD REQUIRED libgpiod)
 
 include_directories(
@@ -58,7 +50,6 @@ include_directories(
   ${GPIOD_INCLUDE_DIRS}
 )
 
-# 기본 소스 파일들
 set(SOURCES
   main.cpp
   src/backend_ws_client.cpp
@@ -91,16 +82,15 @@ set(SOURCES
   src/imu_motor_integration.cpp
 )
 
-# ROS2 관련 소스 파일들 조건부 추가
 if(ROS2_AVAILABLE)
     list(APPEND SOURCES
       src/ros/sensor_data_publisher.cpp
       src/ros/motor_cmd_subscriber.cpp
       src/ros/imu_data_publisher.cpp
     )
-    message(STATUS "ROS2 관련 소스 파일들을 포함합니다.")
+    message(STATUS "Including ROS2 source files.")
 else()
-    message(STATUS "ROS2 관련 소스 파일들을 제외합니다.")
+    message(STATUS "Excluding ROS2 source files.")
 endif()
 
 add_executable(amr_main ${SOURCES})
@@ -118,7 +108,7 @@ if(ROS2_AVAILABLE)
       nav2_msgs
     )
 else()
-    message(STATUS "ROS2 의존성을 건너뜁니다.")
+    message(STATUS "Skipping ROS2 dependencies.")
 endif()
 
 # OpenCV는 ROS2와 독립적으로 처리
@@ -163,5 +153,5 @@ install(DIRECTORY include/
 if(ROS2_AVAILABLE)
     ament_package()
 else()
-    message(STATUS "ament_package()를 건너뜁니다.")
+    message(STATUS "Skipping ament_package().")
 endif()

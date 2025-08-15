@@ -12,7 +12,7 @@ I2CAddressManager::I2CAddressManager(std::shared_ptr<I2CInterface> i2c)
         throw std::invalid_argument("I2C 인터페이스가 null입니다.");
     }
     
-    std::cout << "I2C 주소 관리자 초기화 완료" << std::endl;
+    std::cout << "I2C address manager initialization completed" << std::endl;
 }
 
 uint8_t I2CAddressManager::findAvailableAddress(const std::string& deviceName) {
@@ -21,7 +21,7 @@ uint8_t I2CAddressManager::findAvailableAddress(const std::string& deviceName) {
     for (uint8_t addr : defaultAddresses_) {
         if (isAddressAvailable(addr)) {
             if (reserveAddress(addr, deviceName)) {
-                std::cout << deviceName << " 주소 할당 완료: 0x" 
+                std::cout << deviceName << " address assignment completed: 0x" 
                           << std::hex << (int)addr << std::dec << std::endl;
                 return addr;
             }
@@ -139,7 +139,7 @@ std::vector<uint8_t> I2CAddressManager::scanBus() {
 }
 
 void I2CAddressManager::printBusStatus() {
-    std::cout << "\n=== I2C 버스 상태 ===" << std::endl;
+    std::cout << "\n=== I2C Bus Status ===" << std::endl;
     
     // 전체 버스 스캔
     std::vector<uint8_t> allDevices = scanBus();

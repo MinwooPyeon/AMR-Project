@@ -15,8 +15,8 @@ enum class RobotMovement {
     TURN_RIGHT = 4,
     ROTATE_LEFT = 5,
     ROTATE_RIGHT = 6,
-    SINGLE_WHEEL_ROTATE_LEFT = 7,   // 휠 1개만 사용한 좌회전
-    SINGLE_WHEEL_ROTATE_RIGHT = 8   // 휠 1개만 사용한 우회전
+    SINGLE_WHEEL_ROTATE_LEFT = 7,
+    SINGLE_WHEEL_ROTATE_RIGHT = 8
 };
 
 enum class RobotStatus {
@@ -34,7 +34,6 @@ public:
                    const std::string& name = "MotorController");
     ~MotorController();
 
-    // 기본 이동 명령
     bool moveForward(int speed);
     bool moveBackward(int speed);
     bool turnLeft(int speed);
@@ -44,33 +43,27 @@ public:
     bool stop();
     bool emergencyStop();
 
-    // 휠 1개만 사용한 회전 명령
-    bool rotateLeftSingleWheel(int speed);    // 왼쪽 휠만 사용하여 좌회전
-    bool rotateRightSingleWheel(int speed);   // 오른쪽 휠만 사용하여 우회전
-    bool rotateLeftSingleWheelLeft(int speed);   // 왼쪽 휠만 사용하여 좌회전
-    bool rotateRightSingleWheelRight(int speed); // 오른쪽 휠만 사용하여 우회전
+    bool rotateLeftSingleWheel(int speed);
+    bool rotateRightSingleWheel(int speed);
+    bool rotateLeftSingleWheelLeft(int speed);
+    bool rotateRightSingleWheelRight(int speed);
 
-    // 고급 이동 명령
     bool moveWithDifferential(int leftSpeed, int rightSpeed);
-    bool moveWithCurvature(int speed, double curvature); // 곡률 기반 이동
+    bool moveWithCurvature(int speed, double curvature);
     
-    // 상태 확인
     RobotStatus getStatus() const;
     bool isConnected() const;
     std::string getStatusString() const;
     
-    // 모터 개별 제어
     bool setLeftMotorSpeed(int speed);
     bool setRightMotorSpeed(int speed);
     int getLeftMotorSpeed() const;
     int getRightMotorSpeed() const;
     
-    // 설정 및 진단
     bool testMotors();
     bool resetMotors();
     bool calibrateMotors();
     
-    // I2C 주소 관리
     bool setMotorAddresses(uint8_t leftAddr, uint8_t rightAddr);
     std::pair<uint8_t, uint8_t> getMotorAddresses() const;
 
@@ -85,7 +78,6 @@ private:
     std::atomic<int> rightSpeed_{0};
     std::atomic<RobotMovement> currentMovement_{RobotMovement::STOP};
     
-    // 내부 헬퍼 함수
     void updateStatus();
     bool checkMotorConnection();
     void logMovement(RobotMovement movement, int speed);
@@ -93,4 +85,4 @@ private:
     std::string statusToString(RobotStatus status) const;
 };
 
-} // namespace amr 
+}

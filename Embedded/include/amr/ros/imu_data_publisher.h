@@ -26,7 +26,6 @@ private:
     rclcpp::Publisher<sensor_msgs::msg::Temperature>::SharedPtr temp_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
     
-    // 설정
     std::string frame_id_;
     double publish_rate_;
     bool enable_temperature_;
@@ -35,4 +34,4 @@ private:
 }
 }
 
-#endif // AMR_IMU_DATA_PUBLISHER_H 
+#endif 

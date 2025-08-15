@@ -19,7 +19,7 @@ MotorDriver::MotorDriver(std::shared_ptr<I2CInterface> i2c, uint8_t i2cAddr, con
         connected_ = true;
         updateStatus(MotorStatus::OK);
         stop(); // 안전을 위해 정지 상태로 초기화
-        std::cout << name_ << ": Motor Driver 초기화 완료 (주소: 0x" 
+        std::cout << name_ << ": Motor Driver initialization completed (address: 0x" 
                   << std::hex << (int)i2cAddr_ << std::dec << ")" << std::endl;
     } else {
         updateStatus(MotorStatus::ERROR_COMMUNICATION);

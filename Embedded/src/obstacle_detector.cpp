@@ -13,11 +13,11 @@ ObstacleDetector::ObstacleDetector(std::shared_ptr<IMUSensor> imu,
     , config_(config)
 {
     if (!imu_) {
-        std::cerr << "ObstacleDetector: IMU 센서가 제공되지 않았습니다." << std::endl;
+        std::cerr << "ObstacleDetector: IMU sensor not provided." << std::endl;
         return;
     }
     
-    std::cout << "ObstacleDetector: 장애물 감지기 초기화 시작" << std::endl;
+    std::cout << "ObstacleDetector: Obstacle detector initialization started" << std::endl;
 }
 
 ObstacleDetector::~ObstacleDetector() {
@@ -26,14 +26,14 @@ ObstacleDetector::~ObstacleDetector() {
 
 bool ObstacleDetector::initialize() {
     if (!imu_) {
-        std::cerr << "ObstacleDetector: IMU 센서가 없습니다." << std::endl;
+        std::cerr << "ObstacleDetector: No IMU sensor." << std::endl;
         return false;
     }
     
     try {
         // IMU 센서 초기화
         if (!imu_->initialize()) {
-            std::cerr << "ObstacleDetector: IMU 센서 초기화 실패" << std::endl;
+            std::cerr << "ObstacleDetector: IMU sensor initialization failed" << std::endl;
             return false;
         }
         
@@ -51,12 +51,12 @@ bool ObstacleDetector::initialize() {
         initialized_ = true;
         dataValid_ = dataHistory_.size() >= config_.window_size;
         
-        std::cout << "ObstacleDetector: 초기화 완료 (데이터 포인트: " 
+                std::cout << "ObstacleDetector: Initialization completed (data points: "
                   << dataHistory_.size() << ")" << std::endl;
         return true;
         
     } catch (const std::exception& e) {
-        std::cerr << "ObstacleDetector: 초기화 오류: " << e.what() << std::endl;
+        std::cerr << "ObstacleDetector: Initialization error: " << e.what() << std::endl;
         return false;
     }
 }

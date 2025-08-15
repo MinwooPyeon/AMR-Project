@@ -7,7 +7,6 @@
 
 namespace amr {
 
-// 전방 선언
 class IMUSensor;
 class MotorController;
 class MotorDriver;
@@ -18,27 +17,22 @@ public:
     IMUMotorIntegration(const std::string& i2cDevice = "/dev/i2c-1");
     ~IMUMotorIntegration();
 
-    // 초기화 및 설정
     bool initialize();
     bool calibrateInitialAngle();
 
-    // 제어 루프
     void start();
     void stop();
 
-    // 회전 명령
-    bool turnLeft90();      // 좌회전 90도
-    bool turnRight90();     // 우회전 90도
-    void stopTurning();     // 회전 정지
+    bool turnLeft90();      
+    bool turnRight90();     
+    void stopTurning();     
 
-    // 상태 확인
     void printStatus() const;
     bool isRunning() const { return isRunning_; }
     bool isTurning() const { return isTurning_; }
     double getCurrentAngle() const { return currentAngle_; }
     double getTargetAngle() const { return targetAngle_; }
 
-    // PID 설정
     void setPIDGains(double kp, double ki, double kd) {
         pidKp_ = kp;
         pidKi_ = ki;
@@ -61,7 +55,6 @@ private:
     std::thread controlThread_;
     mutable std::mutex controlMutex_;
     
-    // PID 제어 변수
     double pidKp_ = 2.0;
     double pidKi_ = 0.1;
     double pidKd_ = 0.5;
@@ -69,11 +62,10 @@ private:
     double pidPreviousError_ = 0.0;
     std::chrono::steady_clock::time_point lastPIDTime_;
     
-    // 내부 함수
     void controlLoop();
     double calculatePIDOutput(double error, double dt);
     double normalizeAngle(double angle);
     double calculateAngleError(double current, double target);
 };
 
-} // namespace amr
+} 

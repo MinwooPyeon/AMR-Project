@@ -1,5 +1,0 @@
-# Motor Driver HAT AI 통신 의존성
-requests>=2.25.1
-numpy>=1.19.0
-Pillow>=8.0.0
-Flask>=2.0.0

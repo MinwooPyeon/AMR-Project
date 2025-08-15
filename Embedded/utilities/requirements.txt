@@ -1,0 +1,14 @@
+# Utilities Module Dependencies
+
+# Core dependencies
+logging>=0.5.1.2
+
+# Optional dependencies for enhanced functionality
+# datetime (built-in)
+# sys (built-in)
+# typing (built-in for Python 3.5+)
+
+# Development dependencies
+# pytest>=7.0.0
+# black>=22.0.0
+# flake8>=4.0.0

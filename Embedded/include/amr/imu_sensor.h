@@ -9,7 +9,6 @@
 
 namespace amr {
 
-// IMU 센서 타입
 enum class IMUType {
     MPU6050,
     MPU9250,
@@ -18,42 +17,33 @@ enum class IMUType {
     BNO08X
 };
 
-// IMU 데이터 구조체
 struct IMUData {
-    // 자이로스코프 (도/초)
     float gyro_x;
     float gyro_y;
     float gyro_z;
     
-    // 가속도계 (m/s²)
     float accel_x;
     float accel_y;
     float accel_z;
     
-    // 자력계 (μT) - 지원하는 경우
     float mag_x;
     float mag_y;
     float mag_z;
     
-    // 오일러 각도 (도) - 지원하는 경우
     float roll;
     float pitch;
     float yaw;
     
-    // 쿼터니언 - 지원하는 경우
     float quaternion_w;
     float quaternion_x;
     float quaternion_y;
     float quaternion_z;
     
-    // 온도 (섭씨)
     float temperature;
     
-    // 타임스탬프
     uint64_t timestamp;
 };
 
-// IMU 센서 상태
 enum class IMUStatus {
     OK,
     ERROR_I2C,
@@ -69,30 +59,24 @@ public:
               const std::string& name = "IMU");
     ~IMUSensor();
 
-    // 초기화 및 설정
     bool initialize();
     bool calibrate();
     bool reset();
     
-    // 데이터 읽기
     bool readData();
     IMUData getLatestData() const;
     
-    // 상태 확인
     IMUStatus getStatus() const;
     bool isConnected() const;
     bool isCalibrated() const;
     
-    // 설정
     bool setSampleRate(uint16_t rate);
     bool setGyroRange(uint16_t range);
     bool setAccelRange(uint8_t range);
     
-    // 필터링 및 보정
     void enableLowPassFilter(bool enable);
     void setFilterCutoff(float cutoff);
     
-    // 캘리브레이션
     bool startCalibration();
     bool stopCalibration();
     float getCalibrationProgress() const;
@@ -111,14 +95,12 @@ private:
     std::atomic<bool> calibrating_{false};
     std::atomic<float> calibrationProgress_{0.0f};
     
-    // 설정값
     uint16_t sampleRate_;
     uint16_t gyroRange_;
     uint8_t accelRange_;
     bool lowPassFilterEnabled_;
     float filterCutoff_;
     
-    // 내부 함수
     bool initializeMPU6050();
     bool initializeMPU9250();
     bool initializeAK8963();
@@ -140,14 +122,12 @@ private:
     bool testConnection();
     void updateStatus(IMUStatus newStatus);
     
-    // 캘리브레이션 관련
     void calibrationTask();
     std::vector<IMUData> calibrationData_;
     
-    // 자력계 캘리브레이션 값
     float magCalibration_[3] = {1.0f, 1.0f, 1.0f};
 };
 
-} // namespace amr
+} 
 
-#endif // AMR_IMU_SENSOR_H 
+#endif 

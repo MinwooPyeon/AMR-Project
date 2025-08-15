@@ -5,14 +5,8 @@
 #include <string>
 #include <memory>
 
-// Forward declaration for libgpiod
 struct gpiod_chip;
 
-/**
- * @brief Jetson Nano용 GPIO 인터페이스 구현
- * 
- * Jetson Nano에서는 libgpiod를 사용하여 /dev/gpiochip*를 통해 GPIO에 접근합니다.
- */
 class JetsonGpio : public GpioInterface {
 public:
     JetsonGpio();
@@ -32,4 +26,4 @@ private:
     bool initialized_;
 };
 
-#endif // JETSON_GPIO_H 
+#endif 

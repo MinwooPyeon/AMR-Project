@@ -1,0 +1,43 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.black-formatter",
+    "ms-python.flake8",
+    "ms-python.isort",
+    "ms-python.pylint",
+
+    "ms-vscode.cpptools",
+    "ms-vscode.cpptools-extension-pack",
+    "ms-vscode.cmake-tools",
+
+    "ms-iot.vscode-ros",
+    "ms-iot.vscode-ros2",
+
+    "redhat.vscode-yaml",
+
+    "eamodio.gitlens",
+
+    "pkief.material-icon-theme",
+
+    "ms-vscode.vscode-json",
+
+    "ms-vscode.vscode-js-debug",
+
+    "ms-vscode.cpptools-extension-pack",
+
+    "esbenp.prettier-vscode",
+
+    "ms-vscode.live-server",
+
+    "ms-azuretools.vscode-docker",
+
+    "humao.rest-client",
+
+    "yzhang.markdown-all-in-one",
+
+    "ms-vscode.vscode-diff",
+
+    "ms-vscode.vscode-json"
+  ],
+  "unwantedRecommendations": ["ms-vscode.vscode-typescript-next"]
+}

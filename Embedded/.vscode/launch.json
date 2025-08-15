@@ -1,0 +1,105 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug C++ Main",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/main",
+      "args": [],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [
+        {
+          "name": "ROS_DISTRO",
+          "value": "humble"
+        }
+      ],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "CMake Build"
+    },
+    {
+      "name": "Debug Python AI Server",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/motor_control/ai_server_auto.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/ai:${workspaceFolder}/motor_control:${workspaceFolder}/mqtt:${workspaceFolder}/ros2"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Debug Python Manual Controller",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/motor_control/manual_keyboard_controller.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/motor_control"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Debug Python MQTT Client",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/mqtt/ai_mqtt_client.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/mqtt:${workspaceFolder}/ai"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Debug Python IMU Test",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/tests/imu_sensor_test.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/tests:${workspaceFolder}/src"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Debug Python Motor Test",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/tests/run_motor_servo_test.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/tests:${workspaceFolder}/motor_control"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "Attach to Python Process",
+      "type": "python",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "."
+        }
+      ]
+    }
+  ]
+}
