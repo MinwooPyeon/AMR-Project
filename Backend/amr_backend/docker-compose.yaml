@@ -37,7 +37,7 @@ services:
       - "8080:8080"
     user: spring
     env_file:
-      - "./env/spring.prod.env"
+      - "./env/spring-docker.dev.env"
     volumes:
       - "./firebase:/firebase"
       - "./images:/images"
