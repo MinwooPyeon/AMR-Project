@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -31,16 +32,18 @@ class AuthController(
                 schema = Schema(implementation = LoginRequest::class)
             )]
         ),
-        responses = [
-            ApiResponse(
-                responseCode = "200",
-                description = "로그인 성공",
-                content = [Content(
-                    mediaType = "application/json",
-                    schema = Schema(implementation = Token::class)
-                )]
-            )
-        ]
+    )
+    @ApiResponses(
+        ApiResponse(
+            responseCode = "200",
+            description = "로그인 성공",
+            content = [Content(
+                mediaType = "application/json",
+                schema = Schema(implementation = Token::class)
+            )]
+        ),
+        ApiResponse(responseCode = "401", description = "인증 실패"),
+        ApiResponse(responseCode = "500", description = "서버 오류")
     )
     @PostMapping("/login")
     fun login(
@@ -57,16 +60,18 @@ class AuthController(
                 schema = Schema(implementation = RefreshRequest::class)
             )]
         ),
-        responses = [
-            ApiResponse(
-                responseCode = "200",
-                description = "토큰 재발급 성공",
-                content = [Content(
-                    mediaType = "application/json",
-                    schema = Schema(implementation = Token::class)
-                )]
-            )
-        ]
+    )
+    @ApiResponses(
+        ApiResponse(
+            responseCode = "200",
+            description = "토큰 재발급 성공",
+            content = [Content(
+                mediaType = "application/json",
+                schema = Schema(implementation = Token::class)
+            )]
+        ),
+        ApiResponse(responseCode = "401", description = "인증 실패"),
+        ApiResponse(responseCode = "500", description = "서버 오류")
     )
     @PostMapping("/refresh")
     fun refresh(
