@@ -13,9 +13,9 @@ fun FullscreenMapRoute(
 ) {
     val state = viewModel.state.collectAsState().value
 
-    LaunchedEffect(Unit) {
-        viewModel.onIntent(FullscreenMapIntent.LoadMap)
-    }
+//    LaunchedEffect(Unit) {
+//        viewModel.onIntent(FullscreenMapIntent.LoadMap)
+//    }
 
     if (state.selectedAmrSerial != null) {
         navigateToAmrDetail(state.selectedAmrSerial)

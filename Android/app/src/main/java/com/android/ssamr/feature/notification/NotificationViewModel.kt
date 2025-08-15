@@ -10,6 +10,7 @@ import com.android.ssamr.core.domain.usecase.notification.GetNotificationListUse
 import com.android.ssamr.core.domain.usecase.notification.MarkNotificationReadLocalUseCase
 import com.android.ssamr.core.domain.usecase.notification.MarkNotificationReadRemoteUseCase
 import com.android.ssamr.core.domain.usecase.notification.SaveNotificationListUseCase
+import com.android.ssamr.feature.notification.NotificationEffect.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,10 +64,33 @@ class NotificationViewModel @Inject constructor(
                 // 하이브리드: 로컬 즉시 + 서버 비동기
                 markReadHybrid(intent.notificationId)
                 viewModelScope.launch {
-                    _effect.emit(NotificationEffect.NavigateToNotificationDetail(intent.notificationId))
+                    _effect.emit(NavigateToNotificationDetail(intent.notificationId))
                 }
             }
+
+            NotificationIntent.CallFire -> viewModelScope.launch {
+                dismissCallDialog()
+                launchDialer("119")     // 소방서
+            }
+            NotificationIntent.CallManager -> viewModelScope.launch {
+                dismissCallDialog()
+                launchDialer("100")     // 관리실
+            }
+            NotificationIntent.DismissCallDialog -> dismissCallDialog()
+            NotificationIntent.OpenCallDialog -> openCallDialog()
         }
+    }
+
+    fun openCallDialog() {
+        _state.update { it.copy(isCallDialogVisible = true) }
+    }
+
+    private fun dismissCallDialog() {
+        _state.update { it.copy(isCallDialogVisible = false) }
+    }
+
+    private suspend fun launchDialer(phone: String) {
+        _effect.emit(NotificationEffect.LaunchDialer(phone))
     }
 
     fun refresh() = syncFromServer()

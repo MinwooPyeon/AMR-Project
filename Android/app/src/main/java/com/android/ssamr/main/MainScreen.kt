@@ -144,7 +144,8 @@ fun MainScreen() {
                 NotificationRoute(
                     navigateToNotificationDetail = { notificationId ->
                         navController.navigate("notification_detail/$notificationId")
-                    }
+                    },
+                    onCallClick = { onCallbackAction = it }
                 )
             }
             composable(MoreScreen.route) {
