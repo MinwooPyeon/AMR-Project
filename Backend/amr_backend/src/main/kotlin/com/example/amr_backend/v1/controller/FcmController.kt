@@ -2,16 +2,48 @@ package com.example.amr_backend.v1.controller
 
 import com.example.amr_backend.v1.dto.FcmTokenSaveRequest
 import com.example.amr_backend.v1.service.FcmService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 
+@Tag(name = "FCM", description = "FCM 관련 API")
 @RestController
 @RequestMapping("/api/v1/fcm")
+@SecurityRequirement(name = "jwtAuth")
 class FcmController(
     private val fcmService: FcmService,
 ) {
+    @Operation(
+        summary = "FCM 토큰 저장",
+        requestBody = SwaggerRequestBody(
+            description = "FCM 토큰 정보",
+            required = true,
+            content = [Content(
+                mediaType = "application/json",
+                schema = Schema(implementation = FcmTokenSaveRequest::class)
+            )]
+        ),
+    )
+    @ApiResponses(
+        ApiResponse(
+            responseCode = "202",
+            description = "FCM 토큰 저장 성공"
+        ),
+        ApiResponse(responseCode = "400", description = "잘못된 요청"),
+        ApiResponse(responseCode = "500", description = "서버 오류")
+    )
     @PostMapping
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
     fun saveToken(@RequestBody request: FcmTokenSaveRequest) = fcmService.saveToken(request.token)
 }
