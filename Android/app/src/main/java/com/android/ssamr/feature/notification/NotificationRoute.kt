@@ -16,6 +16,7 @@ import com.android.ssamr.core.domain.model.NotificationCategory
 fun NotificationRoute(
     navigateToNotificationDetail: (Long) -> Unit,
     viewModel: NotificationViewModel = hiltViewModel(),
+    onRefresh: ((() -> Unit) -> Unit)? = null,
     onCallClick: ((() -> Unit) -> Unit)? = null
 ) {
     val context = LocalContext.current
@@ -49,8 +50,8 @@ fun NotificationRoute(
         }
     }
 
-    onCallClick?.invoke { viewModel.openCallDialog() }
-
+    LaunchedEffect(onRefresh)   { onRefresh?.invoke { viewModel.syncFromServer() } }
+    LaunchedEffect(onCallClick) { onCallClick?.invoke { viewModel.openCallDialog() } }
 
     NotificationScreen(
         state = state,
