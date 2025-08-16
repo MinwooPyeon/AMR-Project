@@ -72,5 +72,6 @@ class AlertMessageHandler(
         Case.COLLAPSE -> "충돌"
         Case.SMOKE -> "흡연"
         Case.EQUIPMENT -> "안전 장비 미착용"
+        Case.FALL -> "사람 쓰러짐"
     }
 }
