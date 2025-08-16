@@ -63,7 +63,7 @@ data class AlertOutboundMessage(
 )
 
 enum class Case {
-    COLLAPSE, SMOKE, EQUIPMENT
+    COLLAPSE, SMOKE, EQUIPMENT, FALL
 }
 
 fun AlertOutboundMessage.toEntity() = Notification(
