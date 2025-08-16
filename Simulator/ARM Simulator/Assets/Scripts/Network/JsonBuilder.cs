@@ -28,8 +28,8 @@ public class JsonBuilder
         sb.Append($"\"x\":{data.GridPosition.x},");
         sb.Append($"\"y\":{data.GridPosition.y},");
         sb.Append($"\"speed\":{data.Speed},");
-        sb.Append($"\"angle\":{data.Angle}");
-
+        sb.Append($"\"angle\":{data.Angle},");
+        sb.Append($"\"zone\":\"{data.Zone}\"");
         sb.Append("}");
         return sb.ToString();
     }
