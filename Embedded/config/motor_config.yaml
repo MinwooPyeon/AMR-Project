@@ -1,0 +1,20 @@
+motor:
+  ros__parameters:
+    left_motor_pin: 18
+    right_motor_pin: 19
+    left_motor_dir_pin: 20
+    right_motor_dir_pin: 21
+    pwm_frequency: 1000
+    max_speed: 100
+    min_speed: 0
+    acceleration_rate: 0.1
+    deceleration_rate: 0.1
+
+servo:
+  ros__parameters:
+    servo_pin: 12
+    min_angle: 0
+    max_angle: 180
+    center_angle: 90
+    pulse_min: 500
+    pulse_max: 2500

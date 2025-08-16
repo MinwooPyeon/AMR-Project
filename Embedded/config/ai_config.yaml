@@ -1,0 +1,27 @@
+ai:
+  ros__parameters:
+    model_path: "/opt/ai/models/object_detection.pth"
+    confidence_threshold: 0.5
+    nms_threshold: 0.4
+    max_detections: 10
+    enable_gpu: false
+    inference_interval: 0.1
+
+object_detection:
+  ros__parameters:
+    classes: ["person", "car", "bicycle", "motorcycle", "bus", "truck"]
+    colors:
+      person: [255, 0, 0]
+      car: [0, 255, 0]
+      bicycle: [0, 0, 255]
+      motorcycle: [255, 255, 0]
+      bus: [255, 0, 255]
+      truck: [0, 255, 255]
+
+path_planning:
+  ros__parameters:
+    algorithm: "a_star"
+    heuristic: "euclidean"
+    max_iterations: 1000
+    path_smoothing: true
+    dynamic_obstacle_avoidance: true
