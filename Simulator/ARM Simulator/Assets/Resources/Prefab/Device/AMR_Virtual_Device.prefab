@@ -481,15 +481,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 180
   moveSpeed: 5
-  detectRadius: 0.35
+  detectRadius: 0.3
   forwardBias: 0.5
   safeDistance: 0.6
   amrLayer:
     serializedVersion: 2
     m_Bits: 8
-  blockRadius: 0.35
-  blockDuration: 1.2
-  replanCooldown: 0.8
+  blockRadius: 0.3
+  blockDuration: 0.5
+  replanCooldown: 0.5
+  useSegmentBlocking: 0
+  smallerSerialWins: 1
+  yieldHoldTime: 2
+  openClearance: 0.7
+  maxEscapeSteps: 160
+  maxBackSteps: 60
 --- !u!114 &3119593388044345967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,6 +510,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _state: {fileID: 2660719473102243833}
   _deviceController: {fileID: 6635672922435685038}
+  forceStartGoalWalkable: 1
+  useTransformFallback: 1
+  retryDelay: 0.5
+  maxStartSearchRing: 25
+  maxGoalSearchRing: 25
 --- !u!1 &5057221870365734717
 GameObject:
   m_ObjectHideFlags: 0

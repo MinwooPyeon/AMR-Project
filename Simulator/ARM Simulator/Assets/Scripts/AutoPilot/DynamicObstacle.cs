@@ -23,7 +23,7 @@ public static class DynamicObstacle
                 if (!grid.InBounds(p.x, p.y)) continue;
 
                 Node n = gridA[p.x, p.y];
-                if (n.Walkable)
+                if (n!= null && n.Walkable)
                 {
                     n.Walkable = false;
                     changed.Add(n);

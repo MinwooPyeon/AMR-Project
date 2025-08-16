@@ -12,6 +12,7 @@ public struct PathRequest
 
     public PathRequest(Node start, Node end, Action<List<Node>> callback)
     {
+        //Debug.Log(start + " " + end);
         this.start = start;
         this.end = end;
         this.callback = callback;

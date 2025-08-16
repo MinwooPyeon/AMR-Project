@@ -1,3 +1,4 @@
+using System.Text;
 using UnityEngine;
 
 public class StateData : MonoBehaviour
@@ -40,5 +41,18 @@ public class StateData : MonoBehaviour
     {
         get { return _actionState; }
         set { _actionState = value; }
+    }
+
+    public string Zone
+    {
+        get
+        {
+            StringBuilder sb = new StringBuilder();
+            Vector2Int gridPos = this.GridPosition;
+            sb.Append((char)(gridPos.x / 100 + 65));
+            sb.Append((char)(gridPos.y / 100 + 65));
+
+            return sb.ToString();
+        }
     }
 }
