@@ -44,6 +44,9 @@ data class AmrStatus(
 
     @Column(name = "angle")
     val angle: Double,
+
+    @Column(name = "_zone")
+    var zone: String? = null
 ) {
     @CreatedDate
     @Column(name = "created_at")

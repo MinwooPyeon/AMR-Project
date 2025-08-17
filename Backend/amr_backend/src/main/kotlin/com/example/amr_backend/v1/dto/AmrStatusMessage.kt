@@ -19,6 +19,8 @@ data class AmrStatusMessage(
     val speed: Double,
     @Schema(description = "각도")
     val angle: Double,
+    @Schema(description = "구역")
+    val zone: String? = null
 )
 
 fun AmrStatusMessage.toAmrStatus(amr: Amr) = AmrStatus(
@@ -27,5 +29,6 @@ fun AmrStatusMessage.toAmrStatus(amr: Amr) = AmrStatus(
     x = x,
     y = y,
     speed = speed,
-    angle = angle
+    angle = angle,
+    zone = zone
 )

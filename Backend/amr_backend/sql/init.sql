@@ -14,13 +14,15 @@ CREATE TABLE IF NOT EXISTS amr
 CREATE TABLE IF NOT EXISTS amr_status
 (
     id         BIGSERIAL PRIMARY KEY,
-    amr_serial VARCHAR(255)                        NOT NULL,
-    state      VARCHAR(255)                        NOT NULL,
-    x          DOUBLE PRECISION                    NOT NULL,
-    y          DOUBLE PRECISION                    NOT NULL,
-    speed      DOUBLE PRECISION                    NOT NULL,
-    angle      DOUBLE PRECISION                    NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    amr_serial VARCHAR(255)                           NOT NULL,
+    state      VARCHAR(255)                           NOT NULL,
+    x          DOUBLE PRECISION                       NOT NULL,
+    y          DOUBLE PRECISION                       NOT NULL,
+    speed      DOUBLE PRECISION                       NOT NULL,
+    _zone      VARCHAR(255) DEFAULT NULL,
+    angle      DOUBLE PRECISION                       NOT NULL,
+
+    created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (amr_serial) REFERENCES amr (serial) ON DELETE CASCADE
 );
 
