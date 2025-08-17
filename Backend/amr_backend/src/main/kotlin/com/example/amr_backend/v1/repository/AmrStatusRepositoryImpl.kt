@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Repository
 import java.time.ZoneOffset
 import java.util.Optional
+import kotlin.jvm.optionals.getOrNull
 
 @Repository
 class AmrStatusRepositoryImpl(
@@ -77,7 +78,8 @@ class AmrStatusRepositoryImpl(
         val cachedStatus = amrStatusTemplate.opsForValue().get(key)
         if (cachedStatus != null) return Optional.of(cachedStatus)
 
-        val statusFromDb = amrStatusJpaRepository.findTopByAmrSerialOrderByCreatedAtDesc(serial)
+        val statusFromDb =
+            amrStatusJpaRepository.findTopByAmrSerialOrderByCreatedAtDesc(serial).getOrNull() ?: return Optional.empty()
         putSingleIntoRedis(statusFromDb)
         return Optional.of(statusFromDb)
     }
