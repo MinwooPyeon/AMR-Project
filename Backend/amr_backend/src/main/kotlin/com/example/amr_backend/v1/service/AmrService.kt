@@ -12,8 +12,6 @@ class AmrService(
 ) {
     fun findAllLatestStatuses(): List<AmrStatus> = amrStatusRepository.findAllLatestStatuses()
 
-    fun findAmrDetail(id: Long): AmrStatus = amrStatusRepository.findAmrStatusById(id)
-
     fun findLatestStatusBySerial(serial: String): AmrStatus = amrStatusRepository.findLatestStatusBySerial(serial)
 
     fun sendManualControlMessage(serial: String, message: TopicMessage.AmrManualControlMessage) =

@@ -70,10 +70,6 @@ class AmrStatusRepositoryImpl(
         }
     }
 
-    override fun findAmrStatusById(id: Long): AmrStatus {
-        return amrStatusJpaRepository.findAmrStatusById(id)
-    }
-
     override fun findLatestStatusBySerial(serial: String): AmrStatus {
         val key = getRedisKey(serial)
 
