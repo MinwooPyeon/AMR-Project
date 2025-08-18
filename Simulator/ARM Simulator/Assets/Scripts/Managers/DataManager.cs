@@ -9,6 +9,7 @@ public class SensorFrame
     public AMR_STATE amrState;
     public ACTION_STATE actionState;
     public long timestamp;
+    public string zone;
 }
 public class DataManager
 {
@@ -26,7 +27,8 @@ public class DataManager
             amrState = state.AmrState,
             actionState = state.ActionState,
             position = state.GridPosition,
-            timestamp = timestamp
+            timestamp = timestamp,
+            zone = state.Zone
         });
     }
 
@@ -81,7 +83,7 @@ public class DataManager
         {
             AddSensorFrame(deviceIndex, session.cameraData, session.state, session.timestamp);
             _pendingSessions.Remove((deviceIndex, session.timestamp));
-            //Debug.Log($"[DataManager] Frame saved for Device {deviceIndex}");
+            Debug.Log($"[DataManager] Frame saved for Device {deviceIndex}, {session.state.Zone}");
         }
     }
 }

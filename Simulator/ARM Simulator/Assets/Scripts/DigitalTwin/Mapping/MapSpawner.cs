@@ -20,6 +20,8 @@ public class MapSpawner : MonoBehaviour
     private YamlFile yamlData;
     private ImageFile imgData;
 
+    private WalkableMaskBuilder walkableMaskBuilder = new();
+
     void Awake()
     {
         yamlParser = new YAMLParser();
@@ -36,6 +38,7 @@ public class MapSpawner : MonoBehaviour
         Managers.Map.Grid.SetSize(imgData.width, imgData.height);
         SpawnByProbRanges();
 
+        walkableMaskBuilder.ChangeWalkableNearWall(Managers.Map.Grid.grid, Managers.Map.Resolution);
         MainCamera.OnMapLoaded(imgData);
 
         Managers.Map.isLoaded = true;

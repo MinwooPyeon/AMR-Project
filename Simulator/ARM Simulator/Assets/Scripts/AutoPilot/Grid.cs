@@ -15,7 +15,9 @@ public class Grid
         {NODE_TYPE.LOADER, ()=>new LoaderNode() },
         {NODE_TYPE.DROPER, ()=>new DroperNode() },
     };
-    Node[,] grid;
+
+    public Node[,] grid;
+
     int _width, _height;
 
     public void SetSize(int width, int height)
@@ -51,7 +53,7 @@ public class Grid
             int dx = (int)pos.x + _dirX[i];
             int dy = (int)pos.y + _dirY[i];
             
-            if (CheckBound(dx, dy) && grid[dx, dy].Walkable)
+            if (InBounds(dx, dy) && grid[dx, dy].Walkable)
             {
                 //Debug.Log(grid[dx, dy]);
                 neighbor.Add(grid[dx, dy]);
@@ -60,10 +62,11 @@ public class Grid
         return neighbor;
     }
 
-    private bool CheckBound(int x,  int y)
+    public bool InBounds(int x,  int y)
     {
         if (x < 0 || x >= _width || y < 0 || y >= _height) return false;
         return true;
     }
+
 }
 

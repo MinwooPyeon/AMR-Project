@@ -7,18 +7,13 @@ public class ReceiveMessageParser
 {
     JsonParser parser = new();
     
-    public PositionMsg ParsePositionMessage(string json)
+    public MapMsg ParseMapMessage(string json)
     {
-        PositionMsg msg = new PositionMsg();
+        MapMsg msg = new MapMsg();
 
         Dictionary<string, string> pairs = parser.Parse(json);
 
-        msg.serialNumber = pairs["serial"];
-        msg.actionState = (ACTION_STATE)Enum.Parse(typeof(ACTION_STATE) ,pairs["move"], true);
-        msg.position.x = float.Parse(pairs["x"]);
-        msg.position.y = float.Parse(pairs["y"]);
-        //TODO STRING -> DANGER_CASE
-        msg.situation = pairs["situation"];
+        
 
         return msg;
     }
@@ -34,18 +29,16 @@ public class ReceiveMessageParser
         msg.position.x = float.Parse(pairs["x"]);
         msg.position.y = float.Parse(pairs["y"]);
         msg.speed = float.Parse(pairs["speed"]);
-
+        msg.angle = float.Parse(pairs["angle"]);
         return msg;
     }
 }
 
 //Json Parsing Output Class
-public class PositionMsg
+public class MapMsg
 {
-    public string serialNumber;
-    public ACTION_STATE actionState;
-    public Vector2 position;
-    public string situation;
+    public string map;
+    public Texture2D texture;
 }
 
 public class StatusMsg
@@ -54,4 +47,5 @@ public class StatusMsg
     public AMR_STATE state;
     public Vector2 position;
     public float speed;
+    public float angle;
 }
