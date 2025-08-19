@@ -10,7 +10,10 @@ try:
     from main.amr_real_data_sync import AMRRealDataSync
     print("AMR system module import successful")
     
-    amr_sync = AMRRealDataSync("AMR001", enable_mqtt=True, enable_backup=True)
+    from config.system_config import get_config
+    config = get_config()
+
+    amr_sync = AMRRealDataSync(config.SYSTEM_NAME, enable_mqtt=True, enable_backup=True)
     print("AMR system initialization completed")
     
     print("\nMotor status check:")

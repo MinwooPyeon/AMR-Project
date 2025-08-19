@@ -6,10 +6,14 @@ import paho.mqtt.client as mqtt
 from utils.logger import mqtt_logger
 
 class SensorDataTransmitter:
-    def __init__(self, robot_id: str = "AMR001", mqtt_broker: str = "192.168.100.141", mqtt_port: int = 1883):
-        self.robot_id = robot_id
-        self.mqtt_broker = mqtt_broker
-        self.mqtt_port = mqtt_port
+    def __init__(self, robot_id: str = None, mqtt_broker: str = None, mqtt_port: int = None):
+        from config.system_config import get_config
+        config = get_config()
+        
+        self.robot_id = robot_id or config.SYSTEM_NAME
+        self.mqtt_broker = mqtt_broker or config.MQTT_BROKER
+        self.mqtt_port = mqtt_port or config.MQTT_PORT
+
         
         self.mqtt_client = mqtt.Client(client_id=f"sensor_transmitter_{robot_id}")
         self.connected = False
@@ -44,10 +48,10 @@ class SensorDataTransmitter:
     
     def connect_mqtt(self) -> bool:
         try:
-            self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, 60)
+            self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, config.MQTT_KEEPALIVE)
             self.mqtt_client.loop_start()
             
-            timeout = 10
+            timeout = config.COMMUNICATION_TIMEOUT
             start_time = time.time()
             while not self.connected and (time.time() - start_time) < timeout:
                 time.sleep(0.1)

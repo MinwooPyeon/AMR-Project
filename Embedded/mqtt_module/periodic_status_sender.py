@@ -11,9 +11,14 @@ from mqtt.sensor_data_transmitter import SensorDataTransmitter
 from utils.logger import mqtt_logger
 
 class PeriodicStatusSender:
-    def __init__(self, robot_id: str = "AMR001", broker: str = "192.168.100.141", port: int = 1883):
-        self.robot_id = robot_id
-        self.transmitter = SensorDataTransmitter(robot_id, broker, port)
+    def __init__(self, robot_id: str = None, broker: str = None, port: int = None):
+        from config.system_config import get_config
+        config = get_config()
+        
+        self.robot_id = robot_id or config.SYSTEM_NAME
+        self.broker = broker or config.MQTT_BROKER
+        self.port = port or config.MQTT_PORT
+        self.transmitter = SensorDataTransmitter(self.robot_id, self.broker, self.port)
         self.running = False
         
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -58,10 +63,10 @@ class PeriodicStatusSender:
             
             while self.running:
                 x += speed * 0.1
-                y += speed * 0.05
+                y += speed * config.MOTOR_SPEED_MULTIPLIER / 1000  
                 angle += 5.0
                 
-                if angle >= 360.0:
+                if angle >= config.ROTATION_360_DEGREES:
                     angle = 0.0
                 
                 self.transmitter.update_embedded_data(

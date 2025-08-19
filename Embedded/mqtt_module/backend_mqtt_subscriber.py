@@ -10,9 +10,13 @@ logger = logging.getLogger(__name__)
 
 class BackendMQTTSubscriber:
     
-    def __init__(self, mqtt_broker: str = "192.168.100.141", mqtt_port: int = 1883):
-        self.mqtt_broker = mqtt_broker
-        self.mqtt_port = mqtt_port
+    def __init__(self, mqtt_broker: str = None, mqtt_port: int = None):
+        from config.system_config import get_config
+        config = get_config()
+        
+        self.mqtt_broker = mqtt_broker or config.MQTT_BROKER
+        self.mqtt_port = mqtt_port or config.MQTT_PORT
+
         self.mqtt_client_id = f"backend_subscriber_{int(time.time())}"
         
         self.mqtt_client = mqtt.Client(client_id=self.mqtt_client_id)
@@ -38,10 +42,10 @@ class BackendMQTTSubscriber:
     def connect_mqtt(self) -> bool:
         try:
             logger.info(f"MQTT 브로커에 연결 중: {self.mqtt_broker}:{self.mqtt_port}")
-            self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, 60)
+            self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, config.MQTT_KEEPALIVE)
             self.mqtt_client.loop_start()
             
-            timeout = 10
+            timeout = config.COMMUNICATION_TIMEOUT
             start_time = time.time()
             while not self.mqtt_connected and (time.time() - start_time) < timeout:
                 time.sleep(0.1)
@@ -64,7 +68,10 @@ class BackendMQTTSubscriber:
             self.mqtt_connected = False
             logger.info("MQTT connection released")
     
-    def subscribe_to_amr_data(self, robot_id: str = "AMR001"):
+    def subscribe_to_amr_data(self, robot_id: str = None):
+        if robot_id is None:
+            from config.system_config import get_config
+            robot_id = get_config().SYSTEM_NAME
         topic = f"status/{robot_id}"
         result = self.mqtt_client.subscribe(topic, qos=1)
         
@@ -75,7 +82,10 @@ class BackendMQTTSubscriber:
             logger.error(f"AMR data subscription failed: {result[0]}")
             return False
     
-    def subscribe_to_commands(self, robot_id: str = "AMR001"):
+    def subscribe_to_commands(self, robot_id: str = None):
+        if robot_id is None:
+            from config.system_config import get_config
+            robot_id = get_config().SYSTEM_NAME
         topic = f"command/{robot_id}"
         result = self.mqtt_client.subscribe(topic, qos=1)
         
@@ -182,10 +192,13 @@ class BackendMQTTSubscriber:
 def test_backend_mqtt_subscriber():
     print("=== Backend MQTT Subscriber test ===")
     print("Receive data from AMR and send commands to AMR")
-    print("MQTT broker: 192.168.100.141:1883")
+    from config.system_config import get_config
+    config = get_config()
+        
+    print(f"MQTT broker: {config.MQTT_BROKER}:{config.MQTT_PORT}")
     print("=" * 60)
-    
-    backend = BackendMQTTSubscriber("192.168.100.141", 1883)
+      
+    backend = BackendMQTTSubscriber(config.MQTT_BROKER, config.MQTT_PORT)
     
     def amr_data_callback(data):
         print(f"\r AMR data received: "
@@ -209,20 +222,20 @@ def test_backend_mqtt_subscriber():
     print("MQTT connection successful")
     
     print("Subscribing to AMR data...")
-    if not backend.subscribe_to_amr_data("AMR001"):
+    if not backend.subscribe_to_amr_data(config.SYSTEM_NAME):
         print("AMR data subscription failed")
         return
     
     print("AMR data subscription successful")
     
     print("Subscribing to commands...")
-    if not backend.subscribe_to_commands("AMR001"):
+    if not backend.subscribe_to_commands(config.SYSTEM_NAME):
         print("Command subscription failed")
         return
     
     print("Command subscription successful")
     
-    print("\nWaiting for data reception... (30 seconds)")
+    print(f"\nWaiting for data reception... ({config.TEST_DURATION} seconds)")
     print("Press Ctrl+C to exit or enter a command:")
     print("  - 'MOVE_FORWARD': Move forward")
     print("  - 'MOVE_BACKWARD': Move backward")
@@ -234,7 +247,7 @@ def test_backend_mqtt_subscriber():
     start_time = time.time()
     
     try:
-        while time.time() - start_time < 30:
+        while time.time() - start_time < config.TEST_DURATION:
             try:
                 import select
                 import sys
@@ -242,34 +255,34 @@ def test_backend_mqtt_subscriber():
                     command = input().strip()
                     
                     if command == "MOVE_FORWARD":
-                        backend.publish_command("AMR001", {
+                        backend.publish_command(config.SYSTEM_NAME, {
                             "action": "MOVE_FORWARD",
-                            "speed": 50.0
+                            "speed": config.MOTOR_DEFAULT_SPEED
                         })
                     elif command == "MOVE_BACKWARD":
-                        backend.publish_command("AMR001", {
+                        backend.publish_command(config.SYSTEM_NAME, {
                             "action": "MOVE_BACKWARD",
-                            "speed": 50.0
+                            "speed": config.MOTOR_DEFAULT_SPEED
                         })
                     elif command == "ROTATE_LEFT":
-                        backend.publish_command("AMR001", {
+                        backend.publish_command(config.SYSTEM_NAME, {
                             "action": "ROTATE_LEFT",
-                            "speed": 50.0
+                            "speed": config.MOTOR_DEFAULT_SPEED
                         })
                     elif command == "ROTATE_RIGHT":
-                        backend.publish_command("AMR001", {
+                        backend.publish_command(config.SYSTEM_NAME, {
                             "action": "ROTATE_RIGHT",
-                            "speed": 50.0
+                            "speed": config.MOTOR_DEFAULT_SPEED
                         })
                     elif command == "stop":
-                        backend.publish_command("AMR001", {
+                        backend.publish_command(config.SYSTEM_NAME, {
                             "action": "stop_motor"
                         })
                     elif command == "custom":
                         print("Enter custom command (JSON format):")
                         try:
                             custom_cmd = json.loads(input())
-                            backend.publish_command("AMR001", custom_cmd)
+                            backend.publish_command(config.SYSTEM_NAME, custom_cmd)
                         except json.JSONDecodeError:
                             print("Invalid JSON format.")
                     else:
