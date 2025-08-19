@@ -18,6 +18,8 @@ class SensorDataTransmitter:
         self.mqtt_client = mqtt.Client(client_id=f"sensor_transmitter_{robot_id}")
         self.connected = False
         
+        self.mqtt_client.username_pw_set("minwoo", "minwoo")
+        
         self.mqtt_client.on_connect = self._on_mqtt_connect
         self.mqtt_client.on_disconnect = self._on_mqtt_disconnect
         self.mqtt_client.on_publish = self._on_mqtt_publish

@@ -428,7 +428,8 @@ amr_ai hard nofile 2048
         valid_users = {
             'admin': 'admin123!',
             'operator': 'op123!',
-            'viewer': 'view123!'
+            'viewer': 'view123!',
+            'minwoo': 'minwoo'
         }
         
         return username in valid_users and valid_users[username] == password
@@ -567,7 +568,8 @@ if __name__ == "__main__":
     print(f"Security Status: {manager.get_security_status()}")
     
     print("\nAuthentication Test:")
-    print(f"Valid login: {manager.authenticate_user('admin', 'admin123!', '192.168.1.100')}")
+    print(f"Valid login (admin): {manager.authenticate_user('admin', 'admin123!', '192.168.1.100')}")
+    print(f"Valid login (minwoo): {manager.authenticate_user('minwoo', 'minwoo', '192.168.1.100')}")
     print(f"Invalid login: {manager.authenticate_user('admin', 'wrong', '192.168.1.100')}")
     
     print("\nEncryption Test:")

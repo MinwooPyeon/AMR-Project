@@ -359,8 +359,8 @@ class SecureMQTTClient:
 if __name__ == "__main__":
     client = SecureMQTTClient(
         client_id="test_client",
-        username="admin",
-        password="admin123!"
+        username="minwoo",
+        password="minwoo"
     )
     
     def message_callback(topic: str, payload: str):

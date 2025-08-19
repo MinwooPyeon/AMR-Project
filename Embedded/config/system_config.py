@@ -15,6 +15,8 @@ class SystemConfig:
         self.MQTT_PORT = 1883
         self.MQTT_TIMEOUT = 60
         self.MQTT_KEEPALIVE = 60
+        self.MQTT_USERNAME = "minwoo"
+        self.MQTT_PASSWORD = "minwoo"
         
         # 로컬 MQTT 설정 (process_manager용)
         self.LOCAL_MQTT_BROKER = "localhost"
@@ -103,7 +105,9 @@ class SystemConfig:
             'broker': self.MQTT_BROKER,
             'port': self.MQTT_PORT,
             'timeout': self.MQTT_TIMEOUT,
-            'keepalive': self.MQTT_KEEPALIVE
+            'keepalive': self.MQTT_KEEPALIVE,
+            'username': self.MQTT_USERNAME,
+            'password': self.MQTT_PASSWORD
         }
     
     def get_local_mqtt_config(self) -> Dict[str, Any]:

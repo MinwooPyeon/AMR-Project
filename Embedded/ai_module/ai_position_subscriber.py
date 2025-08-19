@@ -54,6 +54,8 @@ class AIPositionSubscriber(Node):
         self.mqtt_client.on_message = self.on_mqtt_message
         self.mqtt_client.on_disconnect = self.on_mqtt_disconnect
         
+        self.mqtt_client.username_pw_set("minwoo", "minwoo")
+        
         self._setup_mqtt_connection()
         
         self.logger.info("AI Position Subscriber initialized")

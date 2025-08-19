@@ -45,6 +45,8 @@ class AIAlertPublisher(Node):
         self.mqtt_client.on_connect = self.on_mqtt_connect
         self.mqtt_client.on_disconnect = self.on_mqtt_disconnect
         
+        self.mqtt_client.username_pw_set("minwoo", "minwoo")
+        
         self._setup_mqtt_connection()
         
         self.logger.info(f"AI Alert Publisher initialized - Topic: {topic_name}")
