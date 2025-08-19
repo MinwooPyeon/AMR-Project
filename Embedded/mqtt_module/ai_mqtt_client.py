@@ -1,19 +1,21 @@
 import json
 import time
 import threading
-from typing import Dict, Optional, Callable, Any
+from typing import Dict, Optional, Callable, Any, Tuple
 import paho.mqtt.client as mqtt
-from utils.logger import mqtt_logger
+from utilities.logger import LoggerFactory
 
 class AIMQTTClient:
-    def __init__(self, robot_id: str = "AMR001", mqtt_broker: str = "localhost", mqtt_port: int = 1883):
-        self.robot_id = robot_id
-        self.mqtt_broker = mqtt_broker
-        self.mqtt_port = mqtt_port
-        self.mqtt_client_id = f"ai_client_{robot_id}_{int(time.time())}"
+    
+    def __init__(self, robot_id: str = "AMR001", mqtt_broker: str = "localhost", mqtt_port: int = 1883) -> None:
+
+        self.robot_id: str = robot_id
+        self.mqtt_broker: str = mqtt_broker
+        self.mqtt_port: int = mqtt_port
+        self.mqtt_client_id: str = f"ai_client_{robot_id}_{int(time.time())}"
         
-        self.mqtt_client = mqtt.Client(client_id=self.mqtt_client_id)
-        self.mqtt_connected = False
+        self.mqtt_client: mqtt.Client = mqtt.Client(client_id=self.mqtt_client_id)
+        self.mqtt_connected: bool = False
         
         self.mqtt_client.username_pw_set("minwoo", "minwoo")
         
@@ -22,7 +24,7 @@ class AIMQTTClient:
         self.mqtt_client.on_message = self._on_mqtt_message
         self.mqtt_client.on_publish = self._on_mqtt_publish
         
-        self.ai_received_data = {
+        self.ai_received_data: Dict[str, Any] = {
             "serial": "",
             "x": 0.0,
             "y": 0.0,
@@ -31,16 +33,18 @@ class AIMQTTClient:
             "timeStamp": ""
         }
         
-        self.data_lock = threading.Lock()
+        self.data_lock: threading.Lock = threading.Lock()
         
-        self.ai_data_callback: Optional[Callable[[Dict], None]] = None
+        self.ai_data_callback: Optional[Callable[[Dict[str, Any]], None]] = None
         
-        self.stats_lock = threading.Lock()
-        self.total_received = 0
-        self.last_received_time = 0
+        self.stats_lock: threading.Lock = threading.Lock()
+        self.total_received: int = 0
+        self.last_received_time: float = 0
         
-        mqtt_logger.success(f"AI MQTT Client initialization completed - Robot ID: {robot_id}, Broker: {mqtt_broker}:{mqtt_port}")
-        mqtt_logger.info(f"AI -> Embedded connection: {mqtt_broker}:{mqtt_port}")
+        self.logger = LoggerFactory.get_module_logger("mqtt.ai")
+        
+        self.logger.success(f"AI MQTT Client initialization completed - Robot ID: {robot_id}, Broker: {mqtt_broker}:{mqtt_port}")
+        self.logger.info(f"AI -> Embedded connection: {mqtt_broker}:{mqtt_port}")
     
     def connect_mqtt(self) -> bool:
         try:

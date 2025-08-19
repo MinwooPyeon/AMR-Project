@@ -7,6 +7,8 @@ import threading
 from pathlib import Path
 from typing import Dict, List
 
+from utilities.logger import LoggerFactory
+
 class ProcessManager:
     def __init__(self):
         self.base_dir = Path(__file__).parent
@@ -15,6 +17,8 @@ class ProcessManager:
         sys.path.append(str(self.base_dir))
         from config.system_config import get_config
         self.config = get_config()
+        
+        self.logger = LoggerFactory.get_module_logger("process")
         
         self.modules = {
             'mqtt-broker': {

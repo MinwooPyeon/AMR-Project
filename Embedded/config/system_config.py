@@ -1,104 +1,94 @@
-# AMR 시스템 중앙 설정 파일
-
 import os
 from typing import Dict, Any
+from dataclasses import dataclass
 
+from .motor_config import MotorConfig
+from .mqtt_config import MQTTConfig
+from .sensor_config import SensorConfig
+
+
+@dataclass
 class SystemConfig:
     
     def __init__(self):
-        # 기본 시스템 설정
         self.SYSTEM_NAME = "AMR001"
         self.DEBUG_MODE = True
         
-        # MQTT 설정
-        self.MQTT_BROKER = "192.168.100.141"
-        self.MQTT_PORT = 1883
-        self.MQTT_TIMEOUT = 60
-        self.MQTT_KEEPALIVE = 60
-        self.MQTT_USERNAME = "minwoo"
-        self.MQTT_PASSWORD = "minwoo"
+        self.motor = MotorConfig()
+        self.mqtt = MQTTConfig()
+        self.sensor = SensorConfig()
         
-        # 로컬 MQTT 설정 (process_manager용)
-        self.LOCAL_MQTT_BROKER = "localhost"
-        self.LOCAL_MQTT_PORT = 1883
-        
-        # 모터 제어 설정
-        self.MOTOR_I2C_ADDRESS = 0x40
-        self.MOTOR_PWM_FREQUENCY = 50
-        self.MOTOR_MAX_SPEED = 100
-        self.MOTOR_MIN_SPEED = 10
-        self.MOTOR_DEFAULT_SPEED = 50
-        self.MOTOR_TURN_SPEED = 40
-        self.MOTOR_PWM_RESOLUTION = 4095
-        self.MOTOR_SPEED_MULTIPLIER = 40.95
-        
-        # IMU 센서 설정
-        self.IMU_I2C_ADDRESS = 0x4B
-        self.IMU_SAMPLE_RATE = 100  
-        self.IMU_GYRO_RANGE = 250   
-        self.IMU_ACCEL_RANGE = 2    
-        self.IMU_MAG_RANGE = 1300   
-        
-        # 각도 제어 설정
-        self.ANGLE_CONTROL_FREQUENCY = 50.0  
-        self.ANGLE_TOLERANCE = 1.0  
-        self.ANGLE_MAX_ERROR = 180.0
-        self.ANGLE_PID_KP = 2.0
-        self.ANGLE_PID_KI = 0.1
-        self.ANGLE_PID_KD = 0.5
-        self.ANGLE_PID_INTEGRAL_LIMIT = 100.0
-        self.ANGLE_PID_OUTPUT_LIMIT = 100.0
-        
-        # 회전 각도 설정
-        self.ROTATION_90_DEGREES = 90.0
-        self.ROTATION_180_DEGREES = 180.0
-        self.ROTATION_360_DEGREES = 360.0
-        
-        # 센서 동기화 설정
-        self.SENSOR_SYNC_TARGET_SAMPLES = 300
-        self.SENSOR_SYNC_SLEEP_MS = 10
-        self.SENSOR_SYNC_TIMEOUT_MS = 10000
-        
-        # 통신 설정
         self.WEBSOCKET_PORT = 8080
         self.HTTP_PORT = 8000
         self.COMMUNICATION_TIMEOUT = 10
         
-        # 로깅 설정
         self.LOG_LEVEL = "INFO"
         self.LOG_FORMAT = "[%(asctime)s] %(levelname)s: %(message)s"
         self.LOG_FILE = "logs/amr_system.log"
         
-        # 디버깅 설정
         self.DEBUG_COUNTER_LIMIT = 100
         self.DEBUG_PRINT_INTERVAL = 1.0  
 
-        # 성능 설정
         self.CONTROL_LOOP_FREQUENCY = 50.0  
         self.CONTROL_LOOP_PERIOD_MS = 20    
         
-        # 안전 설정
-        self.MAX_SPEED_LIMIT = 80.0
-        self.EMERGENCY_STOP_DELAY = 0.1  
         self.BATTERY_LOW_THRESHOLD = 20.0  
         
-        # 하드웨어 주소 설정
-        self.I2C_BUS = 1
-        self.GPIO_BASE_PIN = 18
-        
-        # 테스트 설정
         self.TEST_DURATION = 30  
         self.TEST_SPEED = 50
         self.TEST_CURVATURE = 0.3
         
-        # 백업 설정
         self.BACKUP_INTERVAL = 3600  
         self.BACKUP_RETENTION_DAYS = 7
         
-        # 네트워크 설정
         self.NETWORK_TIMEOUT = 5.0
         self.NETWORK_RETRY_COUNT = 3
         self.NETWORK_RETRY_DELAY = 1.0
+        
+        self._setup_compatibility_attributes()
+    
+    def _setup_compatibility_attributes(self):
+        self.MQTT_BROKER = self.mqtt.broker
+        self.MQTT_PORT = self.mqtt.port
+        self.MQTT_TIMEOUT = self.mqtt.timeout
+        self.MQTT_KEEPALIVE = self.mqtt.keepalive
+        self.MQTT_USERNAME = self.mqtt.username
+        self.MQTT_PASSWORD = self.mqtt.password
+        self.LOCAL_MQTT_BROKER = self.mqtt.local_broker
+        self.LOCAL_MQTT_PORT = self.mqtt.local_port
+        
+        self.MOTOR_I2C_ADDRESS = self.motor.i2c_address
+        self.MOTOR_PWM_FREQUENCY = self.motor.pwm_frequency
+        self.MOTOR_MAX_SPEED = self.motor.max_speed
+        self.MOTOR_MIN_SPEED = self.motor.min_speed
+        self.MOTOR_DEFAULT_SPEED = self.motor.default_speed
+        self.MOTOR_TURN_SPEED = self.motor.turn_speed
+        self.MOTOR_PWM_RESOLUTION = self.motor.pwm_resolution
+        self.MOTOR_SPEED_MULTIPLIER = self.motor.speed_multiplier
+        self.MAX_SPEED_LIMIT = self.motor.max_speed_limit
+        self.EMERGENCY_STOP_DELAY = self.motor.emergency_stop_delay
+        
+        self.IMU_I2C_ADDRESS = self.sensor.imu_i2c_address
+        self.IMU_SAMPLE_RATE = self.sensor.imu_sample_rate
+        self.IMU_GYRO_RANGE = self.sensor.imu_gyro_range
+        self.IMU_ACCEL_RANGE = self.sensor.imu_accel_range
+        self.IMU_MAG_RANGE = self.sensor.imu_mag_range
+        self.ANGLE_CONTROL_FREQUENCY = self.sensor.angle_control_frequency
+        self.ANGLE_TOLERANCE = self.sensor.angle_tolerance
+        self.ANGLE_MAX_ERROR = self.sensor.angle_max_error
+        self.ANGLE_PID_KP = self.sensor.angle_pid_kp
+        self.ANGLE_PID_KI = self.sensor.angle_pid_ki
+        self.ANGLE_PID_KD = self.sensor.angle_pid_kd
+        self.ANGLE_PID_INTEGRAL_LIMIT = self.sensor.angle_pid_integral_limit
+        self.ANGLE_PID_OUTPUT_LIMIT = self.sensor.angle_pid_output_limit
+        self.ROTATION_90_DEGREES = self.sensor.rotation_90_degrees
+        self.ROTATION_180_DEGREES = self.sensor.rotation_180_degrees
+        self.ROTATION_360_DEGREES = self.sensor.rotation_360_degrees
+        self.SENSOR_SYNC_TARGET_SAMPLES = self.sensor.sensor_sync_target_samples
+        self.SENSOR_SYNC_SLEEP_MS = self.sensor.sensor_sync_sleep_ms
+        self.SENSOR_SYNC_TIMEOUT_MS = self.sensor.sensor_sync_timeout_ms
+        self.I2C_BUS = self.sensor.i2c_bus
+        self.GPIO_BASE_PIN = self.sensor.gpio_base_pin
         
     def get_mqtt_config(self) -> Dict[str, Any]:
         return {

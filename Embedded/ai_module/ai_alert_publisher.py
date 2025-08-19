@@ -9,7 +9,8 @@ from typing import Optional
 import paho.mqtt.client as mqtt
 
 from .config import AIConfig
-from .utils import setup_logger, create_json_message
+from .utils import create_json_message
+from utilities.logger import LoggerFactory
 
 class AlertSituation(Enum):
     COLLAPSE = "COLLAPSE"    
@@ -31,7 +32,7 @@ class AIAlertPublisher(Node):
         super().__init__('ai_alert_publisher')
         
         self.amr_serial = amr_serial or AIConfig.DEFAULT_ROBOT_ID
-        self.logger = setup_logger("AIAlertPublisher")
+        self.logger = LoggerFactory.get_module_logger("ai.alert")
         
         topic_name = f"{AIConfig.ROS_TOPIC_ALERT}/{self.amr_serial}"
         

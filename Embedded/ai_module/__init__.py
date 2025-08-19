@@ -4,7 +4,6 @@ from .ai_file_client import AIFileClient
 from .ai_position_subscriber import AIPositionSubscriber, AICommand, AIPositionData
 from .config import AIConfig
 from .utils import (
-    setup_logger,
     encode_image_to_base64,
     decode_base64_to_image,
     create_json_message,
@@ -26,7 +25,6 @@ __all__ = [
     "AICommand",
     "AIPositionData",
     "AIConfig",
-    "setup_logger",
     "encode_image_to_base64",
     "decode_base64_to_image",
     "create_json_message",
