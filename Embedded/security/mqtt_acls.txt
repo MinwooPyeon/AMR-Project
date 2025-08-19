@@ -1,0 +1,24 @@
+# MQTT Broker Access Control List (ACL)
+# Format: user topic [read|write|readwrite]
+
+# Admin user - full access
+user admin
+topic readwrite #
+
+# Operator user - limited access
+user operator
+topic read status/#
+topic write command/#
+topic readwrite amr/#
+
+# Viewer user - read only access
+user viewer
+topic read status/#
+topic read amr/#
+
+# System user - internal access
+user amr_system
+topic readwrite status/#
+topic readwrite command/#
+topic readwrite amr/#
+topic readwrite system/#
