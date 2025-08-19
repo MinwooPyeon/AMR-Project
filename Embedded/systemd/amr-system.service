@@ -1,0 +1,32 @@
+[Unit]
+Description=AMR System Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=forking
+User=amr
+Group=amr
+WorkingDirectory=/path/to/your/amr/project
+ExecStart=/path/to/your/amr/project/run_amr.sh start
+ExecStop=/path/to/your/amr/project/run_amr.sh stop
+ExecReload=/path/to/your/amr/project/run_amr.sh restart
+PIDFile=/path/to/your/amr/project/amr_system.pid
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# 환경 변수 설정
+Environment=PYTHONPATH=/path/to/your/amr/project
+Environment=MQTT_BROKER=localhost
+Environment=MQTT_PORT=1883
+
+# 보안 설정
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/path/to/your/amr/project/logs
+
+[Install]
+WantedBy=multi-user.target
