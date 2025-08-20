@@ -5,71 +5,83 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
 def run_ai_communication_test():
-    print("Running AI communication test...")
-    try:
-        from tests.ai_communication_test import main
-        main()
-    except Exception as e:
-        print(f"Error occurred during test execution: {e}")
+    print("AI communication test - Use pytest instead")
+    print("Run: pytest tests/ -m ai")
 
 def run_angle_control_test():
-    print("Running angle control test...")
-    try:
-        from tests.angle_control_test import main
-        main()
-    except Exception as e:
-        print(f"Error occurred during test execution: {e}")
+    print("Angle control test - Use pytest instead")
+    print("Run: pytest tests/ -m motor")
 
 def run_imu_sensor_test():
-    print("Running IMU sensor test...")
-    try:
-        from tests.imu_sensor_test import main
-        main()
-    except Exception as e:
-        print(f"Error occurred during test execution: {e}")
+    print("IMU sensor test - Use pytest instead")
+    print("Run: pytest tests/ -m sensor")
 
 def run_mqtt_test():
-    print("Running MQTT test...")
-    try:
-        from tests.mqtt_test import main
-        main()
-    except Exception as e:
-        print(f"Error occurred during test execution: {e}")
+    print("MQTT test - Use pytest instead")
+    print("Run: pytest tests/ -m mqtt")
 
 def run_obstacle_detection_test():
-    print("Running obstacle detection test...")
-    try:
-        from tests.obstacle_detection_test import main
-        main()
-    except Exception as e:
-        print(f"Error occurred during test execution: {e}")
+    print("Obstacle detection test - Use pytest instead")
+    print("Run: pytest tests/ -m sensor")
 
 def run_rotation_detection_test():
-    print("Running rotation detection test...")
-    try:
-        from tests.rotation_detection_test import main
-        main()
-    except Exception as e:
-        print(f"Error occurred during test execution: {e}")
+    print("Rotation detection test - Use pytest instead")
+    print("Run: pytest tests/ -m sensor")
 
 def run_all_tests():
     print("Running all tests...")
-    tests = [
-        run_ai_communication_test,
-        run_angle_control_test,
-        run_imu_sensor_test,
-        run_mqtt_test,
-        run_obstacle_detection_test,
-        run_rotation_detection_test
-    ]
     
-    for test in tests:
-        try:
-            test()
-            print("-" * 50)
-        except Exception as e:
-            print(f"Error occurred during test execution: {e}")
-            print("-" * 50)
+    import subprocess
+    import sys
+    
+    try:
+        print("Running unit tests...")
+        result = subprocess.run([
+            sys.executable, "-m", "pytest", 
+            "tests/unit/", 
+            "-v", 
+            "--tb=short"
+        ], capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("✓ Unit tests passed")
+        else:
+            print("✗ Unit tests failed")
+            print(result.stdout)
+            print(result.stderr)
+        
+        print("\nRunning integration tests...")
+        result = subprocess.run([
+            sys.executable, "-m", "pytest", 
+            "tests/integration/", 
+            "-v", 
+            "--tb=short"
+        ], capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("✓ Integration tests passed")
+        else:
+            print("✗ Integration tests failed")
+            print(result.stdout)
+            print(result.stderr)
+        
+        print("\nRunning E2E tests...")
+        result = subprocess.run([
+            sys.executable, "-m", "pytest", 
+            "tests/e2e/", 
+            "-v", 
+            "--tb=short"
+        ], capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("✓ E2E tests passed")
+        else:
+            print("✗ E2E tests failed")
+            print(result.stdout)
+            print(result.stderr)
+            
+    except Exception as e:
+        print(f"Error occurred during test execution: {e}")
 
 if __name__ == "__main__":
     import argparse
