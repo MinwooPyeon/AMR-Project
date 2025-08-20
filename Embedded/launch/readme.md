@@ -9,7 +9,7 @@ launch/
 ├── amr_robot_launch.py    # ROS2 런치 파일
 ├── main.py                # 모터 드라이버 테스트 스크립트
 ├── run_amr.py             # AMR 메인 실행 스크립트
-└── readme.md              # 이 파일
+└── readme.md             
 ```
 
 ## 주요 파일
