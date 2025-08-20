@@ -1,8 +1,7 @@
-package com.example.amr_backend.v1.repository
+package com.example.amr_backend.v1.listener
 
 import com.example.amr_backend.v1.entity.AmrStatus
-import com.example.amr_backend.v1.repository.RedisUtil.SERIALS_KEY
-import com.example.amr_backend.v1.repository.RedisUtil.getRedisKey
+import com.example.amr_backend.v1.repository.RedisUtil
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.data.redis.core.RedisTemplate
@@ -20,9 +19,9 @@ class RedisUpdater(
     @EventListener
     fun save(status: AmrStatus) {
         logger.debug("saving {} status into redis", status.amr.serial)
-        amrStatusTemplate.opsForValue().set(getRedisKey(status.amr.serial), status)
+        amrStatusTemplate.opsForValue().set(RedisUtil.getRedisKey(status.amr.serial), status)
         stringTemplate.opsForZSet().add(
-            SERIALS_KEY,
+            RedisUtil.SERIALS_KEY,
             status.amr.serial,
             status.createdAt.toEpochSecond(ZoneOffset.UTC).toDouble()
         )
