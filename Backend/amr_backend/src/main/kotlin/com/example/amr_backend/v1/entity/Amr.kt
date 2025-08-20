@@ -6,53 +6,61 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.hibernate.proxy.HibernateProxy
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "amr")
-data class Amr(
+class Amr(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = 0L,
+    var id: Long = 0L,
 
     @Column(name = "name")
-    val name: String,
+    var name: String,
 
     @Column(name = "ip_address", nullable = false)
-    val ipAddress: String,
+    var ipAddress: String,
 
     @Column(name = "serial", unique = true, nullable = false)
-    val serial: String,
+    var serial: String,
 
     @Column(name = "model")
-    val model: String,
+    var model: String,
 
     @Column(name = "firmware_version")
-    val firmwareVersion: String,
+    var firmwareVersion: String,
 
     @Column(name = "last_update_date")
-    val lastUpdateDate: LocalDateTime,
+    var lastUpdateDate: LocalDateTime,
 ) {
-    final override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null) return false
-        val oEffectiveClass =
-            if (other is HibernateProxy) other.hibernateLazyInitializer.persistentClass else other.javaClass
-        val thisEffectiveClass =
-            if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
-        if (thisEffectiveClass != oEffectiveClass) return false
-        other as Amr
+        if (other !is Amr) return false
 
-        return id == other.id
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (ipAddress != other.ipAddress) return false
+        if (serial != other.serial) return false
+        if (model != other.model) return false
+        if (firmwareVersion != other.firmwareVersion) return false
+        if (lastUpdateDate != other.lastUpdateDate) return false
+
+        return true
     }
 
-    final override fun hashCode(): Int =
-        if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass.hashCode() else javaClass.hashCode()
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + ipAddress.hashCode()
+        result = 31 * result + serial.hashCode()
+        result = 31 * result + model.hashCode()
+        result = 31 * result + firmwareVersion.hashCode()
+        result = 31 * result + lastUpdateDate.hashCode()
+        return result
+    }
 
-    @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , name = $name , ipAddress = $ipAddress , serial = $serial , model = $model , firmwareVersion = $firmwareVersion , lastUpdateDate = $lastUpdateDate )"
+        return "Amr(id=$id, name='$name', ipAddress='$ipAddress', serial='$serial', model='$model', firmwareVersion='$firmwareVersion', lastUpdateDate=$lastUpdateDate)"
     }
 }
