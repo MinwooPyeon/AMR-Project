@@ -6,36 +6,34 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.hibernate.proxy.HibernateProxy
 
 @Entity
 @Table(name = "fcm_token")
-data class FcmToken(
+class FcmToken(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = 0L,
+    var id: Long = 0L,
     @Column(name = "token")
-    val token: String,
+    var token: String,
 ) {
-    final override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null) return false
-        val oEffectiveClass =
-            if (other is HibernateProxy) other.hibernateLazyInitializer.persistentClass else other.javaClass
-        val thisEffectiveClass =
-            if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
-        if (thisEffectiveClass != oEffectiveClass) return false
-        other as FcmToken
+        if (other !is FcmToken) return false
 
-        return id == other.id
+        if (id != other.id) return false
+        if (token != other.token) return false
+
+        return true
     }
 
-    final override fun hashCode(): Int =
-        if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass.hashCode() else javaClass.hashCode()
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + token.hashCode()
+        return result
+    }
 
-    @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , token = $token )"
+        return "FcmToken(id=$id, token='$token')"
     }
 }
