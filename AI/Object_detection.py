@@ -86,14 +86,6 @@ SITUATION_MAPPING = {
     "PERSON_FALL": "FALL"
 }
 
-# detection_states는 MP.Manager().dict()를 사용해야 합니다.
-# 그렇지 않으면 멀티프로세스 환경에서 각 프로세스가 독립적인 딕셔너리를 갖게 됩니다.
-# 여기서는 메인 프로세스에 있으므로 일반 딕셔너리로 유지합니다.
-detection_states = {
-    cls_name: {'start_time': None, 'alert_sent': False, 'alert_sent_time': None}
-    for cls_name in ALERT_CLASSES
-}
-
 ALERT_DURATION_THRESHOLD = 0.5
 RESET_ALERT_AFTER = 60
 KP_CONF_THRES = 0.35
@@ -106,11 +98,14 @@ MIN_BOX_AREA = 80*80
 
 # MQTT 설정
 PORT = 1883
-BROKER = "192.168.212.40"
+BROKER = "192.168.100.141"
 AMR_SERIAL = "AMR001"
 TOPIC = f"alert"
 
-client = mqtt.Client()
+# paho.mqtt.client의 DeprecationWarning을 피하기 위해 client_id를 사용합니다.
+# 하지만 이 부분은 main 프로세스에서 사용되지 않으므로 제거합니다.
+# 대신, process_and_stream_frames 함수 안에서 local_client를 초기화합니다.
+# client = mqtt.Client()
 
 robot_pose = mp.Manager().dict({'x': None, 'y': None})
 
@@ -143,9 +138,9 @@ def start_ros2_node(shared_pose):
     node.destroy_node()
     rclpy.shutdown()
 
-def send_alert_to_backend(situation, image_base64="", x=None, y=None, detail=""):
+def send_alert_to_backend(client_instance, situation, image_base64="", x=None, y=None, detail=""):
     """
-    AI에서 Backend로 알림 전송
+    AI에서 Backend로 알림 전송 (클라이언트 인스턴스를 인자로 받음)
     """
     global robot_pose
     if x is None or y is None:
@@ -166,9 +161,18 @@ def send_alert_to_backend(situation, image_base64="", x=None, y=None, detail="")
     }
 
     try:
-        client.publish(TOPIC, json.dumps(message))
-        print(f"[AI -> Backend] 상황: {situation}, 상세: {detail}, 로봇 위치: x={x_val}, y={y_val}")
-        return True
+        # QoS 1로 전송하고 브로커의 PUBACK 응답을 기다립니다.
+        result = client_instance.publish(TOPIC, json.dumps(message), qos=1, retain=False)
+        result.wait_for_publish()
+        
+        if result.rc == mqtt.MQTT_ERR_SUCCESS:
+            print(f"[AI -> Backend] 상황: {situation}, 상세: {detail}, 로봇 위치: x={x_val}, y={y_val}")
+            print("✅ MQTT 브로커로부터 메시지 수신 확인됨.")
+            return True
+        else:
+            print(f"[ERROR] MQTT 메시지 전송 실패 (리턴 코드: {result.rc})")
+            return False
+
     except Exception as e:
         print(f"[ERROR] 알림 전송 실패: {e}")
         return False
@@ -228,8 +232,11 @@ def capture_frames(queue):
 
 def process_and_stream_frames(queue):
     """큐에서 프레임을 가져와 AI 추론 및 통신, 그리고 RTSP 스트리밍을 수행하는 프로세스"""
+    # 이 프로세스에서 MQTT 클라이언트를 생성하고 연결합니다.
+    local_client = mqtt.Client()
     try:
-        client.connect(BROKER, PORT, 60)
+        local_client.connect(BROKER, PORT, 60)
+        local_client.loop_start()
         print("✅ MQTT 연결 성공")
     except Exception as e:
         print(f"[ERROR] MQTT 연결 실패: {e}")
@@ -241,6 +248,7 @@ def process_and_stream_frames(queue):
         print("✅ YOLO 모델 로드 완료")
     except Exception as e:
         print(f"[ERROR] YOLO 모델 로드 실패: {e}")
+        local_client.loop_stop()
         return
     
     frame_width, frame_height = 1280, 720
@@ -269,9 +277,6 @@ def process_and_stream_frames(queue):
     print(f"✅ MQTT 토픽: {TOPIC}")
     print("✅ 감지 대상:", ALERT_CLASSES)
 
-    # detection_states는 이 프로세스에서 관리합니다.
-    # 멀티프로세스 환경에서 각 프로세스는 독립적인 메모리를 사용하므로,
-    # capture_frames에서 큐에 넣은 클래스 정보는 이 프로세스에서만 사용됩니다.
     local_detection_states = {
         cls_name: {'start_time': None, 'alert_sent': False, 'alert_sent_time': None}
         for cls_name in ALERT_CLASSES
@@ -281,7 +286,7 @@ def process_and_stream_frames(queue):
         while True:
             try:
                 frame = queue.get(timeout=1)
-            except:
+            except mp.TimeoutError:
                 continue
                 
             current_time = time.time()
@@ -359,7 +364,6 @@ def process_and_stream_frames(queue):
             except Exception as e:
                 print(f"[ERROR] Pose 계산 오류: {e}")
 
-            # === 알림 상태 관리 로직 수정 ===
             current_detected_classes = detected_classes_in_current_frame
             for cls_name in ALERT_CLASSES:
                 is_detected_in_frame = cls_name in current_detected_classes
@@ -375,22 +379,19 @@ def process_and_stream_frames(queue):
                         detail = get_situation_detail(situation)
                         image_base64 = encode_frame_to_base64(frame)
 
-                        if send_alert_to_backend(situation, image_base64, None, None, detail):
+                        if send_alert_to_backend(local_client, situation, image_base64, None, None, detail):
                             local_detection_states[cls_name]['alert_sent'] = True
                             local_detection_states[cls_name]['alert_sent_time'] = current_time
                             print(f"✅ 알림 전송 완료: {situation}")
                 else:
-                    # 감지되지 않았을 때만 start_time을 초기화 (쿨타임은 유지)
                     if local_detection_states[cls_name]['alert_sent'] == False:
                         local_detection_states[cls_name]['start_time'] = None
 
-                # 쿨타임 초기화
                 if local_detection_states[cls_name]['alert_sent'] and (current_time - local_detection_states[cls_name]['alert_sent_time'] >= RESET_ALERT_AFTER):
                     local_detection_states[cls_name]['alert_sent'] = False
                     local_detection_states[cls_name]['alert_sent_time'] = None
                     local_detection_states[cls_name]['start_time'] = None
                     print(f"[RESET] {cls_name} 알림 상태 초기화")
-            # === 알림 상태 관리 로직 수정 끝 ===
 
             cv2.imshow("AI Alert System", frame)
             
@@ -409,13 +410,14 @@ def process_and_stream_frames(queue):
         print("사용자에 의해 중단됨.")
     finally:
         cv2.destroyAllWindows()
-        client.disconnect()
+        local_client.loop_stop()
+        local_client.disconnect()
         if stream_proc and stream_proc.stderr:
             stderr_output = stream_proc.stderr.read().decode('utf-8')
-        if stream_proc and stderr_output:
-            print("\n--- FFmpeg 에러 출력 시작 ---")
-            print(stderr_output)
-            print("--- FFmpeg 에러 출력 끝 ---")
+            if stderr_output:
+                print("\n--- FFmpeg 에러 출력 시작 ---")
+                print(stderr_output)
+                print("--- FFmpeg 에러 출력 끝 ---")
 
         if stream_proc and stream_proc.stdin:
             stream_proc.stdin.close()
