@@ -22,6 +22,7 @@ public class Managers : MonoBehaviour
     public static void OnStart()
     {
         _device.SyncManager.OnStart();
+        DynamicObstacle.CoroutineHost = _instance;
     }
     #endregion
     #region Unity Methods

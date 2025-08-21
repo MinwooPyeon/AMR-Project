@@ -8,7 +8,7 @@ public class Loader : MonoBehaviour
         if (stateData != null && (stateData.AmrState == AMR_STATE.DROP || stateData.AmrState == AMR_STATE.RUNNING))
         {
             stateData.AmrState = AMR_STATE.LOAD;
-            //TODO AMR LIFTING
+            other.gameObject.transform.GetChild(7).gameObject.SetActive(true);
         }
     }
 }

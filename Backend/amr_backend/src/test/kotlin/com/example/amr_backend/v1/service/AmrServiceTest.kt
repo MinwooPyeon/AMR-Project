@@ -4,7 +4,6 @@ import com.example.amr_backend.v1.dto.TopicMessage
 import com.example.amr_backend.v1.entity.Amr
 import com.example.amr_backend.v1.entity.AmrStatus
 import com.example.amr_backend.v1.entity.State
-import com.example.amr_backend.v1.exception.NoSuchAmr
 import com.example.amr_backend.v1.repository.AmrStatusRepository
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
@@ -13,7 +12,6 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.verify
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDateTime
 import kotlin.test.Test
@@ -45,7 +43,7 @@ class AmrServiceTest {
     @Test
     fun `findAllLatestStatuses, amr status repository returns amr statuses, then returns correctly`() {
         // given
-        val expected = (1..5).map { ValidAmrStatus.copy(id = it.toLong()) }
+        val expected = (1..5).map { ValidAmrStatus.apply { id = it.toLong() } }
         every { amrStatusRepository.findAllLatestStatuses() } returns expected
 
         // when
@@ -53,32 +51,6 @@ class AmrServiceTest {
 
         // then
         assertThat(result, `is`(expected))
-    }
-
-    @Test
-    fun `findAmrDetail, amr status repository returns status, then returns correctly`() {
-        // given
-        val expected = ValidAmrStatus.copy(id = 123)
-        every { amrStatusRepository.findAmrStatusById(123) } returns expected
-
-        // when
-        val result = amrService.findAmrDetail(123)
-
-        // then
-        assertThat(result, `is`(expected))
-    }
-
-    @Test
-    fun `findAmrDetail, no amr of given id exists, then throws NoSuchAmr`() {
-        // given
-        every { amrStatusRepository.findAmrStatusById(123) } throws NoSuchAmr("ID가 123인 AMR이 없습니다.")
-
-        // when
-        // then
-        val exception = assertThrows<NoSuchAmr> {
-            amrService.findAmrDetail(123)
-        }
-        assertThat(exception.message, `is`("ID가 123인 AMR이 없습니다."))
     }
 
     @Test
@@ -105,21 +77,22 @@ class AmrServiceTest {
     }
 
     companion object {
-        private val ValidAmrStatus = AmrStatus(
-            amr = Amr(
-                id = 1878,
-                name = "Irving Avila",
-                ipAddress = "1.1.1.1",
-                serial = "AMR001",
-                model = "morbi",
-                firmwareVersion = "arcu",
-                lastUpdateDate = LocalDateTime.of(2025, 8, 7, 12, 30)
-            ),
-            state = State.CHARGING,
-            x = 8.9,
-            y = 10.11,
-            speed = 12.13,
-            angle = 14.15
-        )
+        private val ValidAmrStatus
+            get() = AmrStatus(
+                amr = Amr(
+                    id = 1878,
+                    name = "Irving Avila",
+                    ipAddress = "1.1.1.1",
+                    serial = "AMR001",
+                    model = "morbi",
+                    firmwareVersion = "arcu",
+                    lastUpdateDate = LocalDateTime.of(2025, 8, 7, 12, 30)
+                ),
+                state = State.CHARGING,
+                x = 8.9,
+                y = 10.11,
+                speed = 12.13,
+                angle = 14.15
+            )
     }
 }

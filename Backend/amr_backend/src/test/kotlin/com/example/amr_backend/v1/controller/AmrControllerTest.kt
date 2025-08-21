@@ -53,7 +53,7 @@ class AmrControllerTest {
     @Test
     fun `returns latest amr statuses`() {
         // given
-        val statuses = (1..5).map { ValidAmrStatus.copy(id = it.toLong()) }
+        val statuses = (1..5).map { ValidAmrStatus.apply { id = it.toLong() } }
         every { amrService.findAllLatestStatuses() } returns statuses
 
         // when
@@ -84,10 +84,10 @@ class AmrControllerTest {
     @Test
     fun `returns amr detail by serial`() {
         // given
-        every { amrService.findLatestStatusBySerial("AMR001") } returns ValidAmrStatus.copy(
-            id = 123,
-            amr = ValidAmrStatus.amr.copy(name = "sample name")
-        )
+        every { amrService.findLatestStatusBySerial("AMR001") } returns ValidAmrStatus.apply {
+            id = 123
+            amr.name = "sample name"
+        }
 
         // when
         // then
@@ -128,21 +128,22 @@ class AmrControllerTest {
     }
 
     companion object {
-        private val ValidAmrStatus = AmrStatus(
-            amr = Amr(
-                id = 1878,
-                name = "Irving Avila",
-                ipAddress = "1.1.1.1",
-                serial = "AMR001",
-                model = "morbi",
-                firmwareVersion = "arcu",
-                lastUpdateDate = LocalDateTime.of(2025, 8, 7, 12, 30)
-            ),
-            state = State.CHARGING,
-            x = 8.9,
-            y = 10.11,
-            speed = 12.13,
-            angle = 14.15
-        )
+        private val ValidAmrStatus
+            get() = AmrStatus(
+                amr = Amr(
+                    id = 1878,
+                    name = "Irving Avila",
+                    ipAddress = "1.1.1.1",
+                    serial = "AMR001",
+                    model = "morbi",
+                    firmwareVersion = "arcu",
+                    lastUpdateDate = LocalDateTime.of(2025, 8, 7, 12, 30)
+                ),
+                state = State.CHARGING,
+                x = 8.9,
+                y = 10.11,
+                speed = 12.13,
+                angle = 14.15
+            )
     }
 }

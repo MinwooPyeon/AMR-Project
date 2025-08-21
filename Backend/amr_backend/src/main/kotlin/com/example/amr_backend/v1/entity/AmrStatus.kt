@@ -11,7 +11,6 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import org.hibernate.proxy.HibernateProxy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
@@ -19,54 +18,70 @@ import java.time.LocalDateTime
 @Entity
 @EntityListeners(AuditingEntityListener::class)
 @Table(name = "amr_status")
-data class AmrStatus(
+class AmrStatus(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long = 0L,
+    var id: Long = 0L,
 
     @ManyToOne
     @JoinColumn(name = "amr_serial", referencedColumnName = "serial", nullable = false)
-    val amr: Amr,
+    var amr: Amr,
 
     @Column(name = "state")
     @Enumerated(EnumType.STRING)
-    val state: State,
+    var state: State,
 
     @Column(name = "x")
-    val x: Double,
+    var x: Double,
 
     @Column(name = "y")
-    val y: Double,
+    var y: Double,
 
     @Column(name = "speed")
-    val speed: Double,
+    var speed: Double,
 
     @Column(name = "angle")
-    val angle: Double,
+    var angle: Double,
+
+    @Column(name = "_zone")
+    var zone: String? = null
 ) {
     @CreatedDate
     @Column(name = "created_at")
     lateinit var createdAt: LocalDateTime
 
-    final override fun equals(other: Any?): Boolean {
+    override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null) return false
-        val oEffectiveClass =
-            if (other is HibernateProxy) other.hibernateLazyInitializer.persistentClass else other.javaClass
-        val thisEffectiveClass =
-            if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass else this.javaClass
-        if (thisEffectiveClass != oEffectiveClass) return false
-        other as AmrStatus
+        if (other !is AmrStatus) return false
 
-        return id == other.id
+        if (id != other.id) return false
+        if (amr != other.amr) return false
+        if (state != other.state) return false
+        if (x != other.x) return false
+        if (y != other.y) return false
+        if (speed != other.speed) return false
+        if (angle != other.angle) return false
+        if (zone != other.zone) return false
+        if (createdAt != other.createdAt) return false
+
+        return true
     }
 
-    final override fun hashCode(): Int =
-        if (this is HibernateProxy) this.hibernateLazyInitializer.persistentClass.hashCode() else javaClass.hashCode()
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + amr.hashCode()
+        result = 31 * result + state.hashCode()
+        result = 31 * result + x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + speed.hashCode()
+        result = 31 * result + angle.hashCode()
+        result = 31 * result + (zone?.hashCode() ?: 0)
+        result = 31 * result + createdAt.hashCode()
+        return result
+    }
 
-    @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id , amr = $amr , state = $state , x = $x , y = $y , speed = $speed , createdAt = $createdAt )"
+        return "AmrStatus(id=$id, amr=$amr, state=$state, x=$x, y=$y, speed=$speed, angle=$angle, zone=$zone, createdAt=$createdAt)"
     }
 }

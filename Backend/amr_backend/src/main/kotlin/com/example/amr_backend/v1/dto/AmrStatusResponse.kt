@@ -20,6 +20,8 @@ data class AmrStatusResponse(
     val x: Double,
     @Schema(description = "y 좌표")
     val y: Double,
+    @Schema(description = "구역")
+    val zone: String?,
 )
 
 fun AmrStatus.toAmrStatusResponse() = AmrStatusResponse(
@@ -29,5 +31,6 @@ fun AmrStatus.toAmrStatusResponse() = AmrStatusResponse(
     state = state,
     speed = speed,
     x = x,
-    y = y
+    y = y,
+    zone = zone
 )

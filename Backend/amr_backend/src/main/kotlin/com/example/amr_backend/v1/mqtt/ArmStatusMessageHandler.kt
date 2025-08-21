@@ -2,6 +2,7 @@ package com.example.amr_backend.v1.mqtt
 
 import com.example.amr_backend.v1.dto.AmrStatusMessage
 import com.example.amr_backend.v1.dto.toAmrStatus
+import com.example.amr_backend.v1.exception.NoSuchAmr
 import com.example.amr_backend.v1.repository.AmrRepository
 import com.example.amr_backend.v1.repository.AmrStatusRepository
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -43,7 +44,8 @@ class ArmStatusMessageHandler(
         try {
             logger.debug("{} message received : {}", topic, message)
             val amrStatusMessage = objectMapper.readValue(message?.payload, AmrStatusMessage::class.java)
-            val amr = amrRepository.findBySerial(amrStatusMessage.serial)
+            val serial = amrStatusMessage.serial
+            val amr = amrRepository.findBySerial(serial).orElseThrow { NoSuchAmr("시리얼 번호가 ${serial}인 AMR이 없습니다.") }
             amrStatusRepository.save(amrStatusMessage.toAmrStatus(amr)).also {
                 eventPublisher.publishEvent(it)
             }

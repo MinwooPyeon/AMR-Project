@@ -22,6 +22,7 @@ import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.context.ApplicationEventPublisher
 import java.time.LocalDateTime
+import java.util.Optional
 
 @ExtendWith(MockKExtension::class)
 class ArmStatusMessageHandlerTest {
@@ -65,7 +66,7 @@ class ArmStatusMessageHandlerTest {
         )
         val mqttMessage = MqttMessage(objectMapper.writeValueAsString(messageFromAmr).toByteArray())
 
-        every { amrRepository.findBySerial("AMR001") } returns ValidAmrStatus.amr
+        every { amrRepository.findBySerial("AMR001") } returns Optional.of(ValidAmrStatus.amr)
 
         val amrStatusSlot = slot<AmrStatus>()
         every { amrStatusRepository.save(capture(amrStatusSlot)) } answers { amrStatusSlot.captured }
@@ -117,7 +118,7 @@ class ArmStatusMessageHandlerTest {
         """.trimIndent()
         val mqttMessage = MqttMessage(objectMapper.writeValueAsString(malformedMessage).toByteArray())
 
-        every { amrRepository.findBySerial("AMR001") } returns ValidAmrStatus.amr
+        every { amrRepository.findBySerial("AMR001") } returns Optional.of(ValidAmrStatus.amr)
 
         // when
         amrStatusMessageHandler.messageArrived("status", mqttMessage)

@@ -21,7 +21,9 @@ data class AmrDetailResponse(
     @Schema(description = "AMR 펌웨어 버전")
     val firmware: String,
     @Schema(description = "AMR IP 주소")
-    val ipAddress: String
+    val ipAddress: String,
+    @Schema(description = "구역")
+    val zone: String?
 )
 
 fun AmrStatus.toAmrDetailResponse() = AmrDetailResponse(
@@ -32,5 +34,6 @@ fun AmrStatus.toAmrDetailResponse() = AmrDetailResponse(
     model = amr.model,
     serial = amr.serial,
     firmware = amr.firmwareVersion,
-    ipAddress = amr.ipAddress
+    ipAddress = amr.ipAddress,
+    zone = zone
 )

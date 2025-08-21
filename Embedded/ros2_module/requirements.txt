@@ -1,0 +1,4 @@
+rclpy>=0.1.0
+geometry_msgs>=0.1.0
+std_msgs>=0.1.0
+numpy>=1.21.0
