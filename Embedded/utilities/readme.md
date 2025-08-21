@@ -85,3 +85,4 @@ mqtt_logger.mqtt_receive_success("topic", {"data": "value"})
 - Python 3.8+
 - bash shell
 - Jetson Orin (I2C 활성화 스크립트용)
+

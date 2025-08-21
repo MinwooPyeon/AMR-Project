@@ -14,7 +14,7 @@ motors/
 ├── servo_motor_controller.py   # 서보 모터 제어
 ├── requirements.txt            # Python 의존성
 ├── __init__.py                 # 패키지 초기화
-└── readme.md                   # 이 파일
+└── readme.md
 ```
 
 ## 주요 파일
