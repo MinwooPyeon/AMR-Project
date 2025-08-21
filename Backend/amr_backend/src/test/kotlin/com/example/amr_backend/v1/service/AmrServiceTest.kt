@@ -43,7 +43,7 @@ class AmrServiceTest {
     @Test
     fun `findAllLatestStatuses, amr status repository returns amr statuses, then returns correctly`() {
         // given
-        val expected = (1..5).map { ValidAmrStatus.copy(id = it.toLong()) }
+        val expected = (1..5).map { ValidAmrStatus.apply { id = it.toLong() } }
         every { amrStatusRepository.findAllLatestStatuses() } returns expected
 
         // when
@@ -77,21 +77,22 @@ class AmrServiceTest {
     }
 
     companion object {
-        private val ValidAmrStatus = AmrStatus(
-            amr = Amr(
-                id = 1878,
-                name = "Irving Avila",
-                ipAddress = "1.1.1.1",
-                serial = "AMR001",
-                model = "morbi",
-                firmwareVersion = "arcu",
-                lastUpdateDate = LocalDateTime.of(2025, 8, 7, 12, 30)
-            ),
-            state = State.CHARGING,
-            x = 8.9,
-            y = 10.11,
-            speed = 12.13,
-            angle = 14.15
-        )
+        private val ValidAmrStatus
+            get() = AmrStatus(
+                amr = Amr(
+                    id = 1878,
+                    name = "Irving Avila",
+                    ipAddress = "1.1.1.1",
+                    serial = "AMR001",
+                    model = "morbi",
+                    firmwareVersion = "arcu",
+                    lastUpdateDate = LocalDateTime.of(2025, 8, 7, 12, 30)
+                ),
+                state = State.CHARGING,
+                x = 8.9,
+                y = 10.11,
+                speed = 12.13,
+                angle = 14.15
+            )
     }
 }
