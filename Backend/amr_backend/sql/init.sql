@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
+
 -- Table: amr
 CREATE TABLE IF NOT EXISTS amr
 (
@@ -25,6 +27,8 @@ CREATE TABLE IF NOT EXISTS amr_status
     created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP NOT NULL,
     FOREIGN KEY (amr_serial) REFERENCES amr (serial) ON DELETE CASCADE
 );
+
+SELECT create_hypertable('amr_status', 'created_at');
 
 -- Index for latest status by AMR
 CREATE INDEX idx_amr_status_amr_serial_created_at
