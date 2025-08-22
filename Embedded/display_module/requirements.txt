@@ -1,0 +1,3 @@
+RPi.GPIO>=0.7.0
+luma.core>=2.3.0
+luma.lcd>=2.9.0

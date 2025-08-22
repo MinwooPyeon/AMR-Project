@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: amr_backend
+  config:
+    import: optional:file:env/spring.dev.env[.properties]
+  datasource:
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  jpa:
+    hibernate:
+      ddl-auto: update
+firebase:
+  key:
+    location: ${FIREBASE_KEY_LOCATION}
+logging:
+  level:
+    com.example.amr_backend: DEBUG
+mqtt:
+  url: ${MQTT_URL}
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-token:
+    expiry: ${JWT_ACCESS_TOKEN_EXPIRY_IN_MINUTES}
+  refresh-token:
+    expiry: ${JWT_REFRESH_TOKEN_EXPIRY_IN_MINUTES}

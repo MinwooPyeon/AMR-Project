@@ -1,0 +1,20 @@
+mqtt:
+  ros__parameters:
+    broker_address: "localhost"
+    broker_port: 1883
+    client_id: "amr_robot"
+    username: ""
+    password: ""
+    keepalive: 60
+    qos: 1
+    retain: false
+
+topics:
+  ros__parameters:
+    sensor_data: "amr/sensor/data"
+    motor_control: "amr/motor/control"
+    status: "amr/status"
+    command: "amr/command"
+    alert: "amr/alert"
+    config: "amr/config"
+    heartbeat: "amr/heartbeat"

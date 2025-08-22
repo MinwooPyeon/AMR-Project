@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: timescale/timescaledb:2.15.3-pg13
+    restart: always
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    env_file:
+      - "./env/postgres.dev.env"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - "./postgres/postgresql.conf:/var/lib/postgresql/data/postgresql.conf"
+    networks:
+      - amr-backend-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"
+    networks:
+      - amr-backend-network
+
+  amr-server:
+    image: amr-server
+    build: .
+    container_name: amr-server
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_started
+      mosquitto:
+        condition: service_started
+      redis:
+        condition: service_started
+
+    ports:
+      - "8080:8080"
+    user: spring
+    env_file:
+      - "./env/spring-docker.dev.env"
+    volumes:
+      - "./firebase:/firebase"
+      - "./images:/images"
+    networks:
+      - amr-backend-network
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    restart: always
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+    volumes:
+      - "./mosquitto/config:/mosquitto/config"
+      - "./mosquitto/data:/mosquitto/data"
+      - "./mosquitto/log:/mosquitto/log"
+    networks:
+      - amr-backend-network
+
+  redis:
+    image: redis:8.2.0
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - amr-backend-network
+
+volumes:
+  postgres-data:
+
+networks:
+  amr-backend-network:

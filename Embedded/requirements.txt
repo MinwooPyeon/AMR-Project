@@ -1,0 +1,58 @@
+# AMR System - Main Requirements
+# Core system dependencies
+
+# Logging and utilities
+colorlog>=6.7.0
+python-json-logger>=2.0.7
+
+# Configuration management
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# MQTT communication
+paho-mqtt>=1.6.1
+websockets>=11.0.0
+
+# AI and ML
+numpy>=1.21.0
+opencv-python>=4.5.0
+Pillow>=8.3.0
+scikit-learn>=1.1.0
+
+# ROS2 integration
+rclpy>=0.4.0
+sensor-msgs>=0.1.0
+std-msgs>=0.1.0
+geometry-msgs>=0.1.0
+
+# Hardware interface
+smbus2>=0.4.0
+RPi.GPIO>=0.7.0
+adafruit-circuitpython-pca9685>=3.4.0
+
+# Web dashboard
+flask>=2.3.0
+flask-socketio>=5.3.0
+
+# Database and backup
+sqlite3
+psutil>=5.9.0
+
+# Security
+cryptography>=3.4.0
+bcrypt>=4.0.0
+
+# Testing
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+pytest-mock>=3.10.0
+
+# Development tools
+black>=22.0.0
+flake8>=4.0.0
+mypy>=0.991
+pre-commit>=2.20.0
+
+# Monitoring and metrics
+prometheus-client>=0.16.0

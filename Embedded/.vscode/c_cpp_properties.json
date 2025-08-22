@@ -1,0 +1,69 @@
+{
+  "configurations": [
+    {
+      "name": "Linux",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/include/amr",
+        "${workspaceFolder}/include/amr/ai",
+        "${workspaceFolder}/include/amr/angle_controller.h",
+        "${workspaceFolder}/include/amr/backend_ws_client.h",
+        "${workspaceFolder}/include/amr/battery",
+        "${workspaceFolder}/include/amr/camera",
+        "${workspaceFolder}/include/amr/i2c",
+        "${workspaceFolder}/include/amr/imu_motor_integration.h",
+        "${workspaceFolder}/include/amr/imu_sensor.h",
+        "${workspaceFolder}/include/amr/led_driver.h",
+        "${workspaceFolder}/include/amr/level_controller.h",
+        "${workspaceFolder}/include/amr/lidar_sensor.h",
+        "${workspaceFolder}/include/amr/module",
+        "${workspaceFolder}/include/amr/mqtt",
+        "${workspaceFolder}/include/amr/navigation",
+        "${workspaceFolder}/include/amr/obstacle_detector.h",
+        "${workspaceFolder}/include/amr/ros",
+        "${workspaceFolder}/include/amr/slam",
+        "${workspaceFolder}/include/amr/sysfsInterface",
+        "/opt/ros/humble/include",
+        "/opt/ros/humble/include/**",
+        "/usr/include",
+        "/usr/local/include",
+        "/usr/include/x86_64-linux-gnu",
+        "/usr/include/linux"
+      ],
+      "defines": ["ROS2_HUMBLE", "LINUX", "JETSON", "DEBUG", "_DEBUG", "UNICODE", "_UNICODE"],
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "linux-gcc-x64",
+      "compilerArgs": ["-Wall", "-Wextra", "-std=c++17", "-O0", "-g"],
+      "browse": {
+        "path": [
+          "${workspaceFolder}",
+          "/opt/ros/humble/include",
+          "/usr/include",
+          "/usr/local/include"
+        ],
+        "limitSymbolsToIncludedHeaders": true,
+        "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db"
+      }
+    },
+    {
+      "name": "Win32",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/include/amr",
+        "C:/opt/ros/humble/include",
+        "C:/opt/ros/humble/include/**"
+      ],
+      "defines": ["ROS2_HUMBLE", "WIN32", "_WIN32", "DEBUG", "_DEBUG", "UNICODE", "_UNICODE"],
+      "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "windows-gcc-x64",
+      "compilerArgs": ["-Wall", "-Wextra", "-std=c++17", "-O0", "-g"]
+    }
+  ],
+  "version": 4
+}
