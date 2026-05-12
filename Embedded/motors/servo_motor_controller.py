@@ -1,7 +1,7 @@
 import time
 import threading
 from typing import Dict, Optional
-from utils.logger import motor_logger
+from utilities.logger import motor_logger
 
 class ServoMotorController:
     def __init__(self, i2c_address: int = 0x40, frequency: int = 50):

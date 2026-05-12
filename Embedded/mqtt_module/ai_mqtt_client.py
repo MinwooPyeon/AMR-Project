@@ -1,29 +1,35 @@
 import json
 import time
 import threading
-from typing import Dict, Optional, Callable, Any, Tuple
+from typing import Dict, Optional, Callable, Any
 import paho.mqtt.client as mqtt
 from utilities.logger import LoggerFactory
 
-class AIMQTTClient:
-    
-    def __init__(self, robot_id: str = "AMR001", mqtt_broker: str = "localhost", mqtt_port: int = 1883) -> None:
 
+class AIMQTTClient:
+
+    def __init__(self, robot_id: str = "AMR001", mqtt_broker: str = "localhost", mqtt_port: int = 1883) -> None:
         self.robot_id: str = robot_id
         self.mqtt_broker: str = mqtt_broker
         self.mqtt_port: int = mqtt_port
         self.mqtt_client_id: str = f"ai_client_{robot_id}_{int(time.time())}"
-        
+
+        self.logger = LoggerFactory.get_module_logger("mqtt.ai")
+
+        from config.system_config import get_config
+        config = get_config()
+
         self.mqtt_client: mqtt.Client = mqtt.Client(client_id=self.mqtt_client_id)
         self.mqtt_connected: bool = False
-        
-        self.mqtt_client.username_pw_set("minwoo", "minwoo")
-        
+
+        if config.MQTT_USERNAME and config.MQTT_PASSWORD:
+            self.mqtt_client.username_pw_set(config.MQTT_USERNAME, config.MQTT_PASSWORD)
+
         self.mqtt_client.on_connect = self._on_mqtt_connect
         self.mqtt_client.on_disconnect = self._on_mqtt_disconnect
         self.mqtt_client.on_message = self._on_mqtt_message
         self.mqtt_client.on_publish = self._on_mqtt_publish
-        
+
         self.ai_received_data: Dict[str, Any] = {
             "serial": "",
             "x": 0.0,
@@ -32,128 +38,122 @@ class AIMQTTClient:
             "case": "",
             "timeStamp": ""
         }
-        
+
         self.data_lock: threading.Lock = threading.Lock()
-        
         self.ai_data_callback: Optional[Callable[[Dict[str, Any]], None]] = None
-        
+
         self.stats_lock: threading.Lock = threading.Lock()
         self.total_received: int = 0
         self.last_received_time: float = 0
-        
-        self.logger = LoggerFactory.get_module_logger("mqtt.ai")
-        
-        self.logger.success(f"AI MQTT Client initialization completed - Robot ID: {robot_id}, Broker: {mqtt_broker}:{mqtt_port}")
-        self.logger.info(f"AI -> Embedded connection: {mqtt_broker}:{mqtt_port}")
-    
+
+        self.logger.success(f"AI MQTT Client initialized - Robot ID: {robot_id}, Broker: {mqtt_broker}:{mqtt_port}")
+
     def connect_mqtt(self) -> bool:
         try:
-            mqtt_logger.info(f"Connecting to AI MQTT broker: {self.mqtt_broker}:{self.mqtt_port}")
+            self.logger.info(f"Connecting to AI MQTT broker: {self.mqtt_broker}:{self.mqtt_port}")
             self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, 60)
             self.mqtt_client.loop_start()
-            
-            timeout = 10
+
             start_time = time.time()
-            while not self.mqtt_connected and (time.time() - start_time) < timeout:
+            while not self.mqtt_connected and (time.time() - start_time) < 10:
                 time.sleep(0.1)
-            
+
             if self.mqtt_connected:
-                mqtt_logger.success("AI MQTT broker connection successful")
+                self.logger.success("AI MQTT broker connection successful")
                 return True
             else:
-                mqtt_logger.error("AI MQTT connection timeout")
+                self.logger.error("AI MQTT connection timeout")
                 return False
-                
+
         except Exception as e:
-            mqtt_logger.error(f"AI MQTT connection failed: {e}")
+            self.logger.error(f"AI MQTT connection failed: {e}")
             return False
-    
+
     def disconnect_mqtt(self):
         if self.mqtt_connected:
             self.mqtt_client.loop_stop()
             self.mqtt_client.disconnect()
             self.mqtt_connected = False
-            mqtt_logger.info("AI MQTT connection released")
-    
+            self.logger.info("AI MQTT connection released")
+
     def subscribe_to_ai_data(self, robot_id: str = "AMR001"):
         topic = "ai_data"
         result = self.mqtt_client.subscribe(topic, qos=1)
-        
+
         if result[0] == mqtt.MQTT_ERR_SUCCESS:
-            mqtt_logger.info(f"AI data subscription successful: {topic}")
+            self.logger.info(f"AI data subscription successful: {topic}")
             return True
         else:
-            mqtt_logger.error(f"AI data subscription failed: {result[0]}")
+            self.logger.error(f"AI data subscription failed: {result[0]}")
             return False
-    
+
     def set_ai_data_callback(self, callback: Callable[[Dict], None]):
         self.ai_data_callback = callback
-        mqtt_logger.info("AI data callback set")
-    
+        self.logger.info("AI data callback set")
+
     def get_latest_ai_data(self) -> Dict:
         with self.data_lock:
             return self.ai_received_data.copy()
-    
+
     def get_ai_serial(self) -> str:
         with self.data_lock:
             return self.ai_received_data.get("serial", "")
-    
+
     def get_ai_position(self) -> tuple:
         with self.data_lock:
             x = self.ai_received_data.get("x", 0.0)
             y = self.ai_received_data.get("y", 0.0)
             return (x, y)
-    
+
     def get_ai_image(self) -> str:
         with self.data_lock:
             return self.ai_received_data.get("img", "")
-    
+
     def get_ai_case(self) -> str:
         with self.data_lock:
             return self.ai_received_data.get("case", "")
-    
+
     def get_ai_timestamp(self) -> str:
         with self.data_lock:
             return self.ai_received_data.get("timeStamp", "")
-    
+
     def get_reception_stats(self) -> Dict[str, Any]:
         with self.stats_lock:
-            stats = {
+            return {
                 "total_received": self.total_received,
                 "last_received_time": self.last_received_time,
                 "mqtt_connected": self.mqtt_connected,
                 "latest_ai_data": self.get_latest_ai_data()
             }
-        return stats
-    
+
     def _on_mqtt_connect(self, client, userdata, flags, rc):
         if rc == 0:
             self.mqtt_connected = True
-            mqtt_logger.success(f"AI MQTT broker connection successful: {self.mqtt_broker}:{self.mqtt_port}")
+            self.logger.success(f"AI MQTT connected: {self.mqtt_broker}:{self.mqtt_port}")
         else:
-            mqtt_logger.error(f"AI MQTT connection failed: {rc}")
+            self.logger.error(f"AI MQTT connection failed with code: {rc}")
             self.mqtt_connected = False
-    
+
     def _on_mqtt_disconnect(self, client, userdata, rc):
         self.mqtt_connected = False
         if rc != 0:
-            mqtt_logger.warning(f"AI MQTT connection unexpectedly disconnected: {rc}")
+            self.logger.warn(f"AI MQTT unexpectedly disconnected: {rc}")
         else:
-            mqtt_logger.info("AI MQTT connection released")
-    
+            self.logger.info("AI MQTT connection released")
+
     def _on_mqtt_message(self, client, userdata, msg):
         try:
             data = json.loads(msg.payload.decode('utf-8'))
             topic = msg.topic
-            
-            mqtt_logger.debug(f"AI message received - topic: {topic}, data: {data}")
-            
+
+            self.logger.debug(f"AI message received - topic: {topic}")
+
             with self.stats_lock:
                 self.total_received += 1
                 self.last_received_time = time.time()
-            
-            mqtt_logger.mqtt_receive_success(topic, data)
-            
+
+            self.logger.mqtt_receive_success(topic, data)
+
             if topic == "ai_data":
                 with self.data_lock:
                     required_fields = ["serial", "x", "y", "img", "case", "timeStamp"]
@@ -163,14 +163,14 @@ class AIMQTTClient:
                                 self.ai_received_data[field] = float(data[field])
                             else:
                                 self.ai_received_data[field] = str(data[field])
-                
+
                 if self.ai_data_callback:
                     self.ai_data_callback(data)
-            
+
         except json.JSONDecodeError as e:
-            mqtt_logger.error(f"AI JSON parsing error: {e}")
+            self.logger.error(f"AI JSON parsing error: {e}")
         except Exception as e:
-            mqtt_logger.error(f"AI message processing error: {e}")
-    
+            self.logger.error(f"AI message processing error: {e}")
+
     def _on_mqtt_publish(self, client, userdata, mid):
-        mqtt_logger.debug(f"AI MQTT message published: {mid}")
+        self.logger.debug(f"AI MQTT message published: {mid}")

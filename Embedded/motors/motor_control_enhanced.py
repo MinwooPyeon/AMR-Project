@@ -1,7 +1,7 @@
 
 import time
 import math
-import smbus
+import smbus2 as smbus
 from PCA9685 import PCA9685
 
 class MotorDriverHAT:

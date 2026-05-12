@@ -22,10 +22,8 @@ class TestSystemConfig(unittest.TestCase):
         self.assertEqual(self.config.HTTP_PORT, 8000)
     
     def test_mqtt_config_integration(self):
-        self.assertEqual(self.config.MQTT_BROKER, "192.168.100.141")
-        self.assertEqual(self.config.MQTT_PORT, 1883)
-        self.assertEqual(self.config.MQTT_USERNAME, "minwoo")
-        self.assertEqual(self.config.MQTT_PASSWORD, "minwoo")
+        self.assertEqual(self.config.MQTT_BROKER, os.getenv('MQTT_BROKER', '192.168.100.141'))
+        self.assertEqual(self.config.MQTT_PORT, int(os.getenv('MQTT_PORT', '1883')))
     
     def test_motor_config_integration(self):
         self.assertEqual(self.config.MOTOR_I2C_ADDRESS, 0x40)
@@ -63,10 +61,8 @@ class TestMQTTConfig(unittest.TestCase):
         self.mqtt_config = MQTTConfig()
     
     def test_mqtt_config_defaults(self):
-        self.assertEqual(self.mqtt_config.broker, "192.168.100.141")
-        self.assertEqual(self.mqtt_config.port, 1883)
-        self.assertEqual(self.mqtt_config.username, "minwoo")
-        self.assertEqual(self.mqtt_config.password, "minwoo")
+        self.assertEqual(self.mqtt_config.broker, os.getenv('MQTT_BROKER', '192.168.100.141'))
+        self.assertEqual(self.mqtt_config.port, int(os.getenv('MQTT_PORT', '1883')))
     
     def test_mqtt_config_to_dict(self):
         config_dict = self.mqtt_config.to_dict()

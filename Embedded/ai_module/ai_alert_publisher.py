@@ -46,7 +46,10 @@ class AIAlertPublisher(Node):
         self.mqtt_client.on_connect = self.on_mqtt_connect
         self.mqtt_client.on_disconnect = self.on_mqtt_disconnect
         
-        self.mqtt_client.username_pw_set("minwoo", "minwoo")
+        from config.system_config import get_config
+        _cfg = get_config()
+        if _cfg.MQTT_USERNAME and _cfg.MQTT_PASSWORD:
+            self.mqtt_client.username_pw_set(_cfg.MQTT_USERNAME, _cfg.MQTT_PASSWORD)
         
         self._setup_mqtt_connection()
         

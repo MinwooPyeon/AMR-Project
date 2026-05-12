@@ -3,79 +3,73 @@ import time
 import threading
 from typing import Dict, Optional, Callable
 import paho.mqtt.client as mqtt
-from utils.logger import mqtt_logger
+from utilities.logger import mqtt_logger
+
 
 class SensorDataTransmitter:
+
     def __init__(self, robot_id: str = None, mqtt_broker: str = None, mqtt_port: int = None):
         from config.system_config import get_config
-        config = get_config()
-        
-        self.robot_id = robot_id or config.SYSTEM_NAME
-        self.mqtt_broker = mqtt_broker or config.MQTT_BROKER
-        self.mqtt_port = mqtt_port or config.MQTT_PORT
+        self.config = get_config()
 
-        
-        self.mqtt_client = mqtt.Client(client_id=f"sensor_transmitter_{robot_id}")
+        self.robot_id = robot_id or self.config.SYSTEM_NAME
+        self.mqtt_broker = mqtt_broker or self.config.MQTT_BROKER
+        self.mqtt_port = mqtt_port or self.config.MQTT_PORT
+
+        self.mqtt_client = mqtt.Client(client_id=f"sensor_transmitter_{self.robot_id}")
         self.connected = False
-        
-        self.mqtt_client.username_pw_set("minwoo", "minwoo")
-        
+
+        if self.config.MQTT_USERNAME and self.config.MQTT_PASSWORD:
+            self.mqtt_client.username_pw_set(self.config.MQTT_USERNAME, self.config.MQTT_PASSWORD)
+
         self.mqtt_client.on_connect = self._on_mqtt_connect
         self.mqtt_client.on_disconnect = self._on_mqtt_disconnect
         self.mqtt_client.on_publish = self._on_mqtt_publish
-        
-        self.send_success_callback = None
-        
+
+        self.send_success_callback: Optional[Callable] = None
+
         self.embedded_data = {
-            "serial": robot_id,
+            "serial": self.robot_id,
             "state": "IDLE",
             "x": 0.0,
             "y": 0.0,
             "speed": 0.0,
             "angle": 0.0
         }
-        
+
         self.data_lock = threading.Lock()
-        
         self.stats_lock = threading.Lock()
         self.total_sent = 0
         self.last_sent_time = 0
-        
-        self.sensors = {}
-        
+
         self.periodic_sending = False
-        self.periodic_thread = None
+        self.periodic_thread: Optional[threading.Thread] = None
         self.send_interval = 1.0
-        
-    
+
     def connect_mqtt(self) -> bool:
         try:
-            self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, config.MQTT_KEEPALIVE)
+            self.mqtt_client.connect(self.mqtt_broker, self.mqtt_port, self.config.MQTT_KEEPALIVE)
             self.mqtt_client.loop_start()
-            
-            timeout = config.COMMUNICATION_TIMEOUT
+
             start_time = time.time()
-            while not self.connected and (time.time() - start_time) < timeout:
+            while not self.connected and (time.time() - start_time) < self.config.COMMUNICATION_TIMEOUT:
                 time.sleep(0.1)
-            
-            if self.connected:
-                return True
-            else:
-                return False
-                
+
+            return self.connected
+
         except Exception as e:
+            mqtt_logger.error(f"SensorDataTransmitter connect failed: {e}")
             return False
-    
+
     def disconnect_mqtt(self):
         if self.connected:
             self.stop_periodic_sending()
-            
             self.mqtt_client.loop_stop()
             self.mqtt_client.disconnect()
             self.connected = False
-    
-    def update_embedded_data(self, serial: str = None, state: str = None, x: float = None, 
-                           y: float = None, speed: float = None, angle: float = None):
+
+    def update_embedded_data(self, serial: str = None, state: str = None, x: float = None,
+                             y: float = None, speed: float = None, angle: float = None):
         with self.data_lock:
             if serial is not None:
                 self.embedded_data["serial"] = str(serial)
@@ -89,43 +83,45 @@ class SensorDataTransmitter:
                 self.embedded_data["speed"] = float(speed)
             if angle is not None:
                 self.embedded_data["angle"] = float(angle)
-    
+
     def send_embedded_data(self) -> bool:
         if not self.connected:
             return False
-        
+
         try:
-            topic = "status"  
-            
+            topic = "status"
             with self.data_lock:
                 json_data = json.dumps(self.embedded_data, ensure_ascii=False)
-            
+                data_copy = self.embedded_data.copy()
+
             result = self.mqtt_client.publish(topic, json_data, qos=1)
-            
+
             if result.rc == mqtt.MQTT_ERR_SUCCESS:
                 with self.stats_lock:
                     self.total_sent += 1
                     self.last_sent_time = time.time()
-                
-                mqtt_logger.mqtt_send_success(topic, self.embedded_data)
-                
+
+                mqtt_logger.mqtt_send_success(topic, data_copy)
+
                 if self.send_success_callback:
-                    self.send_success_callback(topic, self.embedded_data)
-                
+                    self.send_success_callback(topic, data_copy)
+
                 return True
             else:
+                mqtt_logger.error(f"Publish failed: {result.rc}")
                 return False
-                
+
         except Exception as e:
+            mqtt_logger.error(f"Send error: {e}")
             return False
-    
+
     def send_sensor_data(self, data: Dict) -> bool:
         return self.send_embedded_data()
-    
+
     def get_embedded_data(self) -> Dict:
         with self.data_lock:
             return self.embedded_data.copy()
-    
+
     def get_transmission_stats(self) -> Dict:
         with self.stats_lock:
             return {
@@ -134,48 +130,41 @@ class SensorDataTransmitter:
                 "connected": self.connected,
                 "current_data": self.get_embedded_data()
             }
-    
+
     def set_send_success_callback(self, callback: Callable[[str, Dict], None]):
         self.send_success_callback = callback
-    
-    def _on_mqtt_connect(self, client, userdata, flags, rc):
-        if rc == 0:
-            self.connected = True
-        else:
-            pass
-    
-    def _on_mqtt_disconnect(self, client, userdata, rc):
-        self.connected = False
-    
+
     def start_periodic_sending(self, interval: float = 1.0) -> bool:
-        if self.periodic_sending:
+        if self.periodic_sending or not self.connected:
             return False
-        
-        if not self.connected:
-            return False
-        
+
         self.send_interval = interval
         self.periodic_sending = True
         self.periodic_thread = threading.Thread(target=self._periodic_send_loop, daemon=True)
         self.periodic_thread.start()
-        
         return True
-    
+
     def stop_periodic_sending(self):
         if not self.periodic_sending:
             return
-        
         self.periodic_sending = False
         if self.periodic_thread and self.periodic_thread.is_alive():
             self.periodic_thread.join(timeout=2.0)
-    
+
     def _periodic_send_loop(self):
         while self.periodic_sending and self.connected:
             try:
                 self.send_embedded_data()
                 time.sleep(self.send_interval)
             except Exception as e:
+                mqtt_logger.error(f"Periodic send error: {e}")
                 time.sleep(self.send_interval)
-    
+
+    def _on_mqtt_connect(self, client, userdata, flags, rc):
+        self.connected = (rc == 0)
+
+    def _on_mqtt_disconnect(self, client, userdata, rc):
+        self.connected = False
+
     def _on_mqtt_publish(self, client, userdata, mid):
         pass

@@ -1,6 +1,6 @@
 import time
 import math
-import smbus
+import smbus2 as smbus
 import json
 import base64
 import requests
@@ -12,7 +12,7 @@ from PCA9685 import PCA9685
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 sys.path.insert(0, project_root)
 
-from mqtt.sensor_data_transmitter import SensorDataTransmitter
+from mqtt_module.sensor_data_transmitter import SensorDataTransmitter
 
 class AIMotorController:
     

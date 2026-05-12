@@ -7,8 +7,8 @@ import threading
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from mqtt.sensor_data_transmitter import SensorDataTransmitter
-from utils.logger import mqtt_logger
+from mqtt_module.sensor_data_transmitter import SensorDataTransmitter
+from utilities.logger import mqtt_logger
 
 class PeriodicStatusSender:
     def __init__(self, robot_id: str = None, broker: str = None, port: int = None):

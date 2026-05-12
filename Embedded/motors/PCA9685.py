@@ -1,7 +1,7 @@
 
 import time
 import math
-import smbus
+import smbus2 as smbus
 
 class PCA9685:
 

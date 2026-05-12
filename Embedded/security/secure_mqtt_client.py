@@ -357,10 +357,11 @@ class SecureMQTTClient:
         }
 
 if __name__ == "__main__":
+    import os
     client = SecureMQTTClient(
         client_id="test_client",
-        username="minwoo",
-        password="minwoo"
+        username=os.getenv('MQTT_USERNAME', ''),
+        password=os.getenv('MQTT_PASSWORD', '')
     )
     
     def message_callback(topic: str, payload: str):
