@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+import time
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
@@ -40,14 +42,24 @@ class AIAlertPublisher(Node):
         
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.on_connect = self.on_mqtt_connect
-        
-        try:
-            self.mqtt_client.connect("192.168.100.141", 1883, 60)
-            self.mqtt_client.loop_start()
-        except Exception as e:
-            self.get_logger().error(f"MQTT 연결 실패: {e}")
+
+        mqtt_broker = os.getenv("MQTT_BROKER", "192.168.100.141")
+        mqtt_port = int(os.getenv("MQTT_PORT", "1883"))
+        self._connect_mqtt(mqtt_broker, mqtt_port)
         
         self.get_logger().info(f"AI Alert Publisher 초기화 완료 - Topic: {topic_name}")
+
+    def _connect_mqtt(self, broker: str, port: int, max_retries: int = 3):
+        for attempt in range(max_retries):
+            try:
+                self.mqtt_client.connect(broker, port, 60)
+                self.mqtt_client.loop_start()
+                return
+            except Exception as e:
+                self.get_logger().error(f"MQTT 연결 실패 ({attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+        self.get_logger().error("MQTT 연결 최대 재시도 횟수 초과")
 
     def on_mqtt_connect(self, client, userdata, flags, rc):
         self.get_logger().info(f"MQTT 연결 성공: {rc}")
@@ -72,38 +84,24 @@ class AIAlertPublisher(Node):
         except Exception as e:
             self.get_logger().error(f"Alert 발행 실패: {e}")
 
-    def publish_collapse_alert(self, image: str, x: float, y: float, detail: str = ""):
+    def publish_situation_alert(self, situation: AlertSituation, image: str, x: float, y: float, detail: str = ""):
         alert_data = AlertData()
-        alert_data.situation = AlertSituation.COLLAPSE
+        alert_data.situation = situation
         alert_data.image = image
         alert_data.x = x
         alert_data.y = y
         alert_data.detail = detail
         alert_data.amr_serial = self.amr_serial
-        
         self.publish_alert(alert_data)
+
+    def publish_collapse_alert(self, image: str, x: float, y: float, detail: str = ""):
+        self.publish_situation_alert(AlertSituation.COLLAPSE, image, x, y, detail)
 
     def publish_smoke_alert(self, image: str, x: float, y: float, detail: str = ""):
-        alert_data = AlertData()
-        alert_data.situation = AlertSituation.SMOKE
-        alert_data.image = image
-        alert_data.x = x
-        alert_data.y = y
-        alert_data.detail = detail
-        alert_data.amr_serial = self.amr_serial
-        
-        self.publish_alert(alert_data)
+        self.publish_situation_alert(AlertSituation.SMOKE, image, x, y, detail)
 
     def publish_equipment_alert(self, image: str, x: float, y: float, detail: str = ""):
-        alert_data = AlertData()
-        alert_data.situation = AlertSituation.EQUIPMENT
-        alert_data.image = image
-        alert_data.x = x
-        alert_data.y = y
-        alert_data.detail = detail
-        alert_data.amr_serial = self.amr_serial
-        
-        self.publish_alert(alert_data)
+        self.publish_situation_alert(AlertSituation.EQUIPMENT, image, x, y, detail)
 
     def set_amr_serial(self, amr_serial: str):
         self.amr_serial = amr_serial

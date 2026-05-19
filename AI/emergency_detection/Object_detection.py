@@ -97,10 +97,10 @@ MIN_HORIZONTAL_SCORE = 0.35
 MIN_BOX_AREA = 80*80
 
 # MQTT 설정
-PORT = 1883
-BROKER = "192.168.100.141"
-AMR_SERIAL = "AMR001"
-TOPIC = f"alert"
+PORT = int(os.getenv("MQTT_PORT", "1883"))
+BROKER = os.getenv("MQTT_BROKER", "192.168.100.141")
+AMR_SERIAL = os.getenv("AMR_SERIAL", "AMR001")
+TOPIC = "alert"
 
 # paho.mqtt.client의 DeprecationWarning을 피하기 위해 client_id를 사용합니다.
 # 하지만 이 부분은 main 프로세스에서 사용되지 않으므로 제거합니다.
@@ -232,14 +232,20 @@ def capture_frames(queue):
 
 def process_and_stream_frames(queue):
     """큐에서 프레임을 가져와 AI 추론 및 통신, 그리고 RTSP 스트리밍을 수행하는 프로세스"""
-    # 이 프로세스에서 MQTT 클라이언트를 생성하고 연결합니다.
     local_client = mqtt.Client()
-    try:
-        local_client.connect(BROKER, PORT, 60)
-        local_client.loop_start()
-        print("✅ MQTT 연결 성공")
-    except Exception as e:
-        print(f"[ERROR] MQTT 연결 실패: {e}")
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            local_client.connect(BROKER, PORT, 60)
+            local_client.loop_start()
+            print("✅ MQTT 연결 성공")
+            break
+        except Exception as e:
+            print(f"[ERROR] MQTT 연결 실패 ({attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
+    else:
+        print("[ERROR] MQTT 연결 최대 재시도 횟수 초과")
         return
 
     try:

@@ -31,20 +31,14 @@ class ProcessManager:
             'sensors': {
                 'command': [sys.executable, '-m', 'sensors'],
                 'cwd': self.base_dir / 'sensors',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': True,
                 'description': '센서 모듈'
             },
             'mqtt-module': {
                 'command': [sys.executable, 'mqtt_manager.py'],
                 'cwd': self.base_dir / 'mqtt_module',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': True,
                 'description': 'MQTT 통신 모듈'
             }
@@ -55,55 +49,46 @@ class ProcessManager:
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
     
+    def _get_mqtt_env(self) -> dict:
+        return {
+            'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER,
+            'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT),
+        }
+
     def _add_optional_modules(self):
         optional_modules = {
             'motors': {
                 'command': [sys.executable, 'motor_controller.py'],
                 'cwd': self.base_dir / 'motors',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': False,
                 'description': '모터 제어 모듈'
             },
             'ai-module': {
                 'command': [sys.executable, 'ai_processor.py'],
                 'cwd': self.base_dir / 'ai_module',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': False,
                 'description': 'AI 처리 모듈'
             },
             'communication': {
                 'command': [sys.executable, 'communication_manager.py'],
                 'cwd': self.base_dir / 'communication_module',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': False,
                 'description': '통신 모듈'
             },
             'display': {
                 'command': [sys.executable, 'display_manager.py'],
                 'cwd': self.base_dir / 'display_module',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': False,
                 'description': '디스플레이 모듈'
             },
             'backup': {
                 'command': [sys.executable, 'backup_manager.py'],
                 'cwd': self.base_dir / 'backup_module',
-                'env': {
-                    'MQTT_BROKER': self.config.LOCAL_MQTT_BROKER, 
-                    'MQTT_PORT': str(self.config.LOCAL_MQTT_PORT)
-                },
+                'env': self._get_mqtt_env(),
                 'required': False,
                 'description': '백업 모듈'
             }
